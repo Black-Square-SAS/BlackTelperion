@@ -1,0 +1,75 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "BlackTelperion"
+version = "0.1.0"
+authors = [
+    {name = "Black Square", email = "inti.ruiz@blacksquare.com.co"},
+    {name = "Black Square", email = "leidy.alfonso@blacksquare.com.co"},
+]
+maintainers = [
+    {name = "Black Square Team", email = "inti.ruiz@blacksquare.com.co"},
+    {name = "Black Square Team", email = "leidy.alfonso@blacksquare.com.co"},
+]
+description = "Specialized library for hyperspectral and multispectral imagery processing"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Topic :: Scientific/Engineering :: Image Processing",
+]
+keywords = ["hyperspectral", "multispectral", "remote-sensing", "imagery", "processing", "sentinel", "aster", "enmap"]
+
+dependencies = [
+    "numpy>=1.21",
+    "scipy>=1.7",
+    "matplotlib>=3.3",
+    "rasterio>=1.2",
+    "scikit-learn>=1.0",
+    "tqdm",
+    "imageio",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=6.0",
+    "pytest-cov",
+    "black",
+    "flake8",
+    "mypy",
+]
+docs = [
+    "sphinx",
+    "sphinx-rtd-theme",
+]
+all = [
+    "pytest>=6.0",
+    "pytest-cov",
+    "black",
+    "flake8",
+    "mypy",
+    "sphinx",
+    "sphinx-rtd-theme",
+]
+
+[project.urls]
+Homepage = "https://github.com/Black-Square-SAS/BlackTelperion"
+Source = "https://github.com/Black-Square-SAS/BlackTelperion"
+"Bug Reports" = "https://github.com/Black-Square-SAS/BlackTelperion/issues"
+Documentation = "https://github.com/Black-Square-SAS/BlackTelperion/wiki"
+Company = "https://blacksquare.com.co"
+
+[tool.setuptools.packages.find]
+
+[tool.setuptools.package-data]
+"*" = ["*.txt", "*.hdr", "*.cal", "*.dat"]
+
