@@ -5,11 +5,11 @@ Load or import spectral libraries.
 import os
 import numpy as np
 import glob
-import blacktelperion
-from blacktelperion import BlackLibrary
-from blacktelperion.io.headers import makeDirs
+import BlackTelperion
+from BlackTelperion import BlackLibrary
+from BlackTelperion.io.headers import makeDirs
 from time import gmtime, strftime
-from blacktelperion.io.images import loadWithGDAL, saveWithGDAL, loadWithSPy, loadWithSPy
+from BlackTelperion.io.images import loadWithGDAL, saveWithGDAL, loadWithSPy, loadWithSPy
 from pathlib import Path
 
 # noinspection PyUnusedLocal
@@ -304,7 +304,7 @@ def loadLibraryDIR(path, wav=None):
 
         # check it is valid and resample to desired range
         delta = [np.min(np.abs(lib.get_wavelengths() - w)) for w in wav]
-        if np.min(delta) < blacktelperion.band_select_threshold:
+        if np.min(delta) < BlackTelperion.band_select_threshold:
             lib = lib.resample(wav, vb=False, partial=True)
             if m in libs:
                 libs[m] = libs[m] + lib  # append
@@ -313,7 +313,7 @@ def loadLibraryDIR(path, wav=None):
 
     # aggregate
     data = np.full((len(libs), np.max([l.sample_count() for l in libs.values()]), len(wav)), np.nan)
-    lib = blacktelperion.BlackLibrary(data, lab=list(libs.keys()), wav=wav)
+    lib = BlackTelperion.BlackLibrary(data, lab=list(libs.keys()), wav=wav)
     for i, (k, v) in enumerate(libs.items()):
         lib.data[i, :v.data.shape[0], :] = v.data[:, 0, :]
 
@@ -345,9 +345,9 @@ def saveLibraryTXT(path, library):
 
 def saveLibraryLIB(path, library):
     path = os.path.splitext(path)[0] + ".lib" # ensure correct file format
-    from blacktelperion import io # N.B. this import must be here to avoid circular references
+    from BlackTelperion import io # N.B. this import must be here to avoid circular references
     io.save(path, library.as_image()) # default format is just as an image
 
 def loadLibraryLIB(path):
-    from blacktelperion import io  # N.B. this import must be here to avoid circular references
+    from BlackTelperion import io  # N.B. this import must be here to avoid circular references
     return io.load(path) # this is handled in the io.load function directly

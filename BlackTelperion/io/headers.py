@@ -5,7 +5,7 @@ Read ENVI header files.
 import os
 import glob
 import numpy as np
-from blacktelperion import BlackHeader
+from BlackTelperion import BlackHeader
 import re
 
 def makeDirs(path):

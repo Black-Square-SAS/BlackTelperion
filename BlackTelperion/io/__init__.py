@@ -5,16 +5,13 @@ while for point clouds and hyperspectral libraries a variety of different method
 """
 from .headers import *
 from .images import *
-from .clouds import *
 from .libraries import *
-from .pmaps import *
-from .cameras import saveCameraTXT, loadCameraTXT
 from pathlib import Path
 
-from hylite import HyImage, HyCloud, HyLibrary, HyCollection, HyScene, HyData
-from hylite.project import PMap, Camera, Pushbroom
-from hylite.analyse.mwl import MWL
-from distutils.dir_util import copy_tree
+from BlackTelperion import BlackImage, BlackLibrary, BlackData#, BlackCollection
+#from BlackTelperion.project import PMap, Camera, Pushbroom
+#from BlackTelperion.analyse.mwl import MWL
+#from distutils.dir_util import copy_tree
 import os
 
 # check if gdal is installed
@@ -26,19 +23,19 @@ except ModuleNotFoundError:
 
 def save(path, data, **kwds):
     """
-    A generic function for saving HyData instances such as HyImage, HyLibrary and HyCloud. The appropriate file format
+    A generic function for saving BlackData instances such as BlackImage, BlackLibrary and HyCloud. The appropriate file format
     will be chosen automatically.
 
     Args:
         path (str): the path to save the file too.
-        data (HyData or ndarray): the data to save. This must be an instance of HyImage, HyLibrary or HyCloud.
+        data (BlackData or ndarray): the data to save. This must be an instance of BlackImage, BlackLibrary or HyCloud.
         **kwds: Keywords can include:
 
              - vmin = the data value that = 0 when saving RGB images.
              - vmax = the data value that = 255 when saving RGB images. Must be > vmin.
     """
 
-    if isinstance(data, HyImage):
+    if isinstance(data, BlackImage):
 
         # special case - save ternary image to png or jpg or bmp
         ext = os.path.splitext(path)[1].lower()
@@ -77,7 +74,7 @@ def save(path, data, **kwds):
             else:  # no gdal
                 #save_func = saveWithSPy
                 save_func = saveWithNumpy
-            if 'lib' in ext: # special case - we are actually saving a HyLibrary (as an image)
+            if 'lib' in ext: # special case - we are actually saving a BlackLibrary (as an image)
                 ext = 'lib'
             else:
                 ext = 'dat'
@@ -87,7 +84,7 @@ def save(path, data, **kwds):
     elif isinstance(data, HyCloud):
         save_func = saveCloudPLY
         ext = 'ply'
-    elif isinstance(data, HyLibrary):
+    elif isinstance(data, BlackLibrary):
         save_func = saveLibraryLIB
         ext = 'lib'
     elif isinstance(data, PMap ):
@@ -125,7 +122,7 @@ def save(path, data, **kwds):
         save_func = save_json
         ext = 'json'
     else:
-        assert False, "Error - data type %s is unsupported by hylite.io.save." % type(data)
+        assert False, "Error - data type %s is unsupported by BlackTelperion.io.save." % type(data)
 
     # check path file extension
     if 'hdr' in os.path.splitext(path)[1]: # auto strip .hdr extensions if provided
@@ -183,7 +180,7 @@ def load(path):
         out = loadLibrarySED(path)
     elif 'tsg' in ext: # (flat) spectral library
         out = loadLibraryTSG(path)
-    elif 'hyc' in ext or 'hys' in ext or 'mwl' in ext: # load hylite collection, hyscene or mwl map
+    elif 'hyc' in ext or 'hys' in ext or 'mwl' in ext: # load BlackTelperion collection, hyscene or mwl map
         out = _loadCollection(path)
     elif 'cam' in ext or 'brm' in ext: # load pushbroom and normal cameras
         out = loadCameraTXT(path)
@@ -197,7 +194,7 @@ def load(path):
             im = skio.imread(data)
             if len(im.shape) == 2:
                 im = im[:,:,None] # add last dimension if greyscale image is loaded
-            out = HyImage(np.transpose(im, (1, 0, 2)))
+            out = BlackImage(np.transpose(im, (1, 0, 2)))
             if header is not None:
                 out.header = loadHeader(header)
         else:
@@ -207,9 +204,9 @@ def load(path):
             else: # no gdal
                 #out = loadWithSPy(path)
                 out = loadWithNumpy(path)
-        # special case - loading spectral library; convert image to HyData
+        # special case - loading spectral library; convert image to BlackData
         if 'lib' in ext:
-            out = HyLibrary(out.data, header=out.header)
+            out = BlackLibrary(out.data, header=out.header)
     return out  # return dataset
 
 ##############################################

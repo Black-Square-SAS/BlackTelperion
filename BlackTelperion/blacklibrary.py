@@ -2,9 +2,9 @@
 Create, store and manipulate spectral libraries.
 """
 
-from blacktelperion.blackdata import BlackData
-from blacktelperion.blackfeature import BlackFeature, MultiFeature, MixedFeature
-import hylite.reference.features as ref
+from BlackTelperion.blackdata import BlackData
+from BlackTelperion.blackfeature import BlackFeature, MultiFeature, MixedFeature
+import BlackTelperion.reference.features as ref
 import numpy as np
 import matplotlib.pyplot as plt
 

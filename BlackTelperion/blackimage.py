@@ -10,8 +10,8 @@ from matplotlib import path
 from roipoly import MultiRoi
 import imageio
 import scipy as sp
-import blacktelperion
-from blacktelperion.blackdata import BlackData
+import BlackTelperion
+from BlackTelperion.blackdata import BlackData
 
 
 
@@ -62,12 +62,12 @@ class BlackImage( BlackData ):
             data (bool): True if a copy of the data should be made, otherwise only copy header.
 
         Returns:
-            a new HyImage instance.
+            a new BlackImage instance.
         """
         if not data:
-            return HyImage(None, header=self.header.copy(), projection=self.projection, affine=self.affine)
+            return BlackImage(None, header=self.header.copy(), projection=self.projection, affine=self.affine)
         else:
-            return HyImage( self.data.copy(), header=self.header.copy(), projection=self.projection, affine=self.affine)
+            return BlackImage( self.data.copy(), header=self.header.copy(), projection=self.projection, affine=self.affine)
 
     def T(self):
         """
@@ -160,7 +160,7 @@ class BlackImage( BlackData ):
             px (int): the pixel x-coord.
             py (int): the pixel y-coord.
             proj (str, osr.SpatialReference): the coordinate system to use. Default (None) uses the same system as this image. Otherwise
-                   an osr.SpatialReference can be passed (HyImage.project), or an EPSG string (e.g. get_projection_EPSG(...)).
+                   an osr.SpatialReference can be passed (BlackImage.project), or an EPSG string (e.g. get_projection_EPSG(...)).
         Returns:
             the world coordinates in the coordinate system defined by get_projection_EPSG(...).
         """
@@ -217,7 +217,7 @@ class BlackImage( BlackData ):
             x (float): the world x-coord.
             y (float): the world y-coord.
             proj (str, osr.SpatialReference): the coordinate system of the input coordinates. Default (None) uses the same system as this image. Otherwise
-                   an osr.SpatialReference can be passed (HyImage.project), or an EPSG string (e.g. get_projection_EPSG(...)).
+                   an osr.SpatialReference can be passed (BlackImage.project), or an EPSG string (e.g. get_projection_EPSG(...)).
 
         Returns:
             the pixel coordinates based on the affine transform stored in self.affine.
@@ -850,16 +850,16 @@ class BlackImage( BlackData ):
 
         return regions
 
-    def pickPoints(self, n=-1, bands=hylite.RGB, integer=True, title="Pick Points", **kwds):
+    def pickPoints(self, n=-1, bands=BlackTelperion.RGB, integer=True, title="Pick Points", **kwds):
         """
         Creates a matplotlib gui for picking pixels from an image.
 
         Args:
             n (int): the number of pixels to pick, or -1 if the user can select as many as they wish. Default is -1.
-            bands (tuple): the bands of the image to plot. Default is HyImage.RGB
+            bands (tuple): the bands of the image to plot. Default is BlackImage.RGB
             integer (bool): True if points coordinates should be cast to integers (for use as indices). Default is True.
             title (str): The title of the point picking window.
-            **kwds: Keywords are passed to HyImage.quick_plot( ... ).
+            **kwds: Keywords are passed to BlackImage.quick_plot( ... ).
 
         Returns:
             A list containing the picked point coordinates [ (x1,y1), (x2,y2), ... ].
@@ -895,7 +895,7 @@ class BlackImage( BlackData ):
         Args:
             names (str, list): the name of the sample to pick, or a list of names to pick multiple.
             store (bool): True if sample should be stored in the image header file (for later access). Default is True.
-            **kwds: Keywords are passed to HyImage.quick_plot( ... )
+            **kwds: Keywords are passed to BlackImage.quick_plot( ... )
 
         Returns:
             a list containing a list of points for each sample.
