@@ -103,14 +103,11 @@ LWIR = TIR = (10113., 9156.31, 8527.01)
 """Useful preview for TIR range (10101.01, 9174.31, 8547.01)."""
 
 band_select_threshold = 25.
-"""Maximum distance (in nanometers) to use when matching wavelengths with band indices. See HyData.get_band_index(...) for more detail."""
+"""Maximum distance (in nanometers) to use when matching wavelengths with band indices. See BlackData.get_band_index(...) for more detail."""
 
 #import basic data classes
-from .hyheader import HyHeader
-from .hydata import HyData
-from .hyimage import HyImage
-from .hycloud import HyCloud
-from .hylibrary import HyLibrary
-from .hycollection import HyCollection
-from .hyscene import HyScene
-from .hyfeature import HyFeature, MultiFeature, MixedFeature
+from .blackheader import BlackHeader
+from .blackdata import BlackData
+from .blackimage import BlackImage
+from .blacklibrary import BlackLibrary
+from .blackfeature import BlackFeature, MultiFeature, MixedFeature

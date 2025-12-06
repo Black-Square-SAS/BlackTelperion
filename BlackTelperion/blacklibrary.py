@@ -2,8 +2,8 @@
 Create, store and manipulate spectral libraries.
 """
 
-from hylite.hydata import HyData
-from hylite.hyfeature import HyFeature, MultiFeature, MixedFeature
+from blacktelperion.blackdata import BlackData
+from blacktelperion.blackfeature import BlackFeature, MultiFeature, MixedFeature
 import hylite.reference.features as ref
 import numpy as np
 import matplotlib.pyplot as plt
@@ -12,7 +12,7 @@ def from_indices(data, indices, s=4, names=None, ):
     """
     Extract a spectral library by sampling and averaging pixels within the specified distance of sample points.
     Args:
-        data (HyData): a HyData instance containing the spectral data.
+        data (BlackData): a BlackData instance containing the spectral data.
         indices (list): a list of sample indices to extract spectra from
         s (int): the number of adjacent points to include in each sample. For HyImage data this will be a square patch of sxs
            pixels. For HyCloud data s is used to take adjacent points from the points list (which is assumed to be somewhat ordered).
@@ -34,7 +34,7 @@ def from_indices(data, indices, s=4, names=None, ):
             X = data.data[idx[0] - s: idx[0] + s, idx[1] - s: idx[1] + s, :].reshape(-1, data.band_count())
         elif len(idx) == 1:
             X = data.data[idx[0] - s: idx[0] + s, :]
-        S.append(HyLibrary(X[None, :, :], lab=[name], wav=data.get_wavelengths()))
+        S.append(BlackLibrary(X[None, :, :], lab=[name], wav=data.get_wavelengths()))
 
     # merge
     out = S[0]
@@ -49,8 +49,8 @@ def from_classification(data, labels, names=None, ignore=[0], subsample='all'):
     Extract a spectral library from a labelled dataset.
 
     Args:
-        data (HyData): a HyData instance containing the hyperspectral data.
-        labels (HyData): a HyData instance or numpy array containing class labels.
+        data (BlackData): a BlackData instance containing the hyperspectral data.
+        labels (BlackData): a BlackData instance or numpy array containing class labels.
         names (dict): a dictionary with numerical labels (integers) in labels.data as keys and corresponding string names
                as values. If None, class names will be pulled from the header, and if these don't exist then integer
                names will be used.
@@ -66,10 +66,10 @@ def from_classification(data, labels, names=None, ignore=[0], subsample='all'):
 
     X = data.X()
 
-    if isinstance(labels, HyData):
+    if isinstance(labels, BlackData):
         L = labels.X().ravel()
     else:
-        assert isinstance(labels, np.ndarray), "Error - labels must be array or HyData, not %s" % str(type(labels))
+        assert isinstance(labels, np.ndarray), "Error - labels must be array or BlackData, not %s" % str(type(labels))
         L = labels.ravel()
     assert X.shape[0] == L.shape[0], "Error - number of spectra (%d) does not match number of labels (%d)?" % (
     X.shape[0], L.shape[0])
@@ -80,7 +80,7 @@ def from_classification(data, labels, names=None, ignore=[0], subsample='all'):
     cls_names = {}
     if names is None:
         classes = np.arange(0, np.nanmax(ids))
-        if isinstance(labels, HyData) and 'class names' in labels.header:
+        if isinstance(labels, BlackData) and 'class names' in labels.header:
             classes = labels.header['class names']
             if isinstance(classes, str):
                 classes = classes.split(',')
@@ -121,9 +121,9 @@ def from_classification(data, labels, names=None, ignore=[0], subsample='all'):
     for i, s in enumerate(Y):
         out[i, :s.shape[0], :] = s
 
-    return HyLibrary(out, samples, wav=data.get_wavelengths())
+    return BlackLibrary(out, samples, wav=data.get_wavelengths())
 
-class HyLibrary(HyData):
+class BlackLibrary(BlackData):
     """
     A class for loading and managing spectral libraries and associated metadata.
     """
@@ -145,7 +145,7 @@ class HyLibrary(HyData):
             data = data[:,None,:] # expand to correct shape
         assert len(data.shape) == 3, "Error - reflectance data must by a 2D array indexed as [sample,measurement,bands]."
 
-        # init HyData object with reflectance data
+        # init BlackData object with reflectance data
         super().__init__(data, header=header)
         self.header['file type'] = 'Hylite Library'  # set file type
 
@@ -182,7 +182,7 @@ class HyLibrary(HyData):
             names = self.get_sample_names()
         if data==True and self.has_wavelengths():
             wav = self.get_wavelengths()
-        out = HyLibrary(arr, lab=names, wav=wav, header=header)
+        out = BlackLibrary(arr, lab=names, wav=wav, header=header)
         if not data:
             out.data = None # drop data array to protect it (we don't want shallow copies)
         return out
@@ -299,9 +299,9 @@ class HyLibrary(HyData):
         ids = self.get_group_ids(name)
         ids = [ self.get_sample_index(i) for i in ids ]
         if shallow:
-            return HyLibrary( self.data[ids,:], lab=self.get_sample_names()[ids], wav=self.get_wavelengths() )
+            return BlackLibrary(self.data[ids, :], lab=self.get_sample_names()[ids], wav=self.get_wavelengths())
         else:
-            return HyLibrary( self.data[ids,:].copy(),  lab=self.get_sample_names()[ids], wav=self.get_wavelengths() )
+            return BlackLibrary(self.data[ids, :].copy(), lab=self.get_sample_names()[ids], wav=self.get_wavelengths())
 
     def add_group(self, name, indices):
         """
@@ -342,7 +342,7 @@ class HyLibrary(HyData):
                 return self.get_group( n ) # return group (easy)
             else:
                 assert False, "Error - %s is an invalid spectra key." % str(n)
-            return HyLibrary(arr.copy(), lab= [n], wav=self.get_wavelengths())
+            return BlackLibrary(arr.copy(), lab= [n], wav=self.get_wavelengths())
 
     def __add__(self, other):
 
@@ -377,7 +377,7 @@ class HyLibrary(HyData):
             arr[i, :sample.shape[0], : ] = sample
 
         # return
-        return HyLibrary( arr, lab=names, wav=self.get_wavelengths())
+        return BlackLibrary(arr, lab=names, wav=self.get_wavelengths())
 
     # noinspection PyChainedComparisons
     def get_sample_index(self, name):
@@ -431,7 +431,7 @@ class HyLibrary(HyData):
             arr[i, 0:v.shape[0], : ] = v
 
         # return output
-        return HyLibrary( arr, lab=groups, wav=self.get_wavelengths() )
+        return BlackLibrary(arr, lab=groups, wav=self.get_wavelengths())
 
     def squash(self):
         """

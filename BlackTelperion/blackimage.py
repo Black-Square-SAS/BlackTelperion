@@ -10,13 +10,12 @@ from matplotlib import path
 from roipoly import MultiRoi
 import imageio
 import scipy as sp
-import hylite
-from hylite.hydata import HyData
-from hylite.hylibrary import HyLibrary
+import blacktelperion
+from blacktelperion.blackdata import BlackData
 
 
 
-class HyImage( HyData ):
+class BlackImage( BlackData ):
     """
     A class for hyperspectral image data. These can be individual scenes or hyperspectral orthoimages.
     """
@@ -33,7 +32,7 @@ class HyImage( HyData ):
                 header = path to associated header file. Default is None.
         """
 
-        #call constructor for HyData
+        #call constructor for BlackData
         super().__init__(data, **kwds)
 
         # special case - if dataset only has oneband, slice it so it still has

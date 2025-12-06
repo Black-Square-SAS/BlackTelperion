@@ -1,5 +1,5 @@
 """
-A base class for all types of hyperspectral data. Inherited by HyCloud, HyImage and HyLibrary.
+A base class for all types of hyperspectral data. Inherited by HyImage and HyLibrary.
 """
 
 import numpy as np
@@ -7,15 +7,15 @@ import numpy.ma as ma
 import matplotlib.pyplot as plt
 from scipy import ndimage, signal
 import re
-import hylite
-from hylite import HyHeader
-import hylite.reference.features as ref
-from hylite.hyfeature import HyFeature, MultiFeature, MixedFeature
+import BlackTelperion
+from BlackTelperion import BlackHeader
+import BlackTelperion.reference.features as ref
+from BlackTelperion.blackfeature import BlackFeature, MultiFeature, MixedFeature
 from matplotlib.ticker import AutoMinorLocator
 
 from tqdm import tqdm
 
-class HyData(object):
+class BlackData(object):
 
     """
     A generic class for encapsulating hyperspectral (points and images), and associated metadata such as georeferencing, bands etc.
@@ -41,7 +41,7 @@ class HyData(object):
 
         Args:
             data (ndarray): array such that the last dimension corresponds to individual bands (e.g. data[pointID, band] or data[px,py,band])
-            header (hylite.HyHeader): associated header file. Default is None (create a new header).
+            header (BlackTelperion.BlackHeader): associated header file. Default is None (create a new header).
         """
 
         #copy reference to data. Note that this can be None!
@@ -73,25 +73,25 @@ class HyData(object):
             data (bool): True if a copy of the data should be made, otherwise only copy header.
 
         Returns:
-            a new HyData instance.
+            a new BlackData instance.
         """
 
         if not data or self.data is None:
-            return HyData( None, header=self.header.copy())
+            return BlackData(None, header=self.header.copy())
         else:
-            return HyData( self.data.copy(), header=self.header.copy())
+            return BlackData(self.data.copy(), header=self.header.copy())
 
     def set_header(self, header):
         """
         Loads associated header data into self.header.
 
         Args:
-            header (hylite.HyHeader): a HyHeader object or None.
+            header (BlackTelperion.BlackHeader): a BlackHeader object or None.
         """
 
         #no header - create one
         if header is None:
-            self.header = HyHeader()
+            self.header = BlackHeader()
             return
 
         #set the header
@@ -185,6 +185,7 @@ class HyData(object):
             return False
         return len(self.data.shape) == 3
 
+    # TODO: Refactor this to only use with spectral libraries
     def is_point(self):
         """
         Return true if this dataset is an point cloud or related dataset (i.e. data array has dimension [idx,b]). Note
@@ -246,7 +247,7 @@ class HyData(object):
     #############################
     def export_bands(self, bands ):
         """
-        Export a specified band range to a new HyData instance.
+        Export a specified band range to a new BlackData instance.
 
         Args:
             bands (tuple, list): either:
@@ -428,35 +429,38 @@ class HyData(object):
         Returns the specified band as a uint8 greyscale image compatable with opencv.
         """
 
-        return HyData.to_grey( self.get_band(b) )
+        return BlackData.to_grey(self.get_band(b))
 
-    def get_raveled(self):
-        """
-        Get the data array as a 2D array of points/pixels. NOTE: this is just a view of the original data array, so any
-        operations changes made to it will affect the original image. Useful for fast transformations!
+    #NOTE: Not sure what this does
+    # def get_raveled(self):
+    #     """
+    #     Get the data array as a 2D array of points/pixels. NOTE: this is just a view of the original data array, so any
+    #     operations changes made to it will affect the original image. Useful for fast transformations!
+    #
+    #     Returns:
+    #         pixels (ndarray): an array such that pixel[n][band] gives the spectra of the nth pixel.
+    #     """
+    #
+    #     return self.data.reshape(-1, self.data.shape[-1])
+    #
 
-        Returns:
-            pixels (ndarray): an array such that pixel[n][band] gives the spectra of the nth pixel.
-        """
-
-        return self.data.reshape(-1, self.data.shape[-1])
-
-    def X(self, onlyFinite = False):
-        """
-        A shorthand way of writing get_raveled(), as X is conventionally used for a vector of spectra.
-
-        Args:
-            onlyFinite (bool): True if data points containing nan bands should be removed from the feature vector. Default is False.
-        """
-        X = self.get_raveled()
-        if onlyFinite:
-            return X[ np.isfinite(X).all(axis=-1) ]
-        else:
-            return X
+    #NOTE: Note quite sure what is this for
+    # def X(self, onlyFinite = False):
+    #     """
+    #     A shorthand way of writing get_raveled(), as X is conventionally used for a vector of spectra.
+    #
+    #     Args:
+    #         onlyFinite (bool): True if data points containing nan bands should be removed from the feature vector. Default is False.
+    #     """
+    #     X = self.get_raveled()
+    #     if onlyFinite:
+    #         return X[ np.isfinite(X).all(axis=-1) ]
+    #     else:
+    #         return X
 
     def eval(self, op : str, print=False ):
         """
-        Evaluate an arithmetic expression on the data array of this HyData instance.
+        Evaluate an arithmetic expression on the data array of this BlackData instance.
 
         Args:
             op: The operation string to evaluate. This should follow the following syntax:
@@ -473,7 +477,7 @@ class HyData(object):
             on the data array (`a`). Hence other python or numpy (`np`) syntax may (but is not guaranteed to) also work.
 
         Returns:
-            A copy of this HyData instance but with an updated (single-band) data array.
+            A copy of this BlackData instance but with an updated (single-band) data array.
         """
 
         if 'import' in op: # don't let people do anything toooo wild!
@@ -531,36 +535,36 @@ class HyData(object):
             return out
 
 
-    def set_raveled(self, pix, shape=None, onlyFinite = False, strict=True ):
-        """
-        Fills the image/dataset from a list of pixels of the format returned by get_pixel_list(...). Note that this does not
-        copy the list, but simply stores a view of it in this image.
-
-        Args:
-            pix (list, ndarray): a list such that pixel[n][band] gives the spectra of the nth pixel.
-            shape (tuple): the reshaped data dimensions. Defaults to the shape of the current dataset, except with auto-shape for the last dimension.
-            onlyFinite (bool): True if pix contains only pixel values corresponding to non-nan pixels in self.data (as returned by self.X( True ) ).
-            strict (bool): True if set_raveled should not change the number of bands in this image. Default is True.
-        """
-        if shape is None:
-            shape = list( self.data.shape )
-            shape[-1] = -1
-
-        if strict: # number of bands cannot change
-            assert self.data.shape[-1] == pix.shape[-1], \
-                "Error: image and pix array have different number of bands. To allow changes to band count please specify strict=False."
-            if onlyFinite:
-                self.data[ np.isfinite(self.data).all(axis=-1), : ] = pix
-            else:
-                self.data = pix.reshape(shape)
-        else:
-            newdata = np.full( self.data.shape[:-1] + (pix.shape[-1],), np.nan, )
-            if onlyFinite:
-                if onlyFinite:
-                    newdata[np.isfinite(self.data).all(axis=-1), :] = pix
-                else:
-                    newdata = pix.reshape( self.data.shape[:-1] + (pix.shape[-1],) )
-            self.data = newdata
+    # def set_raveled(self, pix, shape=None, onlyFinite = False, strict=True ):
+    #     """
+    #     Fills the image/dataset from a list of pixels of the format returned by get_pixel_list(...). Note that this does not
+    #     copy the list, but simply stores a view of it in this image.
+    #
+    #     Args:
+    #         pix (list, ndarray): a list such that pixel[n][band] gives the spectra of the nth pixel.
+    #         shape (tuple): the reshaped data dimensions. Defaults to the shape of the current dataset, except with auto-shape for the last dimension.
+    #         onlyFinite (bool): True if pix contains only pixel values corresponding to non-nan pixels in self.data (as returned by self.X( True ) ).
+    #         strict (bool): True if set_raveled should not change the number of bands in this image. Default is True.
+    #     """
+    #     if shape is None:
+    #         shape = list( self.data.shape )
+    #         shape[-1] = -1
+    #
+    #     if strict: # number of bands cannot change
+    #         assert self.data.shape[-1] == pix.shape[-1], \
+    #             "Error: image and pix array have different number of bands. To allow changes to band count please specify strict=False."
+    #         if onlyFinite:
+    #             self.data[ np.isfinite(self.data).all(axis=-1), : ] = pix
+    #         else:
+    #             self.data = pix.reshape(shape)
+    #     else:
+    #         newdata = np.full( self.data.shape[:-1] + (pix.shape[-1],), np.nan, )
+    #         if onlyFinite:
+    #             if onlyFinite:
+    #                 newdata[np.isfinite(self.data).all(axis=-1), :] = pix
+    #             else:
+    #                 newdata = pix.reshape( self.data.shape[:-1] + (pix.shape[-1],) )
+    #         self.data = newdata
 
     def get_band_index(self, w, **kwds):
         """
@@ -573,14 +577,14 @@ class HyData(object):
             **kwds: This function takes one keyword:
 
                  - thresh = the threshold (in nanometers) within which a band must fall to be valid. Default is
-                            hylite.band_select_threshold (which defaults to 10 nm). If a wavelength is passed and a
+                            BlackTelperion.band_select_threshold (which defaults to 10 nm). If a wavelength is passed and a
                             band exists within this distance, then it is returned. Otherwise an error is thrown).
 
         Returns:
             the matching band index.
         """
 
-        thresh = kwds.get("thresh", hylite.band_select_threshold)
+        thresh = kwds.get("thresh", BlackTelperion.band_select_threshold)
 
         if np.issubdtype( type(w), np.integer ):  # already a valid band index
             assert -self.band_count() <= w <= self.band_count(), "Error - band index %d is out of range (image has %d bands)." % (w, self.band_count())
@@ -620,7 +624,7 @@ class HyData(object):
                 closest bands. See documentation for get_band_index(...) for more details.
 
         Returns:
-            a copy of this HyData instance resampled onto the new wavelength array.
+            a copy of this BlackData instance resampled onto the new wavelength array.
         """
 
         out = self.copy(data=False)  # create output array
@@ -676,55 +680,56 @@ class HyData(object):
         out.set_wavelengths(out_wav)
         return out
 
-    def contiguous_chunks(self, p=75, min_size=0):
-        """
-        Extract contiguous chunks of spectra, splitting a (1) completely nan bands or (2) large steps in wavelength.
-
-        Args:
-            p (int): the percentile used to define a large change in wavelength. Default is 90. A "gap" is considered to be
-               a change in wavelength greater than double this percentile.
-            min_size (int): the minimum number of bands required to consider a chunk valid. Default is 0 (return all chunks).
-
-        Returns:
-            Tuple containing
-
-            chunks (ndarray): copies of the orignal data array that contain continuous spectra. At least one pixel/point
-                    in each slice of these bans is guaranteed to be finite.
-            wav (ndarray): array containing the wavelengths corresponding to each band of each chunk.
-        """
-
-        # find gaps in wavelength and/or completely nan bands and/or data ignore values
-        finite = np.isfinite(self.data).any(axis=tuple(range(len(self.data.shape) - 1)))  # False = nans
-        finite = finite & (self.data != float(self.header.get("data ignore value", 0))).any(
-            axis=tuple(range(len(self.data.shape) - 1)))
-        assert len(self.get_wavelengths()) == len(
-            finite), "Error - hyperspectral dataset has %d bands but %d wavelengths." % (
-        len(finite), len(self.get_wavelengths()))
-        x = self.get_wavelengths()[finite]
-        dx = np.abs(np.diff(x))
-        maxstep = 2. * np.percentile(dx, p)
-        if not (dx >= maxstep).any():  # no gaps - just return contiguous block!
-            assert len(x) > min_size, "Error - total band count < min_size."
-            msk = [self.get_band_index(b) for b in x]
-            return [self.data[..., msk]], [x]
-        else:
-            break_start = list(np.argwhere(dx > maxstep)[:, 0])
-            break_end = list((-np.argwhere(np.abs(np.diff(x[::-1])) > maxstep)[:, 0])[::-1])
-            break_start.append(-1)  # add end of dataset so we don't miss last chunk
-            break_end.append(-1)  # add end of dataset so we don't miss last chunk
-            assert len(break_start) == len(
-                break_end), r"Error - weird shit is happening? [ useful error messages ftw ¯\_(ツ)_/¯ ]"
-            idx0 = 0
-            chunks = []
-            wav = []
-            for i in range(len(break_start)):  # build chunks
-                W = x[idx0:break_start[i]]
-                msk = [self.get_band_index(b) for b in W]
-                if W.shape[-1] > min_size:
-                    wav.append(W)
-                    chunks.append(self.data[..., msk])
-                idx0 = break_end[i]  # skip forwards
-            return chunks, wav
+    #NOTE: Check in the future if this is usefull
+    # def contiguous_chunks(self, p=75, min_size=0):
+    #     """
+    #     Extract contiguous chunks of spectra, splitting a (1) completely nan bands or (2) large steps in wavelength.
+    #
+    #     Args:
+    #         p (int): the percentile used to define a large change in wavelength. Default is 90. A "gap" is considered to be
+    #            a change in wavelength greater than double this percentile.
+    #         min_size (int): the minimum number of bands required to consider a chunk valid. Default is 0 (return all chunks).
+    #
+    #     Returns:
+    #         Tuple containing
+    #
+    #         chunks (ndarray): copies of the orignal data array that contain continuous spectra. At least one pixel/point
+    #                 in each slice of these bans is guaranteed to be finite.
+    #         wav (ndarray): array containing the wavelengths corresponding to each band of each chunk.
+    #     """
+    #
+    #     # find gaps in wavelength and/or completely nan bands and/or data ignore values
+    #     finite = np.isfinite(self.data).any(axis=tuple(range(len(self.data.shape) - 1)))  # False = nans
+    #     finite = finite & (self.data != float(self.header.get("data ignore value", 0))).any(
+    #         axis=tuple(range(len(self.data.shape) - 1)))
+    #     assert len(self.get_wavelengths()) == len(
+    #         finite), "Error - hyperspectral dataset has %d bands but %d wavelengths." % (
+    #     len(finite), len(self.get_wavelengths()))
+    #     x = self.get_wavelengths()[finite]
+    #     dx = np.abs(np.diff(x))
+    #     maxstep = 2. * np.percentile(dx, p)
+    #     if not (dx >= maxstep).any():  # no gaps - just return contiguous block!
+    #         assert len(x) > min_size, "Error - total band count < min_size."
+    #         msk = [self.get_band_index(b) for b in x]
+    #         return [self.data[..., msk]], [x]
+    #     else:
+    #         break_start = list(np.argwhere(dx > maxstep)[:, 0])
+    #         break_end = list((-np.argwhere(np.abs(np.diff(x[::-1])) > maxstep)[:, 0])[::-1])
+    #         break_start.append(-1)  # add end of dataset so we don't miss last chunk
+    #         break_end.append(-1)  # add end of dataset so we don't miss last chunk
+    #         assert len(break_start) == len(
+    #             break_end), r"Error - weird shit is happening? [ useful error messages ftw ¯\_(ツ)_/¯ ]"
+    #         idx0 = 0
+    #         chunks = []
+    #         wav = []
+    #         for i in range(len(break_start)):  # build chunks
+    #             W = x[idx0:break_start[i]]
+    #             msk = [self.get_band_index(b) for b in W]
+    #             if W.shape[-1] > min_size:
+    #                 wav.append(W)
+    #                 chunks.append(self.data[..., msk])
+    #             idx0 = break_end[i]  # skip forwards
+    #         return chunks, wav
 
     ##################################
     ## Smoothing algorithms
@@ -748,6 +753,7 @@ class HyData(object):
         else:
             assert False, "Error: Run_median does not work on %d-d data." % len(self.data.shape)
 
+    #TODO: Refactor to remove chunks
     def smooth_savgol(self, window=5, poly=2, chunk=False, **kwds):
         """
         Applies Savitzky-Golay-filter on data.
@@ -812,6 +818,7 @@ class HyData(object):
     # PLOTTING AND OTHER VISUALISATIONS
     ###################################
     # noinspection PyDefaultArgument
+    #TODO: Check if chunks can be removed
     def plot_spectra(self, ax=None, band_range=None, labels=None, indices=[], colours='blue', **kwds):
         """
         Plots a summary of all the spectra in this dataset.
@@ -848,7 +855,7 @@ class HyData(object):
         median = kwds.get("median", True)
         if "quantiles" in kwds: del kwds['quantiles']  # remove keyword
         if 'median' in kwds: del kwds['median']  # remove keyword
-        C, x = subset.contiguous_chunks()
+        C, x = subset.contiguous_chunks() #NOTE: Descomment method for this to work
         for C, x in zip(C, x):
             if quantiles or median:  # calculate percentiles
                 percent = np.nanpercentile(C, axis=tuple(range(len(self.data.shape) - 1)),
@@ -928,8 +935,9 @@ class HyData(object):
         #store min/max in header
         self.header["data ignore value"] = str(0)
         self.header['reflectance scale factor'] = sf
-        self.header['hylite compression factor'] = sf # backup, as some packages (i.e. SPy) overwrite the reflectance scale factor
+        self.header['BlackTelperion compression factor'] = sf # backup, as some packages (i.e. SPy) overwrite the reflectance scale factor
 
+    #TODO: Refactor this to include data ignore value and not using a default
     def decompress(self):
         """
         Expand data array to floats to get actual values
@@ -945,8 +953,8 @@ class HyData(object):
         self.header["reflectance scale factor"] = 1.0
         if 'data ignore value' in self.header:
             del self.header['data ignore value']
-        if 'hylite compression factor' in self.header:
-            del self.header['hylite compression factor']
+        if 'BlackTelperion compression factor' in self.header:
+            del self.header['BlackTelperion compression factor']
             
         # expand data array to float32
         self.data = self.data.astype(np.float32)
@@ -974,7 +982,7 @@ class HyData(object):
          mask (ndarray): A binary mask to apply before fitting the PCA and k-means. Masked data will be put in their own
                      class. Data flagged with True in the mask will be retained, while those flagged as False will be removed.
          normalise (bool): If True, PCA components are normalised before k-means clustering. Default is False.
-        Returns: An index dataset (HyData) containing the class IDs, and a spectral library containing the minimum, median,
+        Returns: An index dataset (BlackData) containing the class IDs, and a spectral library containing the minimum, median,
                   and maximum spectra of each class.
         """
         # get data
@@ -984,7 +992,7 @@ class HyData(object):
             mx = min(mask.shape[0], self.data.shape[0])
             my = min(mask.shape[1], self.data.shape[1])
             msk[:mx,:my] = msk[:mx,:my] & mask[:mx,:my]
-        X = hylite.HyData(self.data[msk, :])
+        X = BlackTelperion.HyData(self.data[msk, :])
         if smooth > 1:
             X.smooth_savgol(smooth)
 
@@ -999,7 +1007,7 @@ class HyData(object):
             subsample = 1 # also no point subsampling
 
         # run a PCA
-        from hylite.filter import PCA
+        from BlackTelperion.filter import PCA
         nbands = int(self.band_count() / 2)
         if vthresh > 1:
             nbands = int(vthresh)
@@ -1055,7 +1063,7 @@ class HyData(object):
                 medHC.append(np.full( X.shape[-1], np.nan ))
                 maxHC.append(np.full( X.shape[-1], np.nan ))
 
-        lib = hylite.HyLibrary(np.transpose(np.dstack([minHC, medHC, maxHC]), (0, 2, 1)), wav=self.get_wavelengths())
+        lib = BlackTelperion.BlackLibrary(np.transpose(np.dstack([minHC, medHC, maxHC]), (0, 2, 1)), wav=self.get_wavelengths())
         if self.has_band_names():
             if ( len(self.get_band_names() ) == lib.band_count() ):
                 lib.set_band_names( self.get_band_names() )
@@ -1067,10 +1075,10 @@ class HyData(object):
     @classmethod
     def fromQuanta(cls, index, library ):
         """
-        Reconstruct a HyData instance from an index and spectral library, as returned by `HyData.getQuantized(...)`.
+        Reconstruct a HyData instance from an index and spectral library, as returned by `BlackData.getQuantized(...)`.
 
         Args:
-            index (HyData): A classification index of the same type (e.g., HyImage, HyCloud, etc.) as the desired output.
+            index (BlackData): A classification index of the same type (e.g., HyImage, HyCloud, etc.) as the desired output.
             library (HyLibrary): A spectral library containing the spectral information associated with each class. Note
                                  that this could be a transformed (e.g., by minimum wavelength mapping) version of the
                                  spectral library created by `getQuantized( ... )`.
@@ -1180,18 +1188,19 @@ class HyData(object):
 
         return minv, maxv
 
-    def correct_spectral_shift(self, position):
-        """
-        Corrects potential spectral sensor shifts by shifting the offset (right) part of the spectrum.
-
-        Args:
-            position (float,int): Wavelength or band position of the first offset value - e.g. FENIX: band 714 or wavelength 976., respectively.
-
-        Returns:
-            None - changes data in place
-        """
-        assert isinstance(position, int) or isinstance(position, float), "Error - shift position must be int (band number) or float (wavelength)."
-        if isinstance(position, float):
-            position = self.get_band_index(position)
-
-        self.data[..., position:] += (self.data[..., (position - 1)] - self.data[..., position])[..., None]
+    #NOTE: Might be useful someday
+    # def correct_spectral_shift(self, position):
+    #     """
+    #     Corrects potential spectral sensor shifts by shifting the offset (right) part of the spectrum.
+    #
+    #     Args:
+    #         position (float,int): Wavelength or band position of the first offset value - e.g. FENIX: band 714 or wavelength 976., respectively.
+    #
+    #     Returns:
+    #         None - changes data in place
+    #     """
+    #     assert isinstance(position, int) or isinstance(position, float), "Error - shift position must be int (band number) or float (wavelength)."
+    #     if isinstance(position, float):
+    #         position = self.get_band_index(position)
+    #
+    #     self.data[..., position:] += (self.data[..., (position - 1)] - self.data[..., position])[..., None]

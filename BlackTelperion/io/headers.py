@@ -5,7 +5,7 @@ Read ENVI header files.
 import os
 import glob
 import numpy as np
-from hylite import HyHeader
+from blacktelperion import BlackHeader
 import re
 
 def makeDirs(path):
@@ -30,7 +30,7 @@ def saveHeader(path, header):
 
     Args:
         path: the path to write to.
-        header: the HyHeader object to write.
+        header: the BlackHeader object to write.
     """
 
     if os.path.exists(path):
@@ -71,7 +71,7 @@ def loadHeader(path):
     Args:
        file: a file path to a .hdr file.
     """
-    header = HyHeader()
+    header = BlackHeader()
 
     # store path
     header['path'] = path

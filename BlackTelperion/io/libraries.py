@@ -5,11 +5,11 @@ Load or import spectral libraries.
 import os
 import numpy as np
 import glob
-import hylite
-from hylite import HyLibrary
-from hylite.io import makeDirs
+import blacktelperion
+from blacktelperion import BlackLibrary
+from blacktelperion.io.headers import makeDirs
 from time import gmtime, strftime
-from hylite.io.images import loadWithGDAL, saveWithGDAL, loadWithSPy, loadWithSPy
+from blacktelperion.io.images import loadWithGDAL, saveWithGDAL, loadWithSPy, loadWithSPy
 from pathlib import Path
 
 # noinspection PyUnusedLocal
@@ -115,7 +115,7 @@ def loadLibrarySED(path):
                 pass  # not a float...
 
     # create spectral library
-    library = HyLibrary(np.array(data), names, wav=np.array(wav))
+    library = BlackLibrary(np.array(data), names, wav=np.array(wav))
 
     # add metadata to header
     ignore = ['comment', 'version', 'file name', 'columns [4]']
@@ -161,7 +161,7 @@ def loadLibraryTSG(path):
     names = [name +"_ " +str(x) for x in pos]
 
     # create spectral library
-    library = HyLibrary(np.array(refl), names, wav=np.array(wav))
+    library = BlackLibrary(np.array(refl), names, wav=np.array(wav))
     library.header["depth"] = pos
 
     return library
@@ -196,7 +196,7 @@ def loadLibraryCSV(path):
             names.append( l[0] )
             refl.append( np.array(l[1:],dtype=float) )
             l = f.readline()
-    return HyLibrary( np.array(refl), names, wav=wav )
+    return BlackLibrary( np.array(refl), names, wav=wav )
 
 
 def loadLibraryTXT(path):
@@ -250,12 +250,12 @@ def loadLibraryTXT(path):
         data = np.array(data).T
         f.close()  # close file
 
-        # build hylibrary
+        # build BlackLibrary
         if wav > -1:
             wav = data[wav, :]
         else:
             wav = np.arange(data.shape[-1])
-        lib = HyLibrary(data[list(names.keys()), :], lab=list(names.values()), wav=wav)
+        lib = BlackLibrary(data[list(names.keys()), :], lab=list(names.values()), wav=wav)
         return lib
 
 
@@ -285,7 +285,7 @@ def loadLibraryDIR(path, wav=None):
              have differing wavelength arrays. Data that does not overlap with wav will be set to nan. If None,
              this will be set to the wavelengths of the first encounted dataset.
     Returns:
-        a HyLibrary spectral library instance.
+        a BlackLibrary spectral library instance.
     """
 
     files = glob.glob(str(Path(path)/ "*/*.txt"))
@@ -304,7 +304,7 @@ def loadLibraryDIR(path, wav=None):
 
         # check it is valid and resample to desired range
         delta = [np.min(np.abs(lib.get_wavelengths() - w)) for w in wav]
-        if np.min(delta) < hylite.band_select_threshold:
+        if np.min(delta) < blacktelperion.band_select_threshold:
             lib = lib.resample(wav, vb=False, partial=True)
             if m in libs:
                 libs[m] = libs[m] + lib  # append
@@ -313,7 +313,7 @@ def loadLibraryDIR(path, wav=None):
 
     # aggregate
     data = np.full((len(libs), np.max([l.sample_count() for l in libs.values()]), len(wav)), np.nan)
-    lib = hylite.HyLibrary(data, lab=list(libs.keys()), wav=wav)
+    lib = blacktelperion.BlackLibrary(data, lab=list(libs.keys()), wav=wav)
     for i, (k, v) in enumerate(libs.items()):
         lib.data[i, :v.data.shape[0], :] = v.data[:, 0, :]
 
@@ -345,9 +345,9 @@ def saveLibraryTXT(path, library):
 
 def saveLibraryLIB(path, library):
     path = os.path.splitext(path)[0] + ".lib" # ensure correct file format
-    from hylite import io # N.B. this import must be here to avoid circular references
+    from blacktelperion import io # N.B. this import must be here to avoid circular references
     io.save(path, library.as_image()) # default format is just as an image
 
 def loadLibraryLIB(path):
-    from hylite import io  # N.B. this import must be here to avoid circular references
+    from blacktelperion import io  # N.B. this import must be here to avoid circular references
     return io.load(path) # this is handled in the io.load function directly

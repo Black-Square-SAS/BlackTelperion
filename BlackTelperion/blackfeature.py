@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 from gfit import gfit, initialise, evaluate
 
-class HyFeature(object):
+class BlackFeature(object):
     """
     Utility class for representing and fitting individual or multiple absorption features.
     This class is most likely to be used by MWL calculator
@@ -145,11 +145,11 @@ class HyFeature(object):
             ax.axvline(self.pos, color='k', alpha=0.4)
         if 'gauss' in method.lower() or 'all' in method.lower():
             if self.components is None: # plot single feature
-                _y = HyFeature.gaussian(_x, self.pos, self.width, self.depth)
+                _y = BlackFeature.gaussian(_x, self.pos, self.width, self.depth)
             else:
-                _y = HyFeature.multi_gauss(_x, [c.pos for c in self.components],
-                                               [c.width for c in self.components],
-                                               [c.depth for c in self.components] )
+                _y = BlackFeature.multi_gauss(_x, [c.pos for c in self.components],
+                                              [c.width for c in self.components],
+                                              [c.depth for c in self.components])
             ax.plot(_x, _y, **kwds)
         if 'fill' in method.lower() or 'all' in method.lower():
             kwds['alpha'] = kwds.get('alpha', 0.25)
@@ -191,7 +191,7 @@ class HyFeature(object):
 
         return ax.get_figure(), ax
 
-class MultiFeature(HyFeature):
+class MultiFeature(BlackFeature):
     """
     A spectral feature with variable position due to a solid solution between known end-members.
     """
@@ -270,7 +270,7 @@ class MultiFeature(HyFeature):
                 sublabel = (sublabel[0] + 1, sublabel[1])
         return ax.get_figure(), ax
 
-class MixedFeature(HyFeature):
+class MixedFeature(BlackFeature):
     """
     A spectral feature resulting from a mixture of known sub-features.
     """

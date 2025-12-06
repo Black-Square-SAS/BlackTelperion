@@ -5,7 +5,7 @@ Manage metadata and other header file information.
 import copy
 import numpy as np
 
-class HyHeader( dict ):
+class BlackHeader(dict):
     """
     A generic class for encapsulating header files (.hdr) data. We use these for point clouds and spectral
     libraries as well as images.

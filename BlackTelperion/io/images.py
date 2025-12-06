@@ -4,7 +4,8 @@ Read common image formats, including ENVI format hyperspectral data.
 
 import sys, os
 import numpy as np
-from hylite.hyimage import HyImage, HyData
+from BlackTelperion.blackimage import BlackImage
+from BlackTelperion.blackdata import BlackData
 from .headers import matchHeader, makeDirs, loadHeader, saveHeader
 
 # spectral python throws depreciation warnings - ignore these!
@@ -19,7 +20,7 @@ def loadWithGDAL(path, dtype=np.float32, mask_zero = True):
         path: file path to the image to load
         mask_zero: True if zero values should be masked (replaced with nan). Default is true.
     Returns:
-        a hyImage object
+        a BlackImage object
     """
 
     # find GDAL
@@ -59,7 +60,7 @@ def loadWithGDAL(path, dtype=np.float32, mask_zero = True):
     assert data is not None, "Error - GDAL could not retrieve valid image data from %s" % path
     pj = raster.GetProjection()
     gt = raster.GetGeoTransform()
-    img = HyImage(data, projection=pj, affine=gt, header=header, dtype=dtype)
+    img = BlackImage(data, projection=pj, affine=gt, header=header, dtype=dtype)
 
     if mask_zero and (img.dtype == np.float32 or img.dtype == np.float64):
             img.data[img.data == 0] = np.nan #note to self: np.nan is float...
@@ -75,7 +76,7 @@ def loadWithSPy( path, dtype=np.float32, mask_zero = True):
         path: file path to the image to load
         mask_zero: True if zero values should be masked (replaced with nan). Default is true.
     Returns:
-        a hyImage object
+        a BlackImage object
     """
     assert os.path.exists(path), "Error - %s does not exist." % path
     try: 
@@ -117,7 +118,7 @@ def loadWithSPy( path, dtype=np.float32, mask_zero = True):
 
     # create image object
     assert data is not None, "Error - GDAL could not retrieve valid image data from %s" % path
-    img = HyImage(data, projection=None, affine=None, header=header, dtype=dtype)
+    img = BlackImage(data, projection=None, affine=None, header=header, dtype=dtype)
 
     # spectral python automatically applies reflectance scale factor, so we must set this to 1.0 to avoid future nightmares...
     if np.nanmax(img.data) < 1.0:
@@ -154,7 +155,7 @@ def loadSubset( path, *, bands=None, pixels=None, dtype=np.float32):
         # load header and convert bands to band indices
         imageheader = loadHeader(header)
         if bands is not None:
-            bands = [ HyImage( np.zeros((3,3,imageheader.band_count())),
+            bands = [ BlackImage( np.zeros((3,3,imageheader.band_count())),
                         header=imageheader, wav=imageheader.get_wavelengths() ).get_band_index(b) for b in bands ]
 
         # load image with SPy  TODO - replace this with numpy loading if possible?
@@ -168,15 +169,15 @@ def loadSubset( path, *, bands=None, pixels=None, dtype=np.float32):
         except:
             img = spectral.open_image(header)  # load unknown image type
 
-        if bands is not None:  # get bands and put in HyImage
+        if bands is not None:  # get bands and put in BlackImage
             data = np.dstack( [ img.read_band( b ).T for b in bands ] )
-            out = HyImage( data, projection=None, affine=None, header=imageheader, dtype=dtype)
+            out = BlackImage( data, projection=None, affine=None, header=imageheader, dtype=dtype)
             out.set_wavelengths( imageheader.get_wavelengths()[bands] )
             if out.has_band_names():
                 out.set_band_names( imageheader.get_band_names()[bands])
         if pixels is not None:  # get pixels and put in HyCloud
             data = np.array( [ img.read_pixel( *p[::-1] ) for p in pixels ] )
-            out = HyData( data )
+            out = BlackData( data )
             out.header=imageheader
         return out
 
@@ -236,12 +237,12 @@ def loadWithNumpy( path, dtype=np.float32, mask_zero=True ):
 
         # flip from row-column to x-y layout
         data = np.transpose( data, (1,0,2) )
-        return HyImage(data, header=header)
+        return BlackImage(data, header=header)
     elif 'tif' in ext.lower() or 'png' in ext.lower() or 'jpg' in ext.lower():  # standard image formats
         # load with matplotlib
         import matplotlib.image as mpimg
         data = mpimg.imread(path)
-        return HyImage(data)
+        return BlackImage(data)
     else:
         assert False, "Error - %s is an unknown/unsupported file format." % ext
 
