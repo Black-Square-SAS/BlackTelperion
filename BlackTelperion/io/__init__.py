@@ -8,7 +8,7 @@ from .images import *
 from .libraries import *
 from pathlib import Path
 
-from BlackTelperion import BlackImage, BlackLibrary, BlackData#, BlackCollection
+from BlackTelperion import BlackImage, BlackLibrary, BlackData, BlackCollection
 #from BlackTelperion.project import PMap, Camera, Pushbroom
 #from BlackTelperion.analyse.mwl import MWL
 #from distutils.dir_util import copy_tree
@@ -23,12 +23,12 @@ except ModuleNotFoundError:
 
 def save(path, data, **kwds):
     """
-    A generic function for saving BlackData instances such as BlackImage, BlackLibrary and HyCloud. The appropriate file format
+    A generic function for saving BlackData instances such as BlackImage and BlackLibrary. The appropriate file format
     will be chosen automatically.
 
     Args:
         path (str): the path to save the file too.
-        data (BlackData or ndarray): the data to save. This must be an instance of BlackImage, BlackLibrary or HyCloud.
+        data (BlackData or ndarray): the data to save. This must be an instance of BlackImage or BlackLibrary.
         **kwds: Keywords can include:
 
              - vmin = the data value that = 0 when saving RGB images.
@@ -78,25 +78,13 @@ def save(path, data, **kwds):
                 ext = 'lib'
             else:
                 ext = 'dat'
-    elif isinstance(data, HyHeader):
+    elif isinstance(data, BlackHeader):
         save_func = saveHeader
         ext = 'hdr'
-    elif isinstance(data, HyCloud):
-        save_func = saveCloudPLY
-        ext = 'ply'
     elif isinstance(data, BlackLibrary):
         save_func = saveLibraryLIB
         ext = 'lib'
-    elif isinstance(data, PMap ):
-        save_func = savePMap
-        ext = 'npz'
-    elif isinstance(data, Camera ):
-        save_func = saveCameraTXT
-        ext = 'cam'
-    elif isinstance(data, Pushbroom):
-        save_func = saveCameraTXT
-        ext = 'brm'
-    elif isinstance(data, HyCollection):
+    elif isinstance(data, BlackCollection):
         save_func = _saveCollection
         ext = data.ext[1:]
         outdir = str( Path(data.root) / os.path.splitext(data.name)[0])
@@ -168,11 +156,7 @@ def load(path):
         assert os.path.isfile(data), "Error - %s is a directory not a file." % data
 
     # load other file types
-    if 'ply' in ext: # point or hypercloud
-        out = loadCloudPLY(path) # load dataset
-    elif 'las' in ext: # point or hypercloud
-        out =  loadCloudLAS(path)
-    elif 'csv' in ext: # (flat) spectral library
+    if 'csv' in ext: # (flat) spectral library
         out = loadLibraryCSV(path)
     elif 'txt' in ext: # (flat) spectral library
         out = loadLibraryTXT(path)
@@ -182,8 +166,6 @@ def load(path):
         out = loadLibraryTSG(path)
     elif 'hyc' in ext or 'hys' in ext or 'mwl' in ext: # load BlackTelperion collection, hyscene or mwl map
         out = _loadCollection(path)
-    elif 'cam' in ext or 'brm' in ext: # load pushbroom and normal cameras
-        out = loadCameraTXT(path)
     else: # image
         # load conventional images with PIL
         if 'png' in ext or 'jpg' in ext or 'bmp' in ext:
@@ -231,7 +213,7 @@ def _loadCollection(path):
     name = os.path.basename(os.path.splitext(directory)[0])
 
     if 'hyc' in os.path.splitext(directory)[1]:
-        C = HyCollection(name, root, header=loadHeader(header))
+        C = BlackCollection(name, root, header=loadHeader(header))
     elif 'hys' in os.path.splitext(directory)[1]:
         C = HyScene(name, root, header=loadHeader(header))
     elif 'mwl' in os.path.splitext(directory)[1]:

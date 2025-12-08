@@ -111,3 +111,4 @@ from .blackdata import BlackData
 from .blackimage import BlackImage
 from .blacklibrary import BlackLibrary
 from .blackfeature import BlackFeature, MultiFeature, MixedFeature
+from .blackcollection import BlackCollection

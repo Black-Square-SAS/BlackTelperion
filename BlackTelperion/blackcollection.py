@@ -1,9 +1,9 @@
 """
-Simplify file input and output using HyCollection directory structures.
+Simplify file input and output using BlackCollection directory structures.
 """
 
 import os
-import hylite
+import BlackTelperion
 import numpy as np
 import shutil
 import re
@@ -12,7 +12,7 @@ from pathlib import Path
 
 class External(object):
     """
-    Small wrapper class for storing external objects in HyCollections.
+    Small wrapper class for storing external objects in BlackCollections.
     """
     def __init__( self, path, base=None ):
         self.path = path
@@ -32,34 +32,34 @@ class External(object):
 
         # and load it
         try:
-            self.value = hylite.io.load( path )
+            self.value = BlackTelperion.io.load( path )
             return self.value
         except:
             assert False, "Error loading external attribute %s" % path
 
-class HyCollection(object):
+class BlackCollection(object):
     """
     A utility class for mapping data stored in a special file system (.hyc directory or similar) between RAM and disk storage.
     Useful for (1) reducing IO code and (2) writing out-of-core analyses. The underlying .hyc directory can contain any
-    data that can be read and written by hylite.io, including: numpy arrays, numbers, strings and hylite.HyData instances.
+    data that can be read and written by BlackTelperion.io, including: numpy arrays, numbers, strings and BlackTelperion.BlackData instances.
     """
 
     def __init__(self, name, root, header=None, vb=False):
         """
-        Create a new HyCollection.
+        Create a new BlackCollection.
 
         Args:
-            name (str): a name for this HyCollection. Names of HyCollections stored in any given directory must be
+            name (str): a name for this BlackCollection. Names of BlackCollections stored in any given directory must be
                   be unique to avoid conflicts.
-            root (str): the location of this HyCollection on disk.
-            header (hylite.HyHeader): a header file for this HyCollection. If None (default) a new header will be created.
+            root (str): the location of this BlackCollection on disk.
+            header (BlackTelperion.BlackHeader): a header file for this BlackCollection. If None (default) a new header will be created.
             vb (bool): True if print notifications should be written when data is being loaded from disk. Default is False.
         """
         self.name = os.path.splitext(name)[0]  # trim extension just in case
         self.root = root
         if header is None:
-            header = hylite.HyHeader()
-        header['file type'] = 'Hylite Collection'  # ensure file type is correct (just in case someone cares)
+            header = BlackTelperion.BlackHeader()
+        header['file type'] = 'BlackTelperion Collection'  # ensure file type is correct (just in case someone cares)
         self.header = header
         self.vb = vb
         self.ext = '.hyc'
@@ -70,9 +70,9 @@ class HyCollection(object):
         Note that primitive attributes (string, integer, etc.) will be stored in the header file.
 
         Args:
-            root (str): the directory to store this HyCollection in. Defaults to the root directory specified when
-                  this HyCollection was initialised, but this can be overriden for e.g. saving in a new location.
-            name (str): the name to use for the HyCollection in the file dictionary. If None (default) then this instance's
+            root (str): the directory to store this BlackCollection in. Defaults to the root directory specified when
+                  this BlackCollection was initialised, but this can be overriden for e.g. saving in a new location.
+            name (str): the name to use for the BlackCollection in the file dictionary. If None (default) then this instance's
                   name will be used, but this can be overriden for e.g. saving in a new location.
         Returns:
             a dictionary such that dict[ path ] = object.
@@ -82,8 +82,8 @@ class HyCollection(object):
             root = self.root
         if name is None:
             name = self.name
-        assert root is not None, "Error - root argument must be set during HyCollection initialisation or function call."
-        assert name is not None, "Error - name argument must be set during HyCollection initialisation or function call."
+        assert root is not None, "Error - root argument must be set during BlackCollection initialisation or function call."
+        assert name is not None, "Error - name argument must be set during BlackCollection initialisation or function call."
 
         # get all attributes (excluding class methods/variables and the header variable)
         attr = self.getAttributes()
@@ -124,10 +124,10 @@ class HyCollection(object):
                             path = str(Path(self.getDirectory()) / f)
                             break
                     if path is not None and os.path.exists(path):
-                        hdr, dat = hylite.io.matchHeader( path )
+                        hdr, dat = BlackTelperion.io.matchHeader( path )
                         if hdr is not None and os.path.exists(hdr):
                             os.remove(hdr)
-                        if dat is not None and os.path.exists(dat) and os.path.isdir(dat): # nested HyCollection
+                        if dat is not None and os.path.exists(dat) and os.path.isdir(dat): # nested BlackCollection
                             shutil.rmtree(dat)
                         if os.path.exists(dat) and os.path.isfile(dat): # other data type
                             os.remove(dat)
@@ -152,7 +152,7 @@ class HyCollection(object):
 
         # try loading attribute from disk
         try:
-            # no file associated with this HyCollection - raise attribute error.
+            # no file associated with this BlackCollection - raise attribute error.
             if not os.path.exists(self.getDirectory(makedirs=False)):
                 raise AttributeError
 
@@ -177,7 +177,7 @@ class HyCollection(object):
             # load attribute
             if self.vb:
                 print("Loading %s from %s" % (attr, path))
-            self.__setattr__(attr, hylite.io.load(path))  # load and update HyCollection attribute
+            self.__setattr__(attr, BlackTelperion.io.load(path))  # load and update BlackCollection attribute
         except AttributeError:
 
             # last chance - look in header data
@@ -220,7 +220,7 @@ class HyCollection(object):
     def get_path(self, name: str):
         """
         Return the path of the specified attribute. Note that this file may or may not exist, depending
-        on if this HyCollection has been saved previously. Also note that this path will exclude the file extension.
+        on if this BlackCollection has been saved previously. Also note that this path will exclude the file extension.
         """
         if name == 'header' or name in self.header:
             return os.path.splitext( self.getDirectory() )[0]
@@ -230,12 +230,12 @@ class HyCollection(object):
 
     def getDirectory(self, root=None, name=None, makedirs=False):
         """
-        Return the directory files associated with the HyCollection are stored in.
+        Return the directory files associated with the BlackCollection are stored in.
 
         Args:
-            root (str): the directory to store this HyCollection in. Defaults to the root directory specified when
-                  this HyCollection was initialised, but this can be overriden for e.g. saving in a new location.
-            name (str): the name to use for the HyCollection in the file dictionary. If None (default) then this instance's
+            root (str): the directory to store this BlackCollection in. Defaults to the root directory specified when
+                  this BlackCollection was initialised, but this can be overriden for e.g. saving in a new location.
+            name (str): the name to use for the BlackCollection in the file dictionary. If None (default) then this instance's
                   name will be used, but this can be overriden for e.g. saving in a new location.
             makedirs (bool): True if this directory should be created if it doesn't exist. Default is False.
         """
@@ -243,8 +243,8 @@ class HyCollection(object):
             root = self.root
         if name is None:
             name = self.name
-        assert root is not None, "Error - root argument must be set during HyCollection initialisation or function call."
-        assert name is not None, "Error - name argument must be set during HyCollection initialisation or function call."
+        assert root is not None, "Error - root argument must be set during BlackCollection initialisation or function call."
+        assert name is not None, "Error - name argument must be set during BlackCollection initialisation or function call."
         p = str( Path(root) / (os.path.splitext(name)[0] + self.ext))
         if makedirs:
             os.makedirs(p, exist_ok=True)  # ensure directory actually exists!
@@ -252,14 +252,14 @@ class HyCollection(object):
 
     def getAttributes(self, ram_only=True, file_formats=False):
         """
-        Return a list of available attributes in this HyCollection.
+        Return a list of available attributes in this BlackCollection.
 
         Args:
             ram = True if only attributes loaded in RAM should be included. Default is True.
             file_formats = True if the file extensions of attributes stored on disk should be retained. Default is False.
         """
         # get potential attributes
-        attr = list(set(dir(self)) - set(dir(HyCollection)) - set(['header', 'root', 'file type','name', 'ext', 'vb']))
+        attr = list(set(dir(self)) - set(dir(BlackCollection)) - set(['header', 'root', 'file type','name', 'ext', 'vb']))
 
         # loop through and remove all functions
         out = []
@@ -299,7 +299,7 @@ class HyCollection(object):
 
     def query(self, *, name_pattern=None, ext_pattern=None, recurse=False, recurse_matches=False, ram_only=False):
         """
-        Finds attributes of this HyCollection with names or types matching the specified patterns. Note that (1)
+        Finds attributes of this BlackCollection with names or types matching the specified patterns. Note that (1)
         if both name_pattern and ext_pattern are provided then attributes must match both filters to be included in the
         results, and (2)
 
@@ -310,11 +310,11 @@ class HyCollection(object):
             ext_pattern (list, str) = A regex pattern (string) or list of regex pattern strings to match against. Matches will be evaluated
                          against file extensions for attributes on the disk (e.g., ".hdr") and type names (e.g., "HyImage") for
                          attributes loaded in RAM (as we cannot guess what their file extension may be). Note that class inheritance
-                         is not considered during this matching, so e.g., "HyData" will not match with "HyImage".
+                         is not considered during this matching, so e.g., "BlackData" will not match with "HyImage".
                          Default is None (match all attributes).
-            recurse (bool) = True if (all) child HyCollections should also be queried to search the entire HyCollection tree for
+            recurse (bool) = True if (all) child BlackCollections should also be queried to search the entire BlackCollection tree for
                      matches. Default is False.
-            recurse_matches (bool) = True if HyCollections that match the provided filters should also be queried recursively. Default
+            recurse_matches (bool) = True if BlackCollections that match the provided filters should also be queried recursively. Default
                     is False.
             ram_only (bool) = True if only attributes already loaded into memory should be queried. Default is False.
         """
@@ -346,19 +346,19 @@ class HyCollection(object):
             # recurse if required
             if recurse:
                 if self.loaded(a): # object already loaded in ram
-                    if isinstance( self.get(a), hylite.HyCollection ):
+                    if isinstance( self.get(a), BlackTelperion.BlackCollection ):
                         out += self.get(a).query( name_pattern=name_pattern, ext_pattern=ext_pattern,
                                                   recurse=recurse, recurse_matches=recurse_matches,
                                                   ram_only = ram_only )
                 else: # object is on the disk
-                    from hylite.io import _loadCollection
+                    from BlackTelperion.io import _loadCollection
                     try:
                         C = _loadCollection(str(Path(self.getDirectory()) / (a + e) ) )
                         out += C.query( name_pattern=name_pattern, ext_pattern=ext_pattern,
                                                       recurse=recurse, recurse_matches=recurse_matches,
                                                       ram_only = ram_only )
                     except:
-                        pass # continue, this was not a HyCollection
+                        pass # continue, this was not a BlackCollection
         return natsorted(out) # sort alphabetically for consistency
 
     def loaded(self, name):
@@ -407,22 +407,22 @@ class HyCollection(object):
         """
         Quick utility function for saving this in the predefined location.
         """
-        from hylite import io # occasionally io doesn't seem to get loaded unless we call this ... strange?
-        hylite.io.save(os.path.splitext(self.getDirectory())[0], self)
+        from BlackTelperion import io # occasionally io doesn't seem to get loaded unless we call this ... strange?
+        BlackTelperion.io.save(os.path.splitext(self.getDirectory())[0], self)
 
     def save_attr(self, attr):
         """
-        Save a single attribute in this HyCollection.
+        Save a single attribute in this BlackCollection.
         """
-        from hylite import io  # occasionally io doesn't seem to get loaded unless we call this ... strange?
+        from BlackTelperion import io  # occasionally io doesn't seem to get loaded unless we call this ... strange?
         if attr in self.header:
-            hylite.io.saveHeader( os.path.splitext(self.getDirectory())[0] + '.hdr', self.header )
+            BlackTelperion.io.saveHeader( os.path.splitext(self.getDirectory())[0] + '.hdr', self.header )
         else:
-            hylite.io.save( self.get_path(attr), self.get(attr) )
+            BlackTelperion.io.save( self.get_path(attr), self.get(attr) )
 
     def free(self):
         """
-        Free all attributes in RAM. To avoid losing data, be sure to save this HyCollection first (e.g. using
+        Free all attributes in RAM. To avoid losing data, be sure to save this BlackCollection first (e.g. using
         self.save(...).
         """
         attr = self.getAttributes()
@@ -438,7 +438,7 @@ class HyCollection(object):
 
     def addExternal(self, name, path, relative=True):
         """
-        Add an external link (that is saved/loaded by this HyCollection instance, but not stored in its data folder).
+        Add an external link (that is saved/loaded by this BlackCollection instance, but not stored in its data folder).
 
         Args:
             name: the name of the attribute to add.
@@ -462,13 +462,13 @@ class HyCollection(object):
             name (str): the name of the subcollection to add.
 
         Returns:
-            a HyCollection object representing the subcollection.
+            a BlackCollection object representing the subcollection.
         """
 
         if self.root is None: # no path defined
-            S = HyCollection(name,'')
+            S = BlackCollection(name,'')
         else:
-            S = HyCollection(name, self.getDirectory(makedirs=False))
+            S = BlackCollection(name, self.getDirectory(makedirs=False))
         self.__setattr__(name, S)
         return S
 
@@ -522,15 +522,15 @@ class HyCollection(object):
         if '__' not in name:
             valid = type(value) in [ int, str, bool, float, list, dict ] # accept primitive types
             valid = valid or isinstance( value, np.ndarray) # accept numpy arrays
-            valid = valid or isinstance( value, hylite.HyData ) # accept hydata types
-            valid = valid or isinstance(value, hylite.HyHeader)  # accept hydata types
-            valid = valid or isinstance( value, hylite.HyCollection ) # accept HyCollection instances (nesting)
-            valid = valid or isinstance(value, hylite.project.Camera ) # accept Camera instances
-            valid = valid or isinstance(value, hylite.project.Pushbroom)  # accept Pushbroom instances
-            valid = valid or isinstance(value, hylite.project.PMap)  # accept Pushbroom instances
+            valid = valid or isinstance( value, BlackTelperion.BlackData ) # accept BlackData types
+            valid = valid or isinstance(value, BlackTelperion.BlackHeader)  # accept BlackData types
+            valid = valid or isinstance( value, BlackTelperion.BlackCollection ) # accept BlackCollection instances (nesting)
+            valid = valid or isinstance(value, BlackTelperion.project.Camera ) # accept Camera instances
+            valid = valid or isinstance(value, BlackTelperion.project.Pushbroom)  # accept Pushbroom instances
+            valid = valid or isinstance(value, BlackTelperion.project.PMap)  # accept Pushbroom instances
             valid = valid or isinstance(value, External ) # accept external links
-            valid = valid or isinstance(value, list) and np.array( [isinstance(d, hylite.HyData) ] for d in value ).all() # multimwl maps
+            valid = valid or isinstance(value, list) and np.array( [isinstance(d, BlackTelperion.BlackData) ] for d in value ).all() # multimwl maps
             valid = valid or value is None # also accept None
-            assert valid, "Error - %s is an invalid attribute type for HyCollection." % type(value)
+            assert valid, "Error - %s is an invalid attribute type for BlackCollection." % type(value)
 
         object.__setattr__(self, name.strip().replace(' ', '_'), value)
