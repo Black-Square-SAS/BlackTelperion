@@ -14,12 +14,12 @@ def from_indices(data, indices, s=4, names=None, ):
     Args:
         data (BlackData): a BlackData instance containing the spectral data.
         indices (list): a list of sample indices to extract spectra from
-        s (int): the number of adjacent points to include in each sample. For HyImage data this will be a square patch of sxs
-           pixels. For HyCloud data s is used to take adjacent points from the points list (which is assumed to be somewhat ordered).
+        s (int): the number of adjacent points to include in each sample. For BlackImage data this will be a square patch of sxs
+           pixels.
         names (list): a list containing names for each sample, or None to generate (numeric) sample ids.
 
     Returns:
-        a HyLibrary instance
+        a BlackLibrary instance
     """
 
     if names is None:
@@ -61,7 +61,7 @@ def from_classification(data, labels, names=None, ignore=[0], subsample='all'):
                 (albedo) and the spectra corresponding to the desired percentiles kept in the library. Default is 'all'.
 
     Returns:
-        a HyLibrary instance.
+        a BlackLibrary instance.
     """
 
     X = data.X()
@@ -136,7 +136,7 @@ class BlackLibrary(BlackData):
                   a 2D array is passed (sample, band) then it will be expanded to (sample, 1, band).
             lab (list): list of sample labels (one label per sample). Default is None (labels will be integers from 0 - n).
             wav (list, ndarray): list of wavelengths in the spectra for each sample. If None this must be defined in the header file passed.
-            header (hylite.HyHeader): a HyHeader instance containing additional metadata to associate with this library.
+            header (BlackTelperion.BlackHeader): a BlackHeader instance containing additional metadata to associate with this library.
         """
 
         # checks
@@ -147,7 +147,7 @@ class BlackLibrary(BlackData):
 
         # init BlackData object with reflectance data
         super().__init__(data, header=header)
-        self.header['file type'] = 'Hylite Library'  # set file type
+        self.header['file type'] = 'BlackTelperion Library'  # set file type
 
         # store wavelength data
         if wav is None:
@@ -163,13 +163,13 @@ class BlackLibrary(BlackData):
 
     def copy(self,data=True):
         """
-        Make a deep copy of this HyLibrary instance.
+        Make a deep copy of this BlackLibrary instance.
 
         Args:
             data (bool): True if a copy of the data should be made, otherwise only copy header.
 
         Returns:
-            a new HyLibrary instance.
+            a new BlackLibrary instance.
         """
         header = self.header.copy()
         if data:
@@ -189,19 +189,19 @@ class BlackLibrary(BlackData):
 
     def as_image(self, shallow=False):
         """
-        Convert this library to a HyImage dataset for e.g. visualisation using HyImage.quick_plot(...).
+        Convert this library to a BlackImage dataset for e.g. visualisation using BlackImage.quick_plot(...).
 
         Args:
             shallow (bool): True if the underlying data array should be shared. Default is False as copies are dangerous.
 
         Returns:
-            a HyImage instance of this dataset.
+            a BlackImage instance of this dataset.
         """
-        from hylite.hyimage import HyImage # N.B. this import must be here to avoid circular import
+        from BlackTelperion.blackimage import BlackImage # N.B. this import must be here to avoid circular import
         if shallow:
-            return HyImage( self.data, header=self.header )
+            return BlackImage( self.data, header=self.header )
         else:
-            return HyImage( self.data.copy(), header=self.header.copy() )
+            return BlackImage( self.data.copy(), header=self.header.copy() )
 
     def merge(self, library2):
         """
@@ -261,7 +261,7 @@ class BlackLibrary(BlackData):
 
     def get_groups(self):
         """
-        Return a list of groups that have been defined for the HyLibrary.
+        Return a list of groups that have been defined for the BlackLibrary.
         """
         groups = []
         for k,v in self.header.items():
@@ -286,15 +286,15 @@ class BlackLibrary(BlackData):
 
     def get_group(self, name, shallow=False):
         """
-        Return a HyLibrary instance containing only the spectra associated with the specified group.
+        Return a BlackLibrary instance containing only the spectra associated with the specified group.
 
         Args:
             name (str): the name of the group.
-            shallow (bool): True if the returned HyLibrary instance should be a shallow copy (share the same underlying data
+            shallow (bool): True if the returned BlackLibrary instance should be a shallow copy (share the same underlying data
                       array and header file) as this instance so changes propagate. Default is False - shallow copies
                       are powerful but dangerous!.
         Returns:
-            a HyLibrary instance containing the requested group of spectra.
+            a BlackLibrary instance containing the requested group of spectra.
         """
         ids = self.get_group_ids(name)
         ids = [ self.get_sample_index(i) for i in ids ]
@@ -415,7 +415,7 @@ class BlackLibrary(BlackData):
 
     def collapse(self):
         """
-        Returns a copy of this HyLibrary with any groups collapsed into individual samples.
+        Returns a copy of this BlackLibrary with any groups collapsed into individual samples.
         """
         groups = self.get_groups()
         assert len(groups) > 0, "Error - library has no groups to collapse."
@@ -435,7 +435,7 @@ class BlackLibrary(BlackData):
 
     def squash(self):
         """
-        Returns a copy of this HyLibrary instance with multiple measurements averaged to give a single spectra per sample.
+        Returns a copy of this BlackLibrary instance with multiple measurements averaged to give a single spectra per sample.
         """
 
         data = np.nanmedian(self.data, axis=1)
@@ -451,7 +451,7 @@ class BlackLibrary(BlackData):
         Args:
             ax: an axis to plot to. If None (default), a new axis is created.
             band_range (tuple): the (min,max) band index (int) or wavelength (float) to plot.
-            labels (list): list of HyFeature instances to plot on spectra. Default is reference.features.DIAGNOSTIC
+            labels (list): list of BlackFeature instances to plot on spectra. Default is reference.features.DIAGNOSTIC
             pad (float): the spacing to add between individual spectra. Default is 5% of the range of reflectance values.
             collapse (bool): True if groups should be plotted rather than individual samples. Default is False.
             hc (bool): True if the plotted spectra should be hull corrected first. Default is False.
@@ -482,7 +482,7 @@ class BlackLibrary(BlackData):
 
         # hull correct?
         if hc:
-            from hylite.correct import get_hull_corrected
+            from BlackTelperion.correct import get_hull_corrected
             self = get_hull_corrected(self, band_range=(minb, maxb), vb=False)
             minb = 0 # spectra has already been subset
             maxb = self.band_count() - 1
