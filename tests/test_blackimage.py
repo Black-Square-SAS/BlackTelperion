@@ -1,13 +1,13 @@
 import unittest
 import numpy as np
 from tests import genImage
-import hylite
+import BlackTelperion
 
-class TestHyImage(unittest.TestCase):
+class TestBlackImage(unittest.TestCase):
     def test_image(self):
 
         # test constructor
-        image = hylite.HyImage(np.zeros((25,25,5)), wav=np.arange(5)*100)
+        image = BlackTelperion.BlackImage(np.zeros((25,25,5)), wav=np.arange(5)*100)
         self.assertListEqual(list(image.get_wavelengths()), list(np.arange(5)*100))
 
         # create test image
