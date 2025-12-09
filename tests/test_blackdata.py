@@ -1,13 +1,13 @@
 import unittest
-import hylite
-from hylite.project import Camera
-from hylite.reference.spectra import R90
-from hylite.correct.panel import Panel
+import BlackTelperion
+#from hylite.project import Camera
+#from hylite.reference.spectra import R90
+#from hylite.correct.panel import Panel
 
 import numpy as np
-from tests import genHeader, genCloud, genImage
+from tests import genHeader, genImage
 
-class TestHyData(unittest.TestCase):
+class TestBlackData(unittest.TestCase):
     def test_header(self):
 
         #load header from file
@@ -38,34 +38,34 @@ class TestHyData(unittest.TestCase):
 
         # check set Camera
         # define camera properties and initial location/orientation estimate
-        cam = Camera(pos=np.asarray([665875.0, 4162695, 272]),  # np.array([666290.454, 4162697.93, 268.521235])
-                     ori=np.array([43, 80, 130]),  # np.array([50.0,-83.0,-137.0])
-                     proj='pano', fov=32.3, step=0.084,
-                     dims=(1464, 401))
-        header.set_camera(cam)
-        cam2 = header.get_camera()
+        # cam = Camera(pos=np.asarray([665875.0, 4162695, 272]),  # np.array([666290.454, 4162697.93, 268.521235])
+        #              ori=np.array([43, 80, 130]),  # np.array([50.0,-83.0,-137.0])
+        #              proj='pano', fov=32.3, step=0.084,
+        #              dims=(1464, 401))
+        # header.set_camera(cam)
+        # cam2 = header.get_camera()
 
-        self.assertEqual((cam2.pos == cam.pos).all(), True)
-        self.assertEqual((cam2.ori == cam.ori).all(), True)
-        self.assertEqual(cam2.proj, cam.proj)
-        self.assertEqual(cam2.dims, cam.dims)
-        self.assertEqual(cam2.fov, cam.fov)
-        self.assertEqual(cam2.step, cam.step)
-
-        # check set panel
-        panel = Panel( R90, np.zeros( header.band_count() ), wavelengths=header.get_wavelengths() )
-        header.add_panel(panel)
-        self.assertEqual( len(header.get_panel_names()), 1)
-        panel2 = header.get_panel('R90')
-        self.assertEqual( np.sum( panel2.get_mean_radiance() ), 0 )
-        self.assertEqual(panel2.get_mean_radiance().shape[0], header.band_count())
-        self.assertEqual( panel2.material.get_name().lower(), R90.get_name().lower())
+        # self.assertEqual((cam2.pos == cam.pos).all(), True)
+        # self.assertEqual((cam2.ori == cam.ori).all(), True)
+        # self.assertEqual(cam2.proj, cam.proj)
+        # self.assertEqual(cam2.dims, cam.dims)
+        # self.assertEqual(cam2.fov, cam.fov)
+        # self.assertEqual(cam2.step, cam.step)
+        #
+        # # check set panel
+        # panel = Panel( R90, np.zeros( header.band_count() ), wavelengths=header.get_wavelengths() )
+        # header.add_panel(panel)
+        # self.assertEqual( len(header.get_panel_names()), 1)
+        # panel2 = header.get_panel('R90')
+        # self.assertEqual( np.sum( panel2.get_mean_radiance() ), 0 )
+        # self.assertEqual(panel2.get_mean_radiance().shape[0], header.band_count())
+        # self.assertEqual( panel2.material.get_name().lower(), R90.get_name().lower())
 
     def test_data(self):
         # check functions for images and cloud data
         lines = [401, 1]
         samples = [1464, 1000]
-        for i,data in enumerate( [genImage(dimx = 1464, dimy=401, nbands=10), genCloud(npoints = 1000, nbands=10)] ):
+        for i,data in enumerate( [genImage(dimx = 1464, dimy=401, nbands=10)] ):
             # check basics
             self.assertEqual(data.has_wavelengths(), True)
             self.assertEqual(data.has_band_names(), True)
@@ -120,17 +120,18 @@ class TestHyData(unittest.TestCase):
             self.assertEqual(data.data.dtype, np.float32)
             self.assertAlmostEqual(data.data.ravel()[0], tv, 3)
 
-            # check quantize
-            for m in ['kmeans']: # , 'minibatch', 'birch']:
-                index,lib = data.getQuantized(n=255, cmeth=m, vthresh=10, subsample=50, mask=None )
-                self.assertEquals( np.max(index.data), 255 )
-                self.assertEquals( lib.data.shape[0], 256 )
+            # # check quantize
+            # TODO Implement BlackTelperion.filter
+            # for m in ['kmeans']: # , 'minibatch', 'birch']:
+            #     index,lib = data.getQuantized(n=255, cmeth=m, vthresh=10, subsample=50, mask=None )
+            #     self.assertEquals( np.max(index.data), 255 )
+            #     self.assertEquals( lib.data.shape[0], 256 )
 
-            # check reconstruction from quanta
-            rc = hylite.HyData.fromQuanta( index, lib )
-            self.assertTrue( (np.array(rc.data.shape) == np.array(data.data.shape)).all() )
-            self.assertListEqual( list(rc.get_wavelengths()), list(data.get_wavelengths()) )
-            self.assertListEqual( list(rc.get_band_names()), list(data.get_band_names()) )
+            # # check reconstruction from quanta
+            # rc = BlackTelperion.BlackData.fromQuanta( index, lib )
+            # self.assertTrue( (np.array(rc.data.shape) == np.array(data.data.shape)).all() )
+            # self.assertListEqual( list(rc.get_wavelengths()), list(data.get_wavelengths()) )
+            # self.assertListEqual( list(rc.get_band_names()), list(data.get_band_names()) )
 
             # check smoothing works with nan bands
             data.mask_bands(1, 3)

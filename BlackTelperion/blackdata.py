@@ -1,5 +1,5 @@
 """
-A base class for all types of hyperspectral data. Inherited by HyImage and HyLibrary.
+A base class for all types of hyperspectral data. Inherited by BlackImage and BlackLibrary.
 """
 
 import numpy as np
@@ -317,7 +317,7 @@ class BlackData(object):
             an image copy with the nan bands removed IF inplaces is False. Otherwise the image is modified inplace.
         """
 
-        if len(self.data.shape) == 3: #hyImage
+        if len(self.data.shape) == 3: #BlackImage
             cpy = self.export_bands(np.isfinite(self.data).any(axis=(0, 1)))  # remove bands that are all nan
         else: #hycloud
             assert len(self.data.shape) == 2, "Weird error?"
@@ -680,56 +680,57 @@ class BlackData(object):
         out.set_wavelengths(out_wav)
         return out
 
-    #NOTE: Check in the future if this is usefull
-    # def contiguous_chunks(self, p=75, min_size=0):
-    #     """
-    #     Extract contiguous chunks of spectra, splitting a (1) completely nan bands or (2) large steps in wavelength.
-    #
-    #     Args:
-    #         p (int): the percentile used to define a large change in wavelength. Default is 90. A "gap" is considered to be
-    #            a change in wavelength greater than double this percentile.
-    #         min_size (int): the minimum number of bands required to consider a chunk valid. Default is 0 (return all chunks).
-    #
-    #     Returns:
-    #         Tuple containing
-    #
-    #         chunks (ndarray): copies of the orignal data array that contain continuous spectra. At least one pixel/point
-    #                 in each slice of these bans is guaranteed to be finite.
-    #         wav (ndarray): array containing the wavelengths corresponding to each band of each chunk.
-    #     """
-    #
-    #     # find gaps in wavelength and/or completely nan bands and/or data ignore values
-    #     finite = np.isfinite(self.data).any(axis=tuple(range(len(self.data.shape) - 1)))  # False = nans
-    #     finite = finite & (self.data != float(self.header.get("data ignore value", 0))).any(
-    #         axis=tuple(range(len(self.data.shape) - 1)))
-    #     assert len(self.get_wavelengths()) == len(
-    #         finite), "Error - hyperspectral dataset has %d bands but %d wavelengths." % (
-    #     len(finite), len(self.get_wavelengths()))
-    #     x = self.get_wavelengths()[finite]
-    #     dx = np.abs(np.diff(x))
-    #     maxstep = 2. * np.percentile(dx, p)
-    #     if not (dx >= maxstep).any():  # no gaps - just return contiguous block!
-    #         assert len(x) > min_size, "Error - total band count < min_size."
-    #         msk = [self.get_band_index(b) for b in x]
-    #         return [self.data[..., msk]], [x]
-    #     else:
-    #         break_start = list(np.argwhere(dx > maxstep)[:, 0])
-    #         break_end = list((-np.argwhere(np.abs(np.diff(x[::-1])) > maxstep)[:, 0])[::-1])
-    #         break_start.append(-1)  # add end of dataset so we don't miss last chunk
-    #         break_end.append(-1)  # add end of dataset so we don't miss last chunk
-    #         assert len(break_start) == len(
-    #             break_end), r"Error - weird shit is happening? [ useful error messages ftw ¯\_(ツ)_/¯ ]"
-    #         idx0 = 0
-    #         chunks = []
-    #         wav = []
-    #         for i in range(len(break_start)):  # build chunks
-    #             W = x[idx0:break_start[i]]
-    #             msk = [self.get_band_index(b) for b in W]
-    #             if W.shape[-1] > min_size:
-    #                 wav.append(W)
-    #                 chunks.append(self.data[..., msk])
-    #             idx0 = break_end[i]  # skip forwards
-    #         return chunks, wav
+    # NOTE: Check in the future if this is usefull
+    # NOTE: It is used by smoothing algorithms
+    def contiguous_chunks(self, p=75, min_size=0):
+        """
+        Extract contiguous chunks of spectra, splitting a (1) completely nan bands or (2) large steps in wavelength.
+
+        Args:
+            p (int): the percentile used to define a large change in wavelength. Default is 90. A "gap" is considered to be
+               a change in wavelength greater than double this percentile.
+            min_size (int): the minimum number of bands required to consider a chunk valid. Default is 0 (return all chunks).
+
+        Returns:
+            Tuple containing
+
+            chunks (ndarray): copies of the orignal data array that contain continuous spectra. At least one pixel/point
+                    in each slice of these bans is guaranteed to be finite.
+            wav (ndarray): array containing the wavelengths corresponding to each band of each chunk.
+        """
+
+        # find gaps in wavelength and/or completely nan bands and/or data ignore values
+        finite = np.isfinite(self.data).any(axis=tuple(range(len(self.data.shape) - 1)))  # False = nans
+        finite = finite & (self.data != float(self.header.get("data ignore value", 0))).any(
+            axis=tuple(range(len(self.data.shape) - 1)))
+        assert len(self.get_wavelengths()) == len(
+            finite), "Error - hyperspectral dataset has %d bands but %d wavelengths." % (
+        len(finite), len(self.get_wavelengths()))
+        x = self.get_wavelengths()[finite]
+        dx = np.abs(np.diff(x))
+        maxstep = 2. * np.percentile(dx, p)
+        if not (dx >= maxstep).any():  # no gaps - just return contiguous block!
+            assert len(x) > min_size, "Error - total band count < min_size."
+            msk = [self.get_band_index(b) for b in x]
+            return [self.data[..., msk]], [x]
+        else:
+            break_start = list(np.argwhere(dx > maxstep)[:, 0])
+            break_end = list((-np.argwhere(np.abs(np.diff(x[::-1])) > maxstep)[:, 0])[::-1])
+            break_start.append(-1)  # add end of dataset so we don't miss last chunk
+            break_end.append(-1)  # add end of dataset so we don't miss last chunk
+            assert len(break_start) == len(
+                break_end), r"Error - weird shit is happening? [ useful error messages ftw ¯\_(ツ)_/¯ ]"
+            idx0 = 0
+            chunks = []
+            wav = []
+            for i in range(len(break_start)):  # build chunks
+                W = x[idx0:break_start[i]]
+                msk = [self.get_band_index(b) for b in W]
+                if W.shape[-1] > min_size:
+                    wav.append(W)
+                    chunks.append(self.data[..., msk])
+                idx0 = break_end[i]  # skip forwards
+            return chunks, wav
 
     ##################################
     ## Smoothing algorithms
@@ -992,7 +993,7 @@ class BlackData(object):
             mx = min(mask.shape[0], self.data.shape[0])
             my = min(mask.shape[1], self.data.shape[1])
             msk[:mx,:my] = msk[:mx,:my] & mask[:mx,:my]
-        X = BlackTelperion.HyData(self.data[msk, :])
+        X = BlackTelperion.BlackData(self.data[msk, :])
         if smooth > 1:
             X.smooth_savgol(smooth)
 
@@ -1075,11 +1076,11 @@ class BlackData(object):
     @classmethod
     def fromQuanta(cls, index, library ):
         """
-        Reconstruct a HyData instance from an index and spectral library, as returned by `BlackData.getQuantized(...)`.
+        Reconstruct a BlackData instance from an index and spectral library, as returned by `BlackData.getQuantized(...)`.
 
         Args:
-            index (BlackData): A classification index of the same type (e.g., HyImage, HyCloud, etc.) as the desired output.
-            library (HyLibrary): A spectral library containing the spectral information associated with each class. Note
+            index (BlackData): A classification index of the same type (e.g., BlackImage, HyCloud, etc.) as the desired output.
+            library (BlackLibrary): A spectral library containing the spectral information associated with each class. Note
                                  that this could be a transformed (e.g., by minimum wavelength mapping) version of the
                                  spectral library created by `getQuantized( ... )`.
         """
