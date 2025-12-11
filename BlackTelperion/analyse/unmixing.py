@@ -5,19 +5,19 @@ Note that some of these rely on functions implemented in `pysptools`, which thus
 may need to be installed for them to work.
 """
 import numpy as np
-from hylite import HyLibrary, HyData
+from BlackTelperion import BlackLibrary, BlackData
 
-def mix( abundances : HyData, endmembers : np.ndarray ):
+def mix( abundances : BlackData, endmembers : np.ndarray ):
     """
     Generate synthetic spectra by linearly mixing an abundance and endmember
     matrix. 
 
     Args:
-        abundances: a HyData instance (e.g. image or cloud) with bands representing abundances (typically from 0 to 1).
-        endmembers: A numpy array of shape (nendmembers, bands), or HyLibrary instance
+        abundances: a BlackData instance (e.g. image or cloud) with bands representing abundances (typically from 0 to 1).
+        endmembers: A numpy array of shape (nendmembers, bands), or BlackLibrary instance
                     containing these same endmembers.
     Returns:
-        A HyData instance with the same type as abundances, but containing the forward modelled (linearly mixed) spectra.
+        A BlackData instance with the same type as abundances, but containing the forward modelled (linearly mixed) spectra.
     """
 
     # create output object and get data vector to unmix (without nans)
@@ -25,7 +25,7 @@ def mix( abundances : HyData, endmembers : np.ndarray ):
     A = abundances.X(onlyFinite=True)
 
     # get endmembers as numpy array
-    if isinstance( endmembers, HyLibrary):
+    if isinstance( endmembers, BlackLibrary):
         E = np.mean( endmembers.data, axis=1 )
 
     # do forward mixing
@@ -33,23 +33,23 @@ def mix( abundances : HyData, endmembers : np.ndarray ):
 
     # put into output object and return
     out.set_raveled( X, onlyFinite=True, strict=False)
-    if isinstance( endmembers, HyLibrary):
+    if isinstance( endmembers, BlackLibrary):
         out.set_wavelengths( endmembers.get_wavelengths() )
     return out
 
-def unmix( data : HyData, endmembers : np.ndarray, method : str = 'nnls' ):
+def unmix( data : BlackData, endmembers : np.ndarray, method : str = 'nnls' ):
     """
     Perform least squares unmixing to estimate linear combinations
     of the specified endmembers that best reproduce the observed data.
 
     Args:
-        data: a HyData instance (e.g. image or cloud) to unmix.
-        endmembers: A numpy array of shape (nendmembers, bands), or HyLibrary instance
+        data: a BlackData instance (e.g. image or cloud) to unmix.
+        endmembers: A numpy array of shape (nendmembers, bands), or BlackLibrary instance
                     containing these same endmembers.
         method: the unmixing constraints. Options are non-negative ('nnls', default) or fully
                 constrained ('fcls'). 
     Returns:
-        A HyData instance with the same type as data, but containing the estimated endmember abundances.
+        A BlackData instance with the same type as data, but containing the estimated endmember abundances.
     """
 
     # create output object and get data vector to unmix (without nans)
@@ -57,7 +57,7 @@ def unmix( data : HyData, endmembers : np.ndarray, method : str = 'nnls' ):
     X = data.X(onlyFinite=True)
     
     # get endmembers as numpy array
-    if isinstance( endmembers, HyLibrary):
+    if isinstance( endmembers, BlackLibrary):
         E = np.mean( endmembers.data, axis=1 )
     else:
         E = endmembers # data is a numpy array?
@@ -78,25 +78,25 @@ def unmix( data : HyData, endmembers : np.ndarray, method : str = 'nnls' ):
     
     # put into output object and return
     out.set_raveled( A, onlyFinite=True, strict=False)
-    if isinstance( endmembers, HyLibrary) and endmembers.has_band_names():
+    if isinstance( endmembers, BlackLibrary) and endmembers.has_band_names():
         out.set_band_names( endmembers.get_band_names() )
     else:
         out.set_band_names(["EM%d"%(i+1) for i in range(E.shape[0])])
     return out
 
-def endmembers( data : HyData, n : int, method : str = 'nfindr', **kwds):
+def endmembers( data : BlackData, n : int, method : str = 'nfindr', **kwds):
     """
     Use endmember identification methods implemented in pysptools to find candidate 
     "pure" pixels to use as endmembers. Note that these should always be manually vetted
     as they represent, in essence, outliers.
 
     Args:
-        data: a HyData instance (e.g. image or cloud) to unmix.
+        data: a BlackData instance (e.g. image or cloud) to unmix.
         n: The number of endmembers to find.
         method: The endmember identification method. These are fully documented in the 
                 pysptools documentation, and can be one of: 'nfindr', '' ...
     Returns:
-        library: A HyLibrary containing the identified endmembers. 
+        library: A BlackLibrary containing the identified endmembers. 
         indices: A numpy array containing the coordinates of the selected endmembers in the input data.
     """
     
@@ -135,6 +135,6 @@ def endmembers( data : HyData, n : int, method : str = 'nfindr', **kwds):
     im = np.array([ix[i,:] for i in im]).squeeze()
     
     # build output library
-    out = HyLibrary( np.array(em), lab=['EM%d'%(i+1) for i in range(len(em))], wav=data.get_wavelengths())
+    out = BlackLibrary( np.array(em), lab=['EM%d'%(i+1) for i in range(len(em))], wav=data.get_wavelengths())
     return out, im
 
