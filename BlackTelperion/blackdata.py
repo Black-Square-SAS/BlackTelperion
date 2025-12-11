@@ -431,32 +431,67 @@ class BlackData(object):
 
         return BlackData.to_grey(self.get_band(b))
 
-    #NOTE: Not sure what this does
-    # def get_raveled(self):
-    #     """
-    #     Get the data array as a 2D array of points/pixels. NOTE: this is just a view of the original data array, so any
-    #     operations changes made to it will affect the original image. Useful for fast transformations!
-    #
-    #     Returns:
-    #         pixels (ndarray): an array such that pixel[n][band] gives the spectra of the nth pixel.
-    #     """
-    #
-    #     return self.data.reshape(-1, self.data.shape[-1])
-    #
 
-    #NOTE: Note quite sure what is this for
-    # def X(self, onlyFinite = False):
-    #     """
-    #     A shorthand way of writing get_raveled(), as X is conventionally used for a vector of spectra.
-    #
-    #     Args:
-    #         onlyFinite (bool): True if data points containing nan bands should be removed from the feature vector. Default is False.
-    #     """
-    #     X = self.get_raveled()
-    #     if onlyFinite:
-    #         return X[ np.isfinite(X).all(axis=-1) ]
-    #     else:
-    #         return X
+    def get_raveled(self):
+        """
+        Get the data array as a 2D array of points/pixels, flattening spatial dimensions.
+
+        This is a fundamental operation for spectral data processing, converting multi-dimensional
+        hyperspectral data into the matrix format required by most spectral analysis algorithms.
+        For images, this transforms [x, y, bands] → [pixels, bands]. For point clouds, this
+        ensures consistent [points, bands] structure.
+
+        Returns:
+            ndarray: A 2D view of the data array where each row is a spectrum and each column is a
+                    band. Shape is (n_pixels, n_bands). This is a VIEW of the original data, not a
+                    copy, so modifications will affect the original dataset.
+
+        Note:
+            This method returns a view (not a copy) for memory efficiency when working with large
+            hyperspectral datasets. Use .copy() if you need an independent array. This method is
+            the foundation for X(), which adds additional filtering capabilities.
+
+        See Also:
+            X(): Higher-level method with optional NaN filtering
+            set_raveled(): Inverse operation to restore spatial structure
+        """
+
+         return self.data.reshape(-1, self.data.shape[-1])
+
+
+
+    def X(self, onlyFinite = False):
+        """
+        A shorthand way of writing get_raveled(), as X is conventionally used for a vector of spectra.
+
+        This method is essential for interfacing with many machine learning and spectral analysis
+        libraries (such as scikit-learn and pysptools) that expect data in a 2D matrix format where
+        each row represents a single spectrum. This is the standard representation in linear algebra
+        for spectral unmixing, classification, and dimensionality reduction algorithms.
+
+        The method name 'X' follows the mathematical convention where X represents a data matrix
+        of observations (pixels/points) × features (spectral bands).
+
+        Args:
+            onlyFinite (bool): True if data points containing nan bands should be removed from the
+                              feature vector. Default is False. This is critical for many algorithms
+                              that cannot handle NaN values, as it filters out invalid or masked pixels
+                              while preserving the spectral integrity of valid measurements.
+
+        Returns:
+            ndarray: A 2D array where each row is a spectrum. Shape is (n_pixels, n_bands) if
+                    onlyFinite=False, or (n_valid_pixels, n_bands) if onlyFinite=True.
+
+        Note:
+            This method is commonly used in conjunction with set_raveled() to enable workflows
+            that process data externally and then restore it to the original spatial structure.
+            For example: X = data.X() → process X → data.set_raveled(X_processed)
+        """
+         X = self.get_raveled()
+         if onlyFinite:
+             return X[ np.isfinite(X).all(axis=-1) ]
+         else:
+             return X
 
     def eval(self, op : str, print=False ):
         """
@@ -534,37 +569,73 @@ class BlackData(object):
 
             return out
 
+    def set_raveled(self, pix, shape=None, onlyFinite=False, strict=True):
+        """
+        Fills the image/dataset from a flattened array, restoring spatial structure.
 
-    # def set_raveled(self, pix, shape=None, onlyFinite = False, strict=True ):
-    #     """
-    #     Fills the image/dataset from a list of pixels of the format returned by get_pixel_list(...). Note that this does not
-    #     copy the list, but simply stores a view of it in this image.
-    #
-    #     Args:
-    #         pix (list, ndarray): a list such that pixel[n][band] gives the spectra of the nth pixel.
-    #         shape (tuple): the reshaped data dimensions. Defaults to the shape of the current dataset, except with auto-shape for the last dimension.
-    #         onlyFinite (bool): True if pix contains only pixel values corresponding to non-nan pixels in self.data (as returned by self.X( True ) ).
-    #         strict (bool): True if set_raveled should not change the number of bands in this image. Default is True.
-    #     """
-    #     if shape is None:
-    #         shape = list( self.data.shape )
-    #         shape[-1] = -1
-    #
-    #     if strict: # number of bands cannot change
-    #         assert self.data.shape[-1] == pix.shape[-1], \
-    #             "Error: image and pix array have different number of bands. To allow changes to band count please specify strict=False."
-    #         if onlyFinite:
-    #             self.data[ np.isfinite(self.data).all(axis=-1), : ] = pix
-    #         else:
-    #             self.data = pix.reshape(shape)
-    #     else:
-    #         newdata = np.full( self.data.shape[:-1] + (pix.shape[-1],), np.nan, )
-    #         if onlyFinite:
-    #             if onlyFinite:
-    #                 newdata[np.isfinite(self.data).all(axis=-1), :] = pix
-    #             else:
-    #                 newdata = pix.reshape( self.data.shape[:-1] + (pix.shape[-1],) )
-    #         self.data = newdata
+        This is the inverse operation of get_raveled()/X(), enabling workflows where data is
+        processed in 2D matrix form (for compatibility with standard libraries) and then restored
+        to its original multi-dimensional structure. This is essential for operations like spectral
+        unmixing, where algorithms return abundance maps that must be reshaped back into image format.
+
+        CRITICAL for spectral unmixing workflows: When unmixing, spectral bands are replaced with
+        abundance bands (e.g., 55 spectral bands → 3 abundance bands). Set strict=False to allow
+        this dimension change.
+
+        Args:
+            pix (ndarray): A 2D array where each row represents a spectrum, with shape
+                          (n_pixels, n_bands). This should match the format returned by X() or
+                          get_raveled().
+            shape (tuple): The target reshaped dimensions. Defaults to the current dataset shape
+                          with automatic sizing for the last dimension (bands). For images, this is
+                          typically (x, y, -1) where -1 allows flexible band count.
+            onlyFinite (bool): True if pix contains only values corresponding to non-NaN pixels in
+                              self.data (as returned by self.X(onlyFinite=True)). When True, only
+                              the finite pixels are updated while NaN pixels remain unchanged. This
+                              is critical when algorithms process only valid data and you need to
+                              restore it to a dataset that includes masked/invalid regions.
+            strict (bool): True if the number of bands cannot change. Default is True. Set to False
+                          for operations that change dimensionality, such as:
+                          - Spectral unmixing (spectral bands → abundance bands)
+                          - Feature extraction (many bands → few components)
+                          - Band selection (full spectrum → subset)
+
+        Raises:
+            AssertionError: If strict=True and pix has a different number of bands than self.data.
+
+        Note:
+            When onlyFinite=True, this method uses the CURRENT self.data to determine which pixels
+            are finite, then updates only those pixels with the new values. This preserves the
+            spatial structure of NaN/masked regions while updating valid data.
+
+            The method modifies self.data in place, replacing the entire array when strict=False
+            or updating specific pixels when onlyFinite=True.
+
+        See Also:
+            X(): Get data in 2D format with optional NaN filtering
+            get_raveled(): Get 2D view without NaN filtering
+        """
+        if shape is None:
+            shape = list(self.data.shape)
+            shape[-1] = -1
+
+        if strict:  # number of bands cannot change
+            assert self.data.shape[-1] == pix.shape[-1], \
+                "Error: image and pix array have different number of bands. To allow changes to band count please specify strict=False."
+            if onlyFinite:
+                self.data[np.isfinite(self.data).all(axis=-1), :] = pix
+            else:
+                self.data = pix.reshape(shape)
+        else:
+            # Create new data array with new number of bands
+            newdata = np.full(self.data.shape[:-1] + (pix.shape[-1],), np.nan)
+            if onlyFinite:
+                # Use the OLD data to get the finite mask
+                finite_mask = np.isfinite(self.data).all(axis=-1)
+                newdata[finite_mask, :] = pix
+            else:
+                newdata = pix.reshape(self.data.shape[:-1] + (pix.shape[-1],))
+            self.data = newdata
 
     def get_band_index(self, w, **kwds):
         """
