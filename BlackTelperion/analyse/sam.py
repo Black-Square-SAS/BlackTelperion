@@ -1,7 +1,7 @@
 """
 Functions for calculating spectral angles and doing spectral angle mapping.
 """
-import hylite
+import BlackTelperion
 import numpy as np
 
 def spectral_angles(reference, spectra):
@@ -38,7 +38,7 @@ def SAM(data, ref_spec):
     Returns:
         a HyData instance with the same type as data containing two bands: the class index, and the spectral angle to this (closest) class.
     """
-    if isinstance(ref_spec, hylite.HyLibrary):
+    if isinstance(ref_spec, BlackTelperion.BlackLibrary):
         # convert a HyLibrary instance to a list of spectra
         ref_spec = [[np.nanmedian( ref_spec.data[i,:,:], axis=0 )] for i in range(ref_spec.data.shape[0])]
     R = []

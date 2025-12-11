@@ -5,19 +5,19 @@ functions are simply designed to easily extract features and labels that are com
 """
 
 import numpy as np
-from hylite import HyData
+from BlackTelperion import BlackData
 
 
 def get_feature_vectors(data, labels, ignore=[]):
     """
-    Returns a feature vector and associated labels from a HyData instance.
+    Returns a feature vector and associated labels from a BlackData instance.
 
     Args:
-        data: the dataset (HyData instance) to extract features from.
+        data: the dataset (BlackData instance) to extract features from.
         labels: a list of boolean point or pixel masks where True values should be associated with
                 that label. Generated label indices will range from 0 to len(labels). Alternatively, if labels is
-                a HyData instance (e.g. a classification image), then labels will be extacted from this.
-        ignore: a list of labels to ignore (if labels is a HyData instance). E.g. [ 0 ] will ignore pixels labelled as background.
+                a BlackData instance (e.g. a classification image), then labels will be extacted from this.
+        ignore: a list of labels to ignore (if labels is a BlackData instance). E.g. [ 0 ] will ignore pixels labelled as background.
     Returns:
         A tuple containing:
 
@@ -25,8 +25,8 @@ def get_feature_vectors(data, labels, ignore=[]):
         - c = a list of the number of features for each class.
     """
 
-    # build boolean masks from HyData instance if necessary
-    if isinstance(labels, HyData):
+    # build boolean masks from BlackData instance if necessary
+    if isinstance(labels, BlackData):
         # extract unique labels
         ll = np.unique(labels.data)
 

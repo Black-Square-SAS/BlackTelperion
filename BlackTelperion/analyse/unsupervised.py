@@ -2,20 +2,20 @@
 Implementations basic unsupervised classification algorithms, largely based on scipy.
 """
 import numpy as np
-from hylite import HyData
-from hylite.analyse.sam import spectral_angles
+from BlackTelperion import BlackData
+from BlackTelperion.analyse.sam import spectral_angles
 from scipy.cluster.hierarchy import average, dendrogram, fcluster
 import matplotlib.pyplot as plt
-from hylite.filter import PCA
+from BlackTelperion.filter import PCA
 
 def cluster_hierarchical( data, nclasses, distance='SAM', vb=False, labels=None, **kwds ):
     """
-    Clusters a HyData instance using a hierarchical clustering algorithm and the
+    Clusters a BlackData instance using a hierarchical clustering algorithm and the
     specified distance metric. Note that this can be very slow for large datasets, but
     can work well for spectral libraries or small images.
 
     Args:
-        data: a HyData instance to cluster.
+        data: a BlackData instance to cluster.
         nclasses: the number of classes to extract (level to slice the tree at).
         distance: the distance metric to use. Options are 'SAM' (spectral angle) and 'pca' (use top n principal components).
         vb: True if a preview plot of the dendrogram should be created.
@@ -29,7 +29,7 @@ def cluster_hierarchical( data, nclasses, distance='SAM', vb=False, labels=None,
          - Z = the linkage matrix returned by scipy.
     """
 
-    assert isinstance( data, HyData ), "Error - dataset is not a HyData instance."
+    assert isinstance( data, BlackData ), "Error - dataset is not a BlackData instance."
 
 
     # calculate distance matrix
