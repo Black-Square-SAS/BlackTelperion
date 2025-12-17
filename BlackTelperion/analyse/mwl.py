@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import matplotlib
-#from BlackTelperion.correct.detrend import get_hull_corrected
+from BlackTelperion.correct.detrend import get_hull_corrected
 from gfit import initialise, gfit,evaluate
 from BlackTelperion import BlackCollection, BlackImage, BlackData#, HyCloud
 
