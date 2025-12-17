@@ -227,7 +227,7 @@ def loadWithNumpy( path, dtype=np.float32, mask_zero=True ):
         if interleave == 'bil':
             data = data.reshape((lines, bands, samples))
             data = np.transpose(data, (0, 2, 1))  # (lines, samples, bands)
-        elif interleave == 'bsq':
+        elif interleave == 'bsq' or interleave == 'BSQ':
             data = data.reshape((bands, lines, samples))
             data = np.transpose(data, (1, 2, 0))  # (lines, samples, bands)
         elif interleave == 'bip':
