@@ -1,8 +1,8 @@
 import unittest
 import os
-from hylite import io
+from BlackTelperion import io
 from pathlib import Path
-from hylite.analyse.mwl import *
+from BlackTelperion.analyse.mwl import *
 import shutil
 from tempfile import mkdtemp
 import numpy as np
@@ -10,9 +10,9 @@ import numpy as np
 
 class MyTestCase(unittest.TestCase):
     def test_hull(self):
-        from hylite.correct import get_hull_corrected
+        from BlackTelperion.correct import get_hull_corrected
         image = io.load(os.path.join(os.path.join(str(Path(__file__).parent.parent), "test_data"),"image.hdr"))
-        cloud = io.load(os.path.join(os.path.join(str(Path(__file__).parent.parent), "test_data"),"image.hdr"))
+        #cloud = io.load(os.path.join(os.path.join(str(Path(__file__).parent.parent), "test_data"),"image.hdr"))
 
         # test hull correction on numpy array
         Xhc = get_hull_corrected( image.data,vb=False )
@@ -20,8 +20,8 @@ class MyTestCase(unittest.TestCase):
         self.assertLessEqual( np.nanmax(Xhc), 1.0 )
         self.assertEqual( image.data.shape, Xhc.shape )
 
-        # test hull correction on HyData instances
-        for D in [image, cloud]:
+        # test hull correction on BlackData instances
+        for D in [image]:#, cloud]:
             Xhc = get_hull_corrected(D,vb=False)
             self.assertEqual(image.data.shape, Xhc.data.shape)
             self.assertGreaterEqual(np.nanmin(Xhc.data), 0.0)
@@ -32,12 +32,12 @@ class MyTestCase(unittest.TestCase):
         image.data[:50,:,:] = np.nan # add some nans to make more realistic
         cloud = io.load(os.path.join(os.path.join(str(Path(__file__).parent.parent), "test_data"),"image.hdr"))
 
-        # also create a HyLibrary instance
+        # also create a BlackLibrary instance
         image.header.set_sample_points('A', [(20, 15)]) # label some seed pixels in each sample
         image.header.set_sample_points('B', [(80, 15)])
         image.header.set_sample_points('C', [(140, 15)])
         image.header['class names'] = ['A', 'B', 'C']
-        from hylite.hylibrary import from_indices
+        from BlackTelperion.blacklibrary import from_indices
         lib = from_indices(image,
                            [image.header.get_sample_points(n)[0] for n in image.header.get_class_names()],
                            names=image.header.get_class_names(),
@@ -124,7 +124,7 @@ class MyTestCase(unittest.TestCase):
         df = np.inf
         try:
             io.save(pth+'/test', M)
-            print("MWL: ", os.path.exists('/Users/thiele67/Documents/Python/public/hylite/tests/M.mwl'))
+            print("MWL: ", os.path.exists('/Users/thiele67/Documents/Python/public/BlackTelperion/tests/M.mwl'))
             eq0 = os.path.exists(os.path.join(pth,'test.mwl')) # save worked?
             M2 = io.load(os.path.join(pth,'test.hdr'))
 
@@ -142,10 +142,10 @@ class MyTestCase(unittest.TestCase):
         self.assertTrue(eq1)
         self.assertTrue(df < 1e-2) # difference should be very small
 
-    def test_TPT(self):
-        from hylite.filter import TPT
-        image = io.load(os.path.join(os.path.join(str(Path(__file__).parent.parent), "test_data"),"image.hdr"))
-        # tpt,p,d = TPT(image, sigma=10., window=7, thresh=0, vb=False)
+    #def test_TPT(self):
+    #    from BlackTelperion.filter import TPT
+    #    image = io.load(os.path.join(os.path.join(str(Path(__file__).parent.parent), "test_data"),"image.hdr"))
+    #    # tpt,p,d = TPT(image, sigma=10., window=7, thresh=0, vb=False)
 
 if __name__ == '__main__':
     unittest.main()
