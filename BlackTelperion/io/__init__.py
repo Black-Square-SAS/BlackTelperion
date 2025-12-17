@@ -10,7 +10,7 @@ from pathlib import Path
 
 from BlackTelperion import BlackImage, BlackLibrary, BlackData, BlackCollection
 #from BlackTelperion.project import PMap, Camera, Pushbroom
-#from BlackTelperion.analyse.mwl import MWL
+from BlackTelperion.analyse.mwl import MWL
 #from distutils.dir_util import copy_tree
 import os
 
