@@ -99,7 +99,7 @@ def loadHeader(path):
                 # If value starts with an open brace, it's the start of a block - strip the brace off and read the rest of the block
                 if (re.match("{", value) is not None):
                     inblock = True
-                    value = re.sub("^{", "", value, 1)
+                    value = re.sub("^{", "", value, count=1)
                     # If value ends with a close brace it's the end of the block as well - strip the brace off
                     if (re.search("}$", value)):
                         inblock = False
