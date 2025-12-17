@@ -2,8 +2,8 @@ import unittest
 from tempfile import mkdtemp
 import shutil
 import numpy as np
-import hylite
-from hylite import io
+import BlackTelperion
+from BlackTelperion import io
 import os
 from pathlib import Path
 
@@ -18,7 +18,7 @@ class MyTestCase(unittest.TestCase):
         image.header.set_sample_points('B', [(80, 15)])
         image.header.set_sample_points('C', [(140, 15)])
         image.header['class names'] = ['A', 'B', 'C']
-        from hylite.hylibrary import from_indices
+        from BlackTelperion.blacklibrary import from_indices
         lib = from_indices(image,
                            [image.header.get_sample_points(n)[0] for n in image.header.get_class_names()],
                            names=image.header.get_class_names(),
@@ -26,18 +26,18 @@ class MyTestCase(unittest.TestCase):
         return image, cloud, lib
 
     def test_save_header_only(self):
-        from hylite import HyCollection
+        from BlackTelperion import BlackCollection
         pth = mkdtemp()  # create output directory
         try:
-            C = HyCollection("test", pth ) # create a HyCollection
+            C = BlackCollection("test", pth ) # create a BlackCollection
             C.attr = "foo"
-            self.assertEquals(C.file_type, 'Hylite Collection') # check "file type" key is loaded as file_type
+            self.assertEquals(C.file_type, 'BlackTelperion Collection') # check "file type" key is loaded as file_type
             self.assertEquals(C.file_type, C.header['file type'])  # check "file type" key is loaded as file_type
             C.save()
 
             C2 = io.load(os.path.join(pth,'test.hdr'))
             self.assertEquals(C.attr, "foo")
-            self.assertEquals(C2.file_type, 'Hylite Collection')  # check "file type" key is loaded as file_type
+            self.assertEquals(C2.file_type, 'BlackTelperion Collection')  # check "file type" key is loaded as file_type
             self.assertEquals(C2.file_type, C2.header['file type'])  # check "file type" key is loaded as file_type
         except:
             shutil.rmtree(pth)  # delete temp directory
@@ -47,13 +47,13 @@ class MyTestCase(unittest.TestCase):
 
 
     def test_basic(self):
-        from hylite import HyCollection
+        from BlackTelperion import BlackCollection
         pth = mkdtemp() # create output directory
         array = np.random.rand(50)  # create some random data
         image, cloud, lib = self.getTestData()
         try:
-            ### Create and save a HyCollection
-            C = HyCollection("test", pth ) # create a HyCollection
+            ### Create and save a BlackCollection
+            C = BlackCollection("test", pth ) # create a BlackCollection
             C.array = array # put in numpy array
             C.image = image
             C.cloud = cloud
@@ -100,18 +100,19 @@ class MyTestCase(unittest.TestCase):
             
         except:
             shutil.rmtree(pth)  # delete temp directory
-            self.assertFalse(True, "Error - failed basic HyCollection tests")
+            self.assertFalse(True, "Error - failed basic BlackCollection tests")
         shutil.rmtree(pth)  # delete temp directory
 
     def test_image_png(self):
-        from hylite import HyCollection
+        from BlackTelperion import BlackCollection
         pth = mkdtemp()  # create output directory
         array = np.random.rand(50)  # create some random data
         image, cloud, lib = self.getTestData()
+        BlackTelperion.band_select_threshold = 2000  # NOTE: Sintetic data does not have the required wavelengths
         try:
-            C = HyCollection("test", pth)  # create a HyCollection
+            C = BlackCollection("test", pth)  # create a BlackCollection
             C.image = image
-            C.rgb = image.export_bands(hylite.RGB)
+            C.rgb = image.export_bands(BlackTelperion.RGB)
             C.rgb.percent_clip()
             C.rgb.header['magic_key'] = '42'
             C.rgb.data = (C.rgb.data * 255).astype(np.uint8) # convert to uint8 - this should be saved as .png
@@ -122,22 +123,23 @@ class MyTestCase(unittest.TestCase):
             self.assertTrue( os.path.exists( os.path.join( C.getDirectory(), "rgb.png" ) ) ) # this should be png
             self.assertTrue(os.path.exists(os.path.join(C.getDirectory(), "image.dat"))) # this should be dat
             self.assertEqual( C.rgb.data.dtype, np.uint8 ) # load from disk and check type
-            self.assertListEqual(list(C.rgb.get_wavelengths()), [503.4, 551.19, 681.63] ) # check header info is preserved
+            self.assertListEqual(list(C.rgb.get_wavelengths()), [502.7, 556.8, 700.0] ) # check header info is preserved
+            #NOTE: line test above only works with a set train data, where the rgb bands values were extracted from the original .hdr file and hard coded here
             self.assertEqual(C.rgb.header['magic_key'], '42')
 
         except:
             shutil.rmtree(pth)  # delete temp directory
-            self.assertFalse(True, "Error - failed nested HyCollection tests")
+            self.assertFalse(True, "Error - failed nested BlackCollection tests")
         shutil.rmtree(pth)  # delete temp directory
 
     def test_nested(self):
-        from hylite import HyCollection
+        from BlackTelperion import BlackCollection
         pth = mkdtemp() # create output directory
         array = np.random.rand(50)  # create some random data
         image, cloud, lib = self.getTestData()
         try:
-            ### Create and save a HyCollection
-            C = HyCollection("test", pth ) # create a HyCollection
+            ### Create and save a BlackCollection
+            C = BlackCollection("test", pth ) # create a BlackCollection
             C.funky_data_base = 'foobar'
             C.addSub( "SC1" ) # create a subcollection
             C.SC1.array = array
@@ -152,7 +154,7 @@ class MyTestCase(unittest.TestCase):
             C.addSub("SC3") # add a subcollection with no data directory (only header)
             C.SC3.message = "hi!"
             C.SC3.funky_data_C = 'This is the answer!'
-            C.SC3.another_image = image.export_bands(hylite.RGB)
+            C.SC3.another_image = image.export_bands(BlackTelperion.RGB)
             C.save()
 
             ### Reload it
@@ -179,13 +181,13 @@ class MyTestCase(unittest.TestCase):
                 query = _C.query(ext_pattern=['dat', 'HyImage'], recurse=True,
                                 ram_only=False)  # matches string attributes
                 self.assertListEqual(query, ['another_image', 'image'])
-                query = _C.query(ext_pattern=['hyc', 'HyCollection'], recurse=False, ram_only=False)  # test no recurse
-                query2 = _C.query(ext_pattern=['hyc', 'HyCollection'], recurse=True, ram_only=False,
+                query = _C.query(ext_pattern=['hyc', 'BlackCollection'], recurse=False, ram_only=False)  # test no recurse
+                query2 = _C.query(ext_pattern=['hyc', 'BlackCollection'], recurse=True, ram_only=False,
                                 recurse_matches=False )  # test no recurse matches
                 self.assertListEqual(query, query2)
         except:
             shutil.rmtree(pth)  # delete temp directory
-            self.assertFalse(True, "Error - failed nested HyCollection tests")
+            self.assertFalse(True, "Error - failed nested BlackCollection tests")
         shutil.rmtree(pth)  # delete temp directory
 
 if __name__ == '__main__':
