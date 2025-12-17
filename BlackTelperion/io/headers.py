@@ -112,7 +112,7 @@ def loadHeader(path):
             value = currentline.strip()
             if (re.search("}$", value)):
                 inblock = False
-                value = re.sub("}$", "", value, 1)
+                value = re.sub(r"}$", "", value, count=1)
                 value = value.strip()
             header[key] = header[key] + value
         currentline = hdrfile.readline()
