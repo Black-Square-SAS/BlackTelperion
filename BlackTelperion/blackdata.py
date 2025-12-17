@@ -456,7 +456,7 @@ class BlackData(object):
             set_raveled(): Inverse operation to restore spatial structure
         """
 
-         return self.data.reshape(-1, self.data.shape[-1])
+        return self.data.reshape(-1, self.data.shape[-1])
 
 
 
@@ -487,11 +487,11 @@ class BlackData(object):
             that process data externally and then restore it to the original spatial structure.
             For example: X = data.X() → process X → data.set_raveled(X_processed)
         """
-         X = self.get_raveled()
-         if onlyFinite:
-             return X[ np.isfinite(X).all(axis=-1) ]
-         else:
-             return X
+        X = self.get_raveled()
+        if onlyFinite:
+            return X[ np.isfinite(X).all(axis=-1) ]
+        else:
+            return X
 
     def eval(self, op : str, print=False ):
         """
