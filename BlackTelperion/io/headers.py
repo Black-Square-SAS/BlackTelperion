@@ -91,7 +91,7 @@ def loadHeader(path):
         if not inblock:
             # Split line on first equals sign
             if (re.search("=", currentline) is not None):
-                linesplit = re.split("=", currentline, 1)
+                linesplit = re.split("=", currentline, maxsplit=1)
                 # key = str.lower(linesplit[0].strip())
                 key = linesplit[0].strip()
                 value = linesplit[1].strip()
