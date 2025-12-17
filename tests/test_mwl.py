@@ -141,7 +141,7 @@ class MyTestCase(unittest.TestCase):
         self.assertTrue(eq0) # fail here if something went wrong
         self.assertTrue(eq1)
         self.assertTrue(df < 1e-2) # difference should be very small
-
+    #TODO: once filter is reaady. Also, there is a predication warning related to python standard library
     #def test_TPT(self):
     #    from BlackTelperion.filter import TPT
     #    image = io.load(os.path.join(os.path.join(str(Path(__file__).parent.parent), "test_data"),"image.hdr"))
