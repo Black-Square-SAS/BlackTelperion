@@ -350,7 +350,7 @@ class MWL(BlackCollection):
             else:
                 n = L
 
-        c = mpl.cm.get_cmap(kwds.get('cmap', 'tab10'))(n.ravel() / np.nanmax(n))
+        c = mpl.colormaps.get_cmap(kwds.get('cmap', 'tab10'))(n.ravel() / np.nanmax(n))
 
         for i, f in enumerate(range(self.n)):
             if i >= len(symbols):
@@ -413,7 +413,7 @@ class MWL(BlackCollection):
             else:
                 n = L
 
-        c = mpl.cm.get_cmap(kwds.get('cmap', 'tab10'))(n.ravel() / np.nanmax(n))
+        c = mpl.colormaps.get_cmap(kwds.get('cmap', 'tab10'))(n.ravel() / np.nanmax(n))
 
         # draw biplot
         ax.scatter(p[..., 0].ravel()[::step], p[..., 1].ravel()[::step], c=c[::step], lw=0, s=kwds.get("point_size", 20),
@@ -487,7 +487,7 @@ class MWL(BlackCollection):
                 kwds['n'] = L.ravel()
 
         # get colormap
-        cmap = mpl.cm.get_cmap(kwds.get('cmap', 'tab10'))
+        cmap = mpl.colormaps.get_cmap(kwds.get('cmap', 'tab10'))
 
         # plot overview image
         ax1.set_xticks([])
