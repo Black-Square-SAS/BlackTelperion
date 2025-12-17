@@ -1,8 +1,8 @@
 import unittest
 import os
 from pathlib import Path
-import hylite.io as io
-from hylite.project.align import *
+import BlackTelperion.io as io
+import BlackTelperion
 import shutil
 from tempfile import mkdtemp
 import numpy as np
@@ -18,7 +18,7 @@ class TestAlign(unittest.TestCase):
         image.header['class names'] = ['A', 'B', 'C']
 
         # test building library with sample positions only
-        from hylite.hylibrary import from_indices
+        from BlackTelperion.blacklibrary import from_indices
         lib = from_indices(image,
                              [image.header.get_sample_points(n)[0] for n in image.header.get_class_names()],
                              names=image.header.get_class_names(),
@@ -26,16 +26,16 @@ class TestAlign(unittest.TestCase):
         self.assertEqual( lib.data.shape[0], 3 )
 
         # expand labels using grab-cut
-        from hylite.filter import label_blocks
+        from BlackTelperion.filter import label_blocks
         cls = label_blocks(image, s=5,  # number of pixels to label outside of seed point
                            epad=1,  # ignore these pixels near edges (can be dodgy sometimes)
                            erode=1,  # apply erode filter to avoid pixels near sample edges
                            boost=10,  # boost contrast before labelling
-                           bands=hylite.SWIR)
+                           bands=BlackTelperion.SWIR)
 
 
         # test building library and plotting functions
-        from hylite.hylibrary import from_classification
+        from BlackTelperion.blacklibrary import from_classification
         for sample in [50, (50,),'all', (5,50,95)]:
             lib = from_classification( image, cls, ignore=[0], subsample=sample )
             lib.quick_plot(color=['r','g','b'], clip=(0,50,100))
