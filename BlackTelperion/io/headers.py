@@ -103,7 +103,7 @@ def loadHeader(path):
                     # If value ends with a close brace it's the end of the block as well - strip the brace off
                     if (re.search("}$", value)):
                         inblock = False
-                        value = re.sub("}$", "", value, 1)
+                        value = re.sub("}$", "", value, count=1)
                 value = value.strip()
                 header[key] = value
         else:
