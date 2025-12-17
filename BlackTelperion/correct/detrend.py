@@ -2,7 +2,7 @@
 Hyperspectral detrending algorithms such as hull correction.
 """
 
-from hylite import HyLibrary, HyData
+from BlackTelperion import BlackLibrary, BlackData
 import numpy as np
 from gfit.util import remove_hull
 
@@ -42,14 +42,14 @@ def polynomial(data, degree = 1, method='div'):
 
 def get_hull_corrected(data, band_range=None, method='div', hull='upper', vb=True):
     """
-    Apply a hull correction to an entire HyData instance (HyImage, HyCloud or HyLibrary). Returns a corrected copy of
+    Apply a hull correction to an entire BlackData instance (HyImage, HyCloud or BlackLibrary). Returns a corrected copy of
     the input dataset. Note that noise can greatly effect hull corrections, so you should consider denoising first (see
-    HyData.smooth_median(...) and HyData.smooth_savgol(...).
+    BlackData.smooth_median(...) and BlackData.smooth_savgol(...).
 
     Args:
-        data: a numpy array or HyData instance to detrend.
+        data: a numpy array or BlackData instance to detrend.
         band_range: Tuple containing the (min,max) band indices or wavelengths to run the correction between. If None
-                     (default) then the correction is run of the entire range. Only works if data is a HyData instance.
+                     (default) then the correction is run of the entire range. Only works if data is a BlackData instance.
         method: Trend removal method: 'divide' or 'subtract'. Default is 'divide'.
         hull: 'upper' if a hull should be fitted to the top of the data (default), or 'lower' if it should be fit to the bottom of the data.
         vb: True if this should print output.
@@ -58,7 +58,7 @@ def get_hull_corrected(data, band_range=None, method='div', hull='upper', vb=Tru
         A hull corrected dataset.
     """
 
-    if isinstance(data, HyData):
+    if isinstance(data, BlackData):
 
         # create copy containing the bands of interest
         if band_range is None:
@@ -103,8 +103,8 @@ def get_hull_corrected(data, band_range=None, method='div', hull='upper', vb=Tru
     D[valid] = X  # copy data back into original array
 
     # do housekeeping and return
-    if isinstance(data, HyData):
-        if isinstance(corrected, HyLibrary):
+    if isinstance(data, BlackData):
+        if isinstance(corrected, BlackLibrary):
             corrected.upper = None # reset upper and lower limits as these will now be incorrect
             corrected.lower = None # reset upper and lower limits as these will now be incorrect
         corrected.set_raveled(D)
