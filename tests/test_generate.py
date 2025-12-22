@@ -3,7 +3,7 @@ import numpy as np
 
 class MyTestCase(unittest.TestCase):
     def test_generate(self):
-        from hylite.reference import genImage, randomSpectra
+        from BlackTelperion.reference import genImage, randomSpectra
         im,A = genImage()
         self.assertTrue(im.ydim() == 512) # check shape
         self.assertTrue(np.isfinite(im.data).all() ) # check all finite
