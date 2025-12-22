@@ -4,6 +4,6 @@ radiance to reflectance. Data detrending methods (e.g. hull corrections) are als
 """
 
 from BlackTelperion.correct.detrend import get_hull_corrected
-#from .panel import Panel
-#from .equalize import norm_eq, hist_eq
+from .panel import Panel
+from .equalize import norm_eq, hist_eq
 
