@@ -4,14 +4,14 @@ and Oren-Nayar BRDFs.
 """
 
 import numpy as np
-import hylite
+import BlackTelperion
 
 def estimate_incidence(normals, sunvec):
     """
     Utility function to estimate the cosine of incidence angles based on normals and calculated sun position.
 
     Args:
-        normals: either: (1) a HyImage with band 0 = nx, band 1 = ny and band 2 = nz, (2) HyCloud instance containing
+        normals: either: (1) a BlackImage with band 0 = nx, band 1 = ny and band 2 = nz, (2) BlackCloud instance containing
                  normals, or (3) mx3 numpy array of normal vectors.
         sunvec: a numpy array containing the sun illumination vector (as calculated by estimate_sun_vec(...)).
 
@@ -20,10 +20,11 @@ def estimate_incidence(normals, sunvec):
     """
 
     # extract normal vectors
-    if isinstance(normals, hylite.HyCloud):
-        N = normals.normals[:, :3]
-        outshape = normals.point_count()
-    elif isinstance(normals, hylite.HyImage):
+    #if isinstance(normals, BlackTelperion.BlackCloud):
+    #    N = normals.normals[:, :3]
+    #    outshape = normals.point_count()
+    #elif
+    if isinstance(normals, BlackTelperion.BlackImage):
         N = normals.get_raveled()[:, :3]
         outshape = (normals.xdim(), normals.ydim())
     else:

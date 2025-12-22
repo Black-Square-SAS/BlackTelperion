@@ -1,12 +1,12 @@
 """
 Classes containing different occlusion models (e.g. estimators for shadows, sky view factor etc.)
 """
-import hylite
+import BlackTelperion
 import matplotlib.pyplot as plt
 import numpy as np
 
-from hylite.correct import get_hull_corrected
-from hylite.multiprocessing import parallel_chunks
+from BlackTelperion.correct import get_hull_corrected
+from BlackTelperion.multiprocessing import parallel_chunks
 
 
 def estimate_path_radiance(image, depth, thresh=1):
@@ -14,16 +14,16 @@ def estimate_path_radiance(image, depth, thresh=1):
     Apply the dark object subtraction (DOS) method to estimate path radiance in the provided image.
 
     Args:
-        image: the hyperspectral image (HyImage instance) to estimate path radiance for.
+        image: the hyperspectral image (BlackImage instance) to estimate path radiance for.
         depth: A 2-D (width,height) numpy array of pixel depths in meters. This can be easily computed using
-               a HyScene instance.
+               a BlackScene instance.
         thresh: the percentile threshold to use when selecting dark pixels. Default is 1%.
 
     Returns:
         A tuple containing:
 
             - spectra = a numpy array containing the estimated path radiance spectra (in radiance per meter of depth).
-            - path = a HyImage instance containing the estimated path radiance per pixel (computed by multiplying
+            - path = a BlackImage instance containing the estimated path radiance per pixel (computed by multiplying
                   the spectra by the depth).
     """
 
@@ -70,7 +70,7 @@ def correct_path_absorption(data, band_range=(0, -1), thresh=99, atabs = 1126., 
         vb: True if a progress bar should be created during hull correction steps.
 
     Returns:
-        a HyData instance containing the corrected spectra.
+        a BlackData instance containing the corrected spectra.
     """
     assert isinstance(atabs, float), "Absorption wavelength must be float"
     # subset dataset
@@ -87,7 +87,7 @@ def correct_path_absorption(data, band_range=(0, -1), thresh=99, atabs = 1126., 
     # extract pixels that are affected most by the features
     highratio = out.data[atm_temp > np.percentile(atm_temp, 90)]
     # hull correct those
-    hull = get_hull_corrected(hylite.HyData(highratio), vb=vb)
+    hull = get_hull_corrected(BlackTelperion.BlackData(highratio), vb=vb)
     # extract the always consistent absorptions
     hull_max = np.nanpercentile(hull.data, thresh, axis=0)
 

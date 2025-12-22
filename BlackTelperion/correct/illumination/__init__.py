@@ -8,14 +8,14 @@ import numpy as np
 import pytz
 from scipy import stats
 import datetime
-from hylite.correct import get_hull_corrected
+from BlackTelperion.correct import get_hull_corrected
 import matplotlib.pyplot as plt
 import numpy as np
 
-#####################
+#####################hylite
 ## Utility functions
 ######################
-from hylite.correct import Panel
+from BlackTelperion.correct import panel
 
 from .occlusion import *
 from .reflection import *
@@ -165,7 +165,7 @@ def UAC(data, band_range=(0, -1), thresh=98, vb=True):
         vb: True if a progress bar should be created during hull correction steps.
 
     Returns:
-        a HyData instance containing the corrected spectra.
+        a BlackData instance containing the corrected spectra.
     """
     # subset dataset
     out = data.export_bands(band_range)
@@ -201,12 +201,12 @@ def estimate_illu(image, panel, pilf, pskv, ilf, skv=0.6, oc=None, thresh=0.01, 
               0 is used then it is assumed that the panel is completely shaded.
         pskv: a measured or estimated skyview factor for the panel (from 0.1 to 1).
         ilf: direct illumination factors representing the fraction of downwelling light reflected towards the
-             sensor, as estimated using e.g., hylite.correct.illumination.reflection.calcLambert(...) or
-             hylite.correct.illumination.reflection.calcOrenNayar(..).
+             sensor, as estimated using e.g., BlackTelperion.correct.illumination.reflection.calcLambert(...) or
+             BlackTelperion.correct.illumination.reflection.calcOrenNayar(..).
         skv: a(width,height) array of skyview factors or a float containg the average sky view factor (0 to 1)
              for the scene. Default is 0.6.
         oc: a (width, height) array of occlusion factors computed using
-            e.g., hylite.correct.illumination.occlusion.calcBandRatioOcc, or None (default; for no cast shadows).
+            e.g., BlackTelperion.correct.illumination.occlusion.calcBandRatioOcc, or None (default; for no cast shadows).
         thresh: the threshold for direct illumination factor (skv * (1-oc)) at which a pixel is considered entirely
                 lit by ambient (sky) light. Default is 0.01.
         clip: a subset of the image to use for estimation (to ensure our assumption of equal median reflectance between
@@ -320,7 +320,7 @@ class IlluModel(object):
         # make all attributes numpy arrays
         for attr in ['I', 'P', 'S', 'skv', 'rf', 'oc']:
             val = getattr(self, attr)
-            if isinstance(val, hylite.HyData):  # hydata instance
+            if isinstance(val, BlackTelperion.BlackData):  # hydata instance
                 setattr(self, attr, np.array(val.data).squeeze().astype(np.float32))  # copy out data array
             else:
                 setattr(self, attr, np.array(val).squeeze().astype(np.float32))
@@ -339,7 +339,7 @@ class IlluModel(object):
         Returns:
             an array containing the illumination spectra in its last axis.
         """
-        if isinstance(R, hylite.HyData):
+        if isinstance(R, BlackTelperion.BlackData):
             R = R.data.squeeze()
         else:
             R = np.array(R).squeeze()
@@ -361,7 +361,7 @@ class IlluModel(object):
         Returns:
             an array containing the reflectance spectra in its last axis.
         """
-        if isinstance(r, hylite.HyData):
+        if isinstance(r, BlackTelperion.BlackData):
             self.r = r.data.squeeze()
         else:
             self.r = np.array(r).squeeze()
@@ -413,7 +413,7 @@ class IlluModel(object):
         Plot the relationship between illumination and measured radiance.
 
         Args:
-            radiance: the radiance data (HyImage or HyCloud) to compare too. Shape must match internal self.data array.
+            radiance: the radiance data (BlackImage or BlackCloud) to compare too. Shape must match internal self.data array.
             bands: the band (integer or float), band range (tuple) or bands (list) to include on the regression plot. Default
                    is None (use all bands).
             n: plot every nth point (only) to speed up plotting. Default is 100. This value does not affect the regressions.
@@ -549,7 +549,7 @@ class ELC(object):
 
         self.wav = np.array(panels[0].get_wavelengths())
         for p in panels:
-            assert isinstance(p, Panel), "Error - ELC panels must be instances of hylite.correct.Panel"
+            assert isinstance(p, Panel), "Error - ELC panels must be instances of BlackTelperion.correct.Panel"
             assert (self.wav == np.array(
                 p.get_wavelengths())).all(), 'Error - ELC panels must cover the same wavelengths'
 
@@ -594,7 +594,7 @@ class ELC(object):
         Apply this empirical line calibration to the specified image.
 
         Args:
-            data: a HyData instance to correct
+            data: a BlackData instance to correct
             **kwds: Keywords can include:
 
                  - thresh = the threshold slope. Defaults to the 90th percentile.
