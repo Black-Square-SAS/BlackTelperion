@@ -8,73 +8,73 @@ import shutil
 from tempfile import mkdtemp
 import multiprocessing as mp
 from pathlib import Path
-from hylite import HyCloud, HyImage
-from hylite import io
+from BlackTelperion import BlackImage#, BlackCloud
+from BlackTelperion import io
 
 
 def _split(data, nchunks):
     """
-    Split the specified HyCloud instance into a number of chunks.
+    Split the specified BlackCloud instance into a number of chunks.
 
     Args:
-        data = the complete HyData object to copy and split.
+        data = the complete BlackData object to copy and split.
         nchunks = the number of chunks to split into.
     Returns:
         a list of split
     """
 
-    if isinstance(data, HyCloud):  # special case for hyperclouds - split xyz, rgb and normals too
-        chunksize = int(np.floor(data.point_count() / nchunks))
-        chunks = [(i * chunksize, (i + 1) * chunksize) for i in range(nchunks)]
-        chunks[-1] = (chunks[-1][0], data.point_count())  # expand last chunk to include remainder
+    # if isinstance(data, BlackCloud):  # special case for hyperclouds - split xyz, rgb and normals too
+    #     chunksize = int(np.floor(data.point_count() / nchunks))
+    #     chunks = [(i * chunksize, (i + 1) * chunksize) for i in range(nchunks)]
+    #     chunks[-1] = (chunks[-1][0], data.point_count())  # expand last chunk to include remainder
+    #
+    #     # split points
+    #     xyz = [data.xyz[c[0]:c[1], :].copy() for c in chunks]
+    #
+    #     # split data
+    #     bands = [None for c in chunks]
+    #     if data.has_bands():
+    #         X = data.get_raveled().copy()
+    #         bands = [X[c[0]:c[1], :] for c in chunks]
+    #
+    #     # split rgb
+    #     rgb = [None for c in chunks]
+    #     if data.has_rgb():
+    #         rgb = [data.rgb[c[0]:c[1], :].copy() for c in chunks]
+    #
+    #     # split normals
+    #     normals = [None for c in chunks]
+    #     if data.has_normals():
+    #         normals = [data.normals[c[0]:c[1], :].copy() for c in chunks]
+    #
+    #     return [BlackCloud(xyz[i],
+    #                     rgb=rgb[i],
+    #                     normals=normals[i],
+    #                     bands=bands[i],
+    #                     header=data.header.copy()) for i in range(len(chunks))]
+    #
+    # else:  # just split data (for BlackImage and other types)
+    X = data.get_raveled().copy()
+    chunksize = int(np.floor(X.shape[0] / nchunks))
+    chunks = [(i * chunksize, (i + 1) * chunksize) for i in range(nchunks)]
+    chunks[-1] = (chunks[-1][0], X.shape[0])  # expand last chunk to include remainder
 
-        # split points
-        xyz = [data.xyz[c[0]:c[1], :].copy() for c in chunks]
+    out = []
+    for c in chunks:
+        _o = data.copy(data=False)  # create copy
+        _o.data = X[c[0]:c[1], :][:,None,:]
+        out.append(_o)
 
-        # split data
-        bands = [None for c in chunks]
-        if data.has_bands():
-            X = data.get_raveled().copy()
-            bands = [X[c[0]:c[1], :] for c in chunks]
-
-        # split rgb
-        rgb = [None for c in chunks]
-        if data.has_rgb():
-            rgb = [data.rgb[c[0]:c[1], :].copy() for c in chunks]
-
-        # split normals
-        normals = [None for c in chunks]
-        if data.has_normals():
-            normals = [data.normals[c[0]:c[1], :].copy() for c in chunks]
-
-        return [HyCloud(xyz[i],
-                        rgb=rgb[i],
-                        normals=normals[i],
-                        bands=bands[i],
-                        header=data.header.copy()) for i in range(len(chunks))]
-
-    else:  # just split data (for HyImage and other types)
-        X = data.get_raveled().copy()
-        chunksize = int(np.floor(X.shape[0] / nchunks))
-        chunks = [(i * chunksize, (i + 1) * chunksize) for i in range(nchunks)]
-        chunks[-1] = (chunks[-1][0], X.shape[0])  # expand last chunk to include remainder
-
-        out = []
-        for c in chunks:
-            _o = data.copy(data=False)  # create copy
-            _o.data = X[c[0]:c[1], :][:,None,:]
-            out.append(_o)
-
-        return out
+    return out
 
 def _merge(chunks, shape):
     """
-    Merge a list of HyData objects into a combined one (aka. do the opposite of split(...)).
+    Merge a list of BlackData objects into a combined one (aka. do the opposite of split(...)).
 
     Args:
-        chunks = a list of HyData chunks to merge.
+        chunks = a list of BlackData chunks to merge.
         shape = the output data shape.
-    Returns: a single merged HyData instance (of the same type as the input).
+    Returns: a single merged BlackData instance (of the same type as the input).
                The header of this instance will be a copy of chunks[0].header.
     """
 
@@ -82,21 +82,21 @@ def _merge(chunks, shape):
     X = np.vstack([c.data for c in chunks])
     X = X.reshape((*shape, -1))
 
-    if not isinstance(chunks[0], HyCloud): # easy!
+    #if not isinstance(chunks[0], BlackCloud): # easy!
         # make copy
-        out = chunks[0].copy(data=False)
-        out.data = X
-        out.header = chunks[0].header.copy()
-        return out
-    else: # less easy
-        xyz = np.vstack([c.xyz for c in chunks])
-        rgb = None
-        if chunks[0].has_rgb():
-            rgb = np.vstack([c.rgb for c in chunks])
-        normals = None
-        if chunks[0].has_normals():
-            normals = np.vstack([c.normals for c in chunks])
-        return HyCloud( xyz, rgb=rgb, normals=normals, bands=X, header=chunks[0].header.copy())
+    out = chunks[0].copy(data=False)
+    out.data = X
+    out.header = chunks[0].header.copy()
+    return out
+    # else: # less easy
+    #     xyz = np.vstack([c.xyz for c in chunks])
+    #     rgb = None
+    #     if chunks[0].has_rgb():
+    #         rgb = np.vstack([c.rgb for c in chunks])
+    #     normals = None
+    #     if chunks[0].has_normals():
+    #         normals = np.vstack([c.normals for c in chunks])
+    #     return BlackCloud( xyz, rgb=rgb, normals=normals, bands=X, header=chunks[0].header.copy())
 
 def _call(func, path, arg, kwd, n):
     """
@@ -108,16 +108,16 @@ def _call(func, path, arg, kwd, n):
     # func, path, arg, kwd = args
 
     # load data chunk
-    if '.ply' in path:
-        data = io.loadCloudPLY(path)  # load point cloud
-        result = func(data, *arg, **kwd)  # compute results
-        assert isinstance(result, HyCloud), "Error - function %s does not return a HyCloud." % func
-        io.saveCloudPLY(path, result)  # save point cloud
-    else:
-        data = io.load(path)  # load image
-        result = func(data, *arg, **kwd)  # compute results
-        assert isinstance(result, HyImage), "Error - function %s does not return a HyImage." % func
-        io.save(path, result)  # save result
+    # if '.ply' in path:
+    #     data = io.loadCloudPLY(path)  # load point cloud
+    #     result = func(data, *arg, **kwd)  # compute results
+    #     assert isinstance(result, BlackCloud), "Error - function %s does not return a BlackCloud." % func
+    #     io.saveCloudPLY(path, result)  # save point cloud
+    # else:
+    data = io.load(path)  # load image
+    result = func(data, *arg, **kwd)  # compute results
+    assert isinstance(result, BlackImage), "Error - function %s does not return a BlackImage." % func
+    io.save(path, result)  # save result
 
     return True  # done
 
@@ -129,9 +129,9 @@ def parallel_chunks(function, data, *args, **kwds):
     loading files from cache) are too costly.
 
     Args:
-        function: the function to run on each chunk of the dataset. Must take a HyCloud or HyImage dataset as it's first
-                  argument and also return a HyCloud or HyImage dataset (cf., mwl(...), get_hull_corrected(...)).
-        data (HyCloud or HyImage): data to run the function on.
+        function: the function to run on each chunk of the dataset. Must take a BlackCloud or BlackImage dataset as it's first
+                  argument and also return a BlackCloud or BlackImage dataset (cf., mwl(...), get_hull_corrected(...)).
+        data (BlackCloud or BlackImage): data to run the function on.
         args (tuple): tuple of arguments to pass to the function.
         nthreads (int): the number of threads to spawn. Default is the number of cores - 2. Negative numbers will be subtracted
                    from the number of cores.
@@ -139,7 +139,7 @@ def parallel_chunks(function, data, *args, **kwds):
     Returns:
         Nothing
     """
-    assert isinstance(data, HyCloud) or isinstance(data, HyImage)
+    assert isinstance(data, BlackImage) #or isinstance(data, BlackCloud)
 
     # get number of threads
     if 'nthreads' in kwds:
@@ -166,12 +166,12 @@ def parallel_chunks(function, data, *args, **kwds):
     paths = []
     for i, c in enumerate(chunks):
 
-        if isinstance(c, HyCloud):
-            p = str( Path(pth) / ('%d.ply' % i))
-            io.saveCloudPLY(p, c)
-        else:
-            p = str(Path(pth)/ ('%d.hdr' % i))
-            io.save(p, c)
+        # if isinstance(c, BlackCloud):
+        #     p = str( Path(pth) / ('%d.ply' % i))
+        #     io.saveCloudPLY(p, c)
+        # else:
+        p = str(Path(pth)/ ('%d.hdr' % i))
+        io.save(p, c)
         paths.append(p)
 
     # make sure we don't multithread twice when using advanced scipy/numpy functions...
@@ -188,10 +188,10 @@ def parallel_chunks(function, data, *args, **kwds):
             p.join()
 
         # successs! load data again...
-        if isinstance(data, HyCloud):
-            chunks = [io.loadCloudPLY(p) for p in paths]
-        else:
-            chunks = [io.load(p) for p in paths]
+        # if isinstance(data, BlackCloud):
+        #     chunks = [io.loadCloudPLY(p) for p in paths]
+        # else:
+        chunks = [io.load(p) for p in paths]
 
         # remove temp directory
         shutil.rmtree(pth)  # delete temp directory
@@ -223,7 +223,7 @@ def _call2(func, in_paths, out_paths, kwd, n):
 
 def parallel_datasets(function, in_paths, out_paths=None, nthreads=-2, **kwds):
     """
-    Parallelise a single function across many HyData datasets.
+    Parallelise a single function across many BlackData datasets.
 
     Args:
         function: the function to run on each dataset. This should take an input path (string) as its first input and
