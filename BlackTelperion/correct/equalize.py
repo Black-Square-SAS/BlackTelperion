@@ -1,4 +1,5 @@
 """
+NOTE: unsure if this model will be useful, but keep it just in case.
 A collection of functions for performing histogram equalisation and other similar colour-matching routines.
 """
 

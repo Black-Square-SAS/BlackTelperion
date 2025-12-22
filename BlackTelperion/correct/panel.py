@@ -1,4 +1,5 @@
 """
+NOTE: unsure if this model will be useful, but keep it just in case.
 Utility class for storing information on calibration panels and combining measured radiance values with known
 reflectance spectra.
 """
@@ -9,13 +10,13 @@ import numpy as np
 from scipy.optimize import least_squares
 import matplotlib.patches as patches
 
-import hylite
-from hylite.reference.features import HyFeature
-from hylite import HyData
-from hylite.project import pix_to_ray_pano, pix_to_ray_persp
+import BlackTelperion
+from BlackTelperion.reference.features import BlackFeature
+from BlackTelperion import BlackData
+#from BlackTelperion.project import pix_to_ray_pano, pix_to_ray_persp
 
 
-class Panel( HyData ):
+class Panel( BlackData ):
     """
     A class for identifying calibration reference in images and storing
     the observed pixel radiances and known target reflectance values. This is used
@@ -27,14 +28,14 @@ class Panel( HyData ):
         Generic constructor. Can be of the following forms:
 
         Args:
-            material: a hylite.reference.Target instance containing target reflectance data for this panel.
-            radiance: either a HyImage object (which contains some reference pixels) or a
+            material: a BlackTelperion.reference.Target instance containing target reflectance data for this panel.
+            radiance: either a BlackImage object (which contains some reference pixels) or a
                         NxM numpy array containing radiance values for N pixels across M bands.
             strict: True if measured radiance wavelengths must be entirely within the range of the reference material
                     spectra. Default is True. Use with care!
             **kwds: Keywords can include the following:
 
-                 - wavelengths = wavelengths corresponding to the radiance values (if radiance is an array rather than a HyImage
+                 - wavelengths = wavelengths corresponding to the radiance values (if radiance is an array rather than a BlackImage
                                  object).
                  - method = 'manual' (default) to manually pick reference in image (using an interactive plot). Can also be
                              'sobel' or 'laplace' to use the corresponding edge detectors to automatically identify the
@@ -185,7 +186,7 @@ class Panel( HyData ):
             self.set_wavelengths(radiance.get_wavelengths())  # get wavelength data
 
         else:
-            assert False, "Error: radiance argument must be a HyImage instance or a numpy array of pixels."
+            assert False, "Error: radiance argument must be a BlackImage instance or a numpy array of pixels."
 
         # if we have lots of target pixels (we don't need that many), only keep top 50% [as darker ones likely result from
         # dodgy border effects
@@ -239,9 +240,9 @@ class Panel( HyData ):
         Get the known (reference) reflectance of this panel.
         """
         return self.reflectance
-
+    """
     def get_normal(self, cam=None, recalc=False):
-        """
+        
         Get the normal vector of this panel by assuming its outline is square (prior to projection onto the camera).
 
         Args:
@@ -250,7 +251,7 @@ class Panel( HyData ):
             recalc: True if a precomputed (or otherwise defined) normal vector should be recalculated. Default is False.
         Returns:
             the normal vector of the panel (in world coordinates). This is also stored as self.normal.
-        """
+        
 
         if recalc or self.normal is None:
 
@@ -261,7 +262,7 @@ class Panel( HyData ):
             # get corners of panel and convert to rays
             corners = np.array([self.outline.vertices[i, :] for i in range(4)])
 
-            if cam.is_panoramic():
+            #if cam.is_panoramic():
                 ray1 = pix_to_ray_pano(corners[0, 0], corners[0, 1], cam.fov, cam.step, cam.dims)
                 ray2 = pix_to_ray_pano(corners[1, 0], corners[1, 1], cam.fov, cam.step, cam.dims)
                 ray3 = pix_to_ray_pano(corners[2, 0], corners[2, 1], cam.fov, cam.step, cam.dims)
@@ -309,7 +310,7 @@ class Panel( HyData ):
             self.set_normal(norm)
 
         return self.normal
-
+    """
     def set_normal(self, n ):
         """
         Set panel normal vector to a known vector.
@@ -358,14 +359,14 @@ class Panel( HyData ):
         self.alpha = max( 0, np.dot( -self.normal, illudir ) )
         return self.alpha
 
-    def quick_plot(self, bands=hylite.RGB, **kwds):
+    def quick_plot(self, bands=BlackTelperion.RGB, **kwds):
 
         """
         Quickly plot the outline of this calibration target for quality checking etc.
 
         Args:
-            bands: the image bands to plot as a preview. Default is io.HyImage.RGB.
-            **kwds: keywords are passed to HyData.plot_spectra( ... ).
+            bands: the image bands to plot as a preview. Default is io.BlackImage.RGB.
+            **kwds: keywords are passed to BlackData.plot_spectra( ... ).
         """
         if self.source_image is not None: # plot including preview of panel
             fig, ax = plt.subplots(1, 2, figsize=(15, 5), gridspec_kw={'width_ratios': [1, 3]})
@@ -385,11 +386,11 @@ class Panel( HyData ):
             ax[0].set_ylim(bbox.max[1] + pady, bbox.min[1] - pady)
 
             # plot radiance spectra
-            kwds['labels'] = kwds.get('labels', HyFeature.Themes.ATMOSPHERE)
+            kwds['labels'] = kwds.get('labels', BlackFeature.Themes.ATMOSPHERE)
             fig, ax = self.plot_spectra( ax=ax[1], **kwds )
 
         else: # no image data, just plot radiance spectra
-            kwds['labels'] = kwds.get('labels', HyFeature.Themes.ATMOSPHERE)
+            kwds['labels'] = kwds.get('labels', BlackFeature.Themes.ATMOSPHERE)
             fig, ax = self.plot_spectra(**kwds)
             ax.set_ylabel('Downwelling Radiance')
 
