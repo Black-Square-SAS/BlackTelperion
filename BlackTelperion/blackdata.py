@@ -1015,8 +1015,8 @@ class BlackData(object):
         Expand data array to floats to get actual values
         """
         # no need to decompress...
-        if self.data.dtype != np.uint16: return
-
+        if not np.issubdtype(self.data.dtype, np.integer):
+            return
         # get min/max data
         sf = float(self.header.get("reflectance scale factor", 65535))
         nan = float(self.header.get("data ignore value", -1))
