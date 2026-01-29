@@ -20,11 +20,11 @@ def estimate_path_radiance(image, depth, thresh=1):
         thresh: the percentile threshold to use when selecting dark pixels. Default is 1%.
 
     Returns:
-        A tuple containing:
+        tuple: A tuple containing:
 
             - spectra = a numpy array containing the estimated path radiance spectra (in radiance per meter of depth).
             - path = a BlackImage instance containing the estimated path radiance per pixel (computed by multiplying
-                  the spectra by the depth).
+              the spectra by the depth).
     """
 
     # identify dark pixels

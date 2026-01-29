@@ -19,10 +19,10 @@ def get_feature_vectors(data, labels, ignore=[]):
                 a BlackData instance (e.g. a classification image), then labels will be extacted from this.
         ignore: a list of labels to ignore (if labels is a BlackData instance). E.g. [ 0 ] will ignore pixels labelled as background.
     Returns:
-        A tuple containing:
+        tuple: A tuple containing:
 
-        - F = a list containing a feature array for each class in labels.
-        - c = a list of the number of features for each class.
+            - F = a list containing a feature array for each class in labels.
+            - c = a list of the number of features for each class.
     """
 
     # build boolean masks from BlackData instance if necessary
@@ -72,10 +72,10 @@ def balance( F, n=1.0):
            If an integer is passed then this number of features will be extracted (or max(counts)).
 
     Returns:
-        A tuple containing:
+        tuple: A tuple containing:
 
-         - X = a balanced feature feature vector with dimensions N_samples x M_features.
-         - y = an array of length N_samples containing labels for each feature (ranging from 0 - n_classes).
+            - X = a balanced feature feature vector with dimensions N_samples x M_features.
+            - y = an array of length N_samples containing labels for each feature (ranging from 0 - n_classes).
     """
 
     c = [f.shape[0] for f in F]

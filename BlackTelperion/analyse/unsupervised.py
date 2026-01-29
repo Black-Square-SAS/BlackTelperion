@@ -23,10 +23,10 @@ def cluster_hierarchical( data, nclasses, distance='SAM', vb=False, labels=None,
         nbands: the number of mnf bands to use if distance = MNF. Default is 10.
 
     Returns:
-        A tuple containing:
+        tuple: A tuple containing:
 
-         - labels = an integer array of class labels.
-         - Z = the linkage matrix returned by scipy.
+            - labels = an integer array of class labels.
+            - Z = the linkage matrix returned by scipy.
     """
 
     assert isinstance( data, BlackData ), "Error - dataset is not a BlackData instance."

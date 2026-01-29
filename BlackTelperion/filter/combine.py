@@ -18,10 +18,10 @@ def combine(image_list, method="median", warp=False):
         warp: should the images be warped to optimise coregistration using optical flow? Slow... default is False. Always
               matches images to the first one in image_list. The middle band is used for matching.
     Returns:
-        A tuple containing:
+        tuple: A tuple containing:
 
-         - average = a numpy array containing the averaged image data
-         - std = a numpy array containing the standard deviation of the image data.
+            - average = a numpy array containing the averaged image data
+            - std = a numpy array containing the standard deviation of the image data.
     """
 
     # resize to fit (sometimes some images are 1-2 pixels too long for line-scanners on a tripod)

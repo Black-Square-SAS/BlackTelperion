@@ -160,10 +160,10 @@ def matchHeader(path):
         path: the path to an image or header file
 
     Returns:
-        A tuple containing:
+        tuple: A tuple containing:
 
-        - header = file path to the associated .hdr or .HDR file (if found, otherwise None)
-        - image = file path to the associated image data (if found, otherwise None).
+            - header = file path to the associated .hdr or .HDR file (if found, otherwise None)
+            - image = file path to the associated image data (if found, otherwise None).
     """
 
     # find files with the same name but different extensions

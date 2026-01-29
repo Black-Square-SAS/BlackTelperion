@@ -69,7 +69,29 @@ pip install -e .
 
 ## Documentation
 
-Internal documentation and examples can be found in the project wiki.
+API documentation is generated from docstrings using [Sphinx](https://www.sphinx-doc.org/).
+
+### Generating the docs
+
+```bash
+# Install documentation dependencies
+pip install sphinx sphinx-rtd-theme
+
+# Build HTML docs
+make -C docs/ html
+```
+
+The generated documentation will be available at `docs/build/html/index.html`.
+
+### Regenerating API module files
+
+If you add new modules or subpackages, regenerate the `.rst` files:
+
+```bash
+sphinx-apidoc -o docs/source/api/ BlackTelperion/ -f -e -M --implicit-namespaces
+```
+
+Then rebuild with `make -C docs/ html`.
 
 ## Basic Usage
 

@@ -20,11 +20,11 @@ def PCA(blackdata, bands=20, band_range=None, step=5, mask : np.ndarray = None):
               accurately estimate variance etc.).
         mask: A mask containing pixels to ignore during the fitting of this PCA. Default is None (consider all pixels).
     Returns:
-        A tuple containing:
+        tuple: A tuple containing:
 
-        - bands = A BlackData instance containing the PCA components, ordered from highest to lowest variance.
-        - factors = the factors (vector) each band is multiplied with to give the corresponding PCA band.
-        - means = the means for each band that are subtracted before applying the PCA transform.
+            - bands = A BlackData instance containing the PCA components, ordered from highest to lowest variance.
+            - factors = the factors (vector) each band is multiplied with to give the corresponding PCA band.
+            - means = the means for each band that are subtracted before applying the PCA transform.
 
         Additional info (including loadings and the per-band means) are stored in the header file of the returned BlackData
         instance.
@@ -126,12 +126,12 @@ def MNF(blackdata, bands=20, band_range=None, noise='diff', noise_thresh=50, den
         denoise: True if a MNF denoised image should be returned (rather than the MNF bands). Default is False.
         mask: A boolean mask containing pixels to ignore during the fitting of this PCA. Default is None (consider all pixels).
     Returns:
-        A tuple containing:
+        tuple: A tuple containing:
 
-        - mnf = a BlackData instance containing the MNF bands or denoised image.
-        - factors = A 2D numpy array containing the factors applied to the input datset. Useful
-                     for plotting/interpreting the regions each MNF band is sensitive too.
-        - means = the means for each band that are subtracted before applying the MNF transform.
+            - mnf = a BlackData instance containing the MNF bands or denoised image.
+            - factors = A 2D numpy array containing the factors applied to the input datset. Useful
+              for plotting/interpreting the regions each MNF band is sensitive too.
+            - means = the means for each band that are subtracted before applying the MNF transform.
     """
     try: 
         import spectral

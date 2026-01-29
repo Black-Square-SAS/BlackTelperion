@@ -45,12 +45,12 @@ def TPT(data, sigma=10., window=21, n=2, thresh=0, domain=None, weighted=True, m
         vb: True progress should be printed to the console. Default is True.
 
     Returns:
-        A tuple containing:
+        tuple: A tuple containing:
 
-         - tpt = a BlackData instance containg kernel density estimates of maxima and minima in the each pixel/point. Maxima
-                 are given positive weight while minima are given negative weight.
-         - Tpos = an array containing a list of turning point positions (wavelength) for each point/pixel.
-         - Tdepth = an array containing a list of turning point depths for each point/pixel. Maxima are positive, minima negative.
+            - tpt = a BlackData instance containg kernel density estimates of maxima and minima in the each pixel/point. Maxima
+              are given positive weight while minima are given negative weight.
+            - Tpos = an array containing a list of turning point positions (wavelength) for each point/pixel.
+            - Tdepth = an array containing a list of turning point depths for each point/pixel. Maxima are positive, minima negative.
     """
 
     # init wavelength domain

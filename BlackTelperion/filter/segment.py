@@ -297,13 +297,13 @@ def group_tiles( tiles, groups, ids=None, rotate=True, ignore=[] ):
         rotate: True if tiles should be rotated such that they're longer dimension aligns with the x-axis.
         ignore: a list of group id's that should be ignored/excluded from this grouping.
     Returns:
-        A tuple containing:
+        tuple: A tuple containing:
 
-         - tiled_image = a BlackImage instance containing the arranged tiles.
-         - tiled_label = a BlackImage classification containing the class indices used to arrange the tiles.
-         - [tiled_id] = a BlackImage classification containing individual sample IDs (if ids is not None).
-         - bounds = the bounds (x,y,width,height) of each group of tiles. Useful for labelling or separation.
-     """
+            - tiled_image = a BlackImage instance containing the arranged tiles.
+            - tiled_label = a BlackImage classification containing the class indices used to arrange the tiles.
+            - [tiled_id] = a BlackImage classification containing individual sample IDs (if ids is not None).
+            - bounds = the bounds (x,y,width,height) of each group of tiles. Useful for labelling or separation.
+    """
 
     # rotate tiles
     if rotate:

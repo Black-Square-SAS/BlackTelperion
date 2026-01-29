@@ -22,13 +22,13 @@ def _read_sed_file(path):
         path to the file.
 
     Returns:
-        A tuple containing:
+        tuple: A tuple containing:
 
-             - wav = a list of the wavelengths in the sed file
-             - refl = a list of corresponding reflectances
-             - name = a name for this sample (the file name without extension)
-             - meta = a dictionary containing additional metadata in the header to the .sed file
-     """
+            - wav = a list of the wavelengths in the sed file
+            - refl = a list of corresponding reflectances
+            - name = a name for this sample (the file name without extension)
+            - meta = a dictionary containing additional metadata in the header to the .sed file
+    """
 
     with open(path, 'r') as f:
         # read header into metadata dict

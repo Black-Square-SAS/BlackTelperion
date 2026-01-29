@@ -267,11 +267,11 @@ class MWL(BlackCollection):
             nf: the number of feature positions to use. Default is 2. Must not exceed the number of features fitted.
             step: the step to subsample points (used to avoid really slow plotting). Computes on all points by default.
         Returns:
-            A tuple containing:
+            tuple: A tuple containing:
 
-            - labels =  a BlackData instance (or numpy array if step > 1) containing integer class labels in band 0.
-            - centroids = a list containing the index of each class centroid (in the dataset).
-         """
+                - labels =  a BlackData instance (or numpy array if step > 1) containing integer class labels in band 0.
+                - centroids = a list containing the index of each class centroid (in the dataset).
+        """
 
         assert nf <= self.n, "Error - MWL map has only %d features (<%d)." % (self.n, nf)
         import scipy.cluster.hierarchy as shc
@@ -936,10 +936,10 @@ def colourise_mwl(mwl, mode='p-d', cmap='rainbow', **kwds):
                             Default is (0,75), as these tend to be dominated by low/zero values.
 
     Returns:
-        A tuple containing:
+        tuple: A tuple containing:
 
-        - either an RGB BlackImage object (if mwl is an image) or the original HyCloud with defined rgb bands.
-        - cmap = a mwl_legend instance for plotting colour maps.
+            - either an RGB BlackImage object (if mwl is an image) or the original HyCloud with defined rgb bands.
+            - cmap = a mwl_legend instance for plotting colour maps.
     """
 
     # extract data

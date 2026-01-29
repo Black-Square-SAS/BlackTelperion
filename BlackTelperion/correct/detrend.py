@@ -17,10 +17,10 @@ def polynomial(data, degree = 1, method='div'):
         method: 'divide' or 'subtract'. Default is 'divide'.
 
     Returns:
-        A tuple containing:
+        tuple: A tuple containing:
 
-         - corr = the corrected (detrended) data.
-         - trend = the trend that was removed.
+            - corr = the corrected (detrended) data.
+            - trend = the trend that was removed.
     """
 
     #calculate trend
