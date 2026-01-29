@@ -20,26 +20,51 @@ BlackTelperion serves as a unified framework for processing spectral imagery fro
 ## Repository Structure
 
 ```
-├── io/
-│   └── create_spectral_cubes.py  # Image readers for different platforms
-├── core/
-│   ├── image.py                  # Base image class for data representation
-│   └── factory.py                # ImageFactory for creating appropriate objects
-├── platforms/
-│   ├── base_platform.py          # Base class with common methods
-│   ├── enmap.py                  # EnMAP platform implementation
-│   ├── aster.py                  # ASTER platform implementation 
-│   ├── sentinel.py               # Sentinel-2 implementation
-│   └── hyspex.py                 # Hyspex implementation
-├── products/
-│   ├── base_product.py           # Base class for derived products
-│   ├── spectral_index.py         # Specialized class for indices
-│   ├── classification.py         # Classifications and thematic maps
-│   └── mask.py                   # Binary/categorical masks
-├── utils/
-│   ├── metadata.py               # Metadata handling utilities
-│   └── visualization.py          # Visualization helpers
-└── examples/                     # Example usage scripts
+BlackTelperion/
+├── analyse/                        # Spectral analysis methods
+│   ├── dtree.py                    # Decision tree analysis
+│   ├── indices.py                  # Spectral indices computation
+│   ├── mwl.py                      # Minimum wavelength mapping
+│   ├── sam.py                      # Spectral Angle Mapper
+│   ├── supervised.py               # Supervised classification
+│   ├── unmixing.py                 # Spectral unmixing
+│   └── unsupervised.py             # Unsupervised classification
+├── correct/                        # Data correction methods
+│   ├── illumination/               # Illumination correction
+│   │   ├── occlusion.py            # Occlusion correction
+│   │   ├── path.py                 # Path radiance estimation
+│   │   └── reflection.py           # Reflection correction
+│   ├── detrend.py                  # Polynomial detrending
+│   ├── equalize.py                 # Equalization
+│   └── panel.py                    # Panel-based calibration
+├── filter/                         # Filtering and processing
+│   ├── combine.py                  # Image combination/stacking
+│   ├── dimension_reduction.py      # PCA / MNF transforms
+│   ├── sample.py                   # Sampling utilities
+│   ├── segment.py                  # Segmentation and tiling
+│   └── tpt.py                      # Turning point transform
+├── io/                             # Input/output operations
+│   ├── create_spectral_cubes.py    # Spectral cube creation
+│   ├── headers.py                  # Header file I/O
+│   ├── images.py                   # Image I/O
+│   └── libraries.py                # Spectral library I/O
+├── reference/                      # Reference spectra and features
+│   ├── features/                   # Absorption feature definitions
+│   ├── spectra/                    # Reference spectral data
+│   │   ├── custom/                 # User-defined reference spectra
+│   │   ├── pvc/                    # PVC calibration targets
+│   │   └── spectralon/             # Spectralon calibration targets
+│   └── generate.py                 # Synthetic data generation
+├── utils/                          # Utility functions
+│   ├── metadata.py                 # Metadata handling
+│   └── visualization.py            # Visualization helpers
+├── blackcollection.py              # Collection of hyperspectral objects
+├── blackdata.py                    # Base class for spectral data
+├── blackfeature.py                 # Spectral feature classes
+├── blackheader.py                  # Header/metadata class
+├── blackimage.py                   # Hyperspectral image class
+├── blacklibrary.py                 # Spectral library class
+└── multiprocessing.py              # Parallel processing utilities
 ```
 
 ## Getting Started
