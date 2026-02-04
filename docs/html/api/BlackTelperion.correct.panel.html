@@ -1,0 +1,246 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.correct.panel module &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="BlackTelperion.filter package" href="BlackTelperion.filter.html" />
+    <link rel="prev" title="BlackTelperion.correct.equalize module" href="BlackTelperion.correct.equalize.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="BlackTelperion.html">BlackTelperion package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.RGB"><code class="docutils literal notranslate"><span class="pre">RGB</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.VNIR"><code class="docutils literal notranslate"><span class="pre">VNIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.SWIR"><code class="docutils literal notranslate"><span class="pre">SWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.BROAD"><code class="docutils literal notranslate"><span class="pre">BROAD</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.MWIR"><code class="docutils literal notranslate"><span class="pre">MWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.LWIR"><code class="docutils literal notranslate"><span class="pre">LWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.band_select_threshold"><code class="docutils literal notranslate"><span class="pre">band_select_threshold</span></code></a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="BlackTelperion.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.analyse.html">BlackTelperion.analyse package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="BlackTelperion.correct.html">BlackTelperion.correct package</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.correct.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="BlackTelperion.correct.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.filter.html">BlackTelperion.filter package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.io.html">BlackTelperion.io package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.reference.html">BlackTelperion.reference package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.utils.html">BlackTelperion.utils namespace</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="BlackTelperion.html">BlackTelperion package</a></li>
+          <li class="breadcrumb-item"><a href="BlackTelperion.correct.html">BlackTelperion.correct package</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.correct.panel module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/BlackTelperion.correct.panel.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-BlackTelperion.correct.panel">
+<span id="blacktelperion-correct-panel-module"></span><h1>BlackTelperion.correct.panel module<a class="headerlink" href="#module-BlackTelperion.correct.panel" title="Link to this heading"></a></h1>
+<p>NOTE: unsure if this model will be useful, but keep it just in case.
+Utility class for storing information on calibration panels and combining measured radiance values with known
+reflectance spectra.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="BlackTelperion.correct.panel.Panel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">BlackTelperion.correct.panel.</span></span><span class="sig-name descname"><span class="pre">Panel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">material</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radiance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/correct/panel.html#Panel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.correct.panel.Panel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData" title="BlackTelperion.blackdata.BlackData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BlackData</span></code></a></p>
+<p>A class for identifying calibration reference in images and storing
+the observed pixel radiances and known target reflectance values. This is used
+by, e.g., empirical line calibration procedures.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.correct.panel.Panel.set_outline">
+<span class="sig-name descname"><span class="pre">set_outline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/correct/panel.html#Panel.set_outline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.correct.panel.Panel.set_outline" title="Link to this definition"></a></dt>
+<dd><p>Define a panel outline (for e.g., estimating orientation) based on a known camera pose.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>coords</strong> – the coordinates of the four panel corners.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.correct.panel.Panel.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/correct/panel.html#Panel.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.correct.panel.Panel.copy" title="Link to this definition"></a></dt>
+<dd><p>Make a deep copy of this panel instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a new Panel instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.correct.panel.Panel.get_mean_radiance">
+<span class="sig-name descname"><span class="pre">get_mean_radiance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/correct/panel.html#Panel.get_mean_radiance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.correct.panel.Panel.get_mean_radiance" title="Link to this definition"></a></dt>
+<dd><p>Calculate and return the mean radiance for each band of all the pixels in this calibration region.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.correct.panel.Panel.get_reflectance">
+<span class="sig-name descname"><span class="pre">get_reflectance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/correct/panel.html#Panel.get_reflectance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.correct.panel.Panel.get_reflectance" title="Link to this definition"></a></dt>
+<dd><p>Get the known (reference) reflectance of this panel.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.correct.panel.Panel.set_normal">
+<span class="sig-name descname"><span class="pre">set_normal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/correct/panel.html#Panel.set_normal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.correct.panel.Panel.set_normal" title="Link to this definition"></a></dt>
+<dd><p>Set panel normal vector to a known vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong> – a (3,) numpy array containing the normal vector in world coordinates.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.correct.panel.Panel.get_skyview">
+<span class="sig-name descname"><span class="pre">get_skyview</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hori_elev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">up</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0,</span> <span class="pre">0,</span> <span class="pre">1])</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/correct/panel.html#Panel.get_skyview"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.correct.panel.Panel.get_skyview" title="Link to this definition"></a></dt>
+<dd><p>Get this panels skyview factor. Normal vector must be defined, otherwise an error will be thrown.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hori_elev</strong> – the angle from the panel to the horizon (perpendicular to the panel’s orientation) in degrees.
+Used to reduce the sky view factor if the panel is below the horizon (e.g. in an open pit mine).
+Default is 0.0 (i.e. assume a flat horizon). Can also be negative if sky is visible below the
+(flat) horizon.</p></li>
+<li><p><strong>up</strong> – the vertical (up) vector. Default is [0,0,1].</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>this panels sky view factor (assuming the panel is relatively unoccluded and the horizon is flat).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.correct.panel.Panel.get_alpha">
+<span class="sig-name descname"><span class="pre">get_alpha</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">illudir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/correct/panel.html#Panel.get_alpha"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.correct.panel.Panel.get_alpha" title="Link to this definition"></a></dt>
+<dd><p>Return the reflected light fraction of this panel based on the specified illumination direction using
+Lamberts’ cosine law.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.correct.panel.Panel.quick_plot">
+<span class="sig-name descname"><span class="pre">quick_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(680.0,</span> <span class="pre">550.0,</span> <span class="pre">505.0)</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/correct/panel.html#Panel.quick_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.correct.panel.Panel.quick_plot" title="Link to this definition"></a></dt>
+<dd><p>Quickly plot the outline of this calibration target for quality checking etc.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bands</strong> – the image bands to plot as a preview. Default is io.BlackImage.RGB.</p></li>
+<li><p><strong>**kwds</strong> – keywords are passed to BlackData.plot_spectra( … ).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.correct.panel.Panel.plot_ratio">
+<span class="sig-name descname"><span class="pre">plot_ratio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/correct/panel.html#Panel.plot_ratio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.correct.panel.Panel.plot_ratio" title="Link to this definition"></a></dt>
+<dd><p>Plots the ratio between known reflectance and observed radiance for each band in this target.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ax</strong> – the axes to plot on. If None (default) then a new axes is created.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>fig, ax = the figure and axes objects containing the plot.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="BlackTelperion.correct.equalize.html" class="btn btn-neutral float-left" title="BlackTelperion.correct.equalize module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="BlackTelperion.filter.html" class="btn btn-neutral float-right" title="BlackTelperion.filter package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,223 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.correct.detrend &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/BlackTelperion.html">BlackTelperion package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.correct.detrend</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for BlackTelperion.correct.detrend</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Hyperspectral detrending algorithms such as hull correction.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">BlackTelperion</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlackLibrary</span><span class="p">,</span> <span class="n">BlackData</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gfit.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">remove_hull</span>
+
+<div class="viewcode-block" id="polynomial">
+<a class="viewcode-back" href="../../../api/BlackTelperion.correct.detrend.html#BlackTelperion.correct.detrend.polynomial">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">polynomial</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">degree</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;div&#39;</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Detrend an image data array using a polynomial fit and np.polyfit( ... ).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: numpy array of the format image[x][y][b].</span>
+<span class="sd">        degree: the degree of the polynomial to fit. Default is 2.</span>
+<span class="sd">        method: &#39;divide&#39; or &#39;subtract&#39;. Default is &#39;divide&#39;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: A tuple containing:</span>
+
+<span class="sd">            - corr = the corrected (detrended) data.</span>
+<span class="sd">            - trend = the trend that was removed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">#calculate trend</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">))</span> <span class="c1">#reshape array so each pixel is a column</span>
+    <span class="n">y</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">y</span><span class="p">))]</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1">#kill NaNs</span>
+    <span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">fit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polynomial</span><span class="o">.</span><span class="n">polynomial</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">_x</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">degree</span><span class="p">)</span> <span class="c1"># fit polynomial</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polynomial</span><span class="o">.</span><span class="n">polynomial</span><span class="o">.</span><span class="n">polyval</span><span class="p">(</span><span class="n">_x</span><span class="p">,</span> <span class="n">fit</span><span class="p">)</span> <span class="c1"># evaluate it</span>
+
+    <span class="c1">#apply correction</span>
+    <span class="k">if</span> <span class="s1">&#39;div&#39;</span> <span class="ow">in</span> <span class="n">method</span><span class="p">:</span>
+        <span class="n">y</span> <span class="o">/=</span> <span class="n">t</span>
+    <span class="k">elif</span> <span class="s1">&#39;sub&#39;</span> <span class="ow">in</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="n">y</span> <span class="o">-=</span> <span class="n">t</span>
+        <span class="n">y</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="c1">#map to positive</span>
+
+    <span class="k">return</span> <span class="n">y</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="n">t</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_hull_corrected">
+<a class="viewcode-back" href="../../../api/BlackTelperion.correct.detrend.html#BlackTelperion.correct.detrend.get_hull_corrected">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_hull_corrected</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">band_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="n">hull</span><span class="o">=</span><span class="s1">&#39;upper&#39;</span><span class="p">,</span> <span class="n">vb</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply a hull correction to an entire BlackData instance (HyImage, HyCloud or BlackLibrary). Returns a corrected copy of</span>
+<span class="sd">    the input dataset. Note that noise can greatly effect hull corrections, so you should consider denoising first (see</span>
+<span class="sd">    BlackData.smooth_median(...) and BlackData.smooth_savgol(...).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: a numpy array or BlackData instance to detrend.</span>
+<span class="sd">        band_range: Tuple containing the (min,max) band indices or wavelengths to run the correction between. If None</span>
+<span class="sd">                     (default) then the correction is run of the entire range. Only works if data is a BlackData instance.</span>
+<span class="sd">        method: Trend removal method: &#39;divide&#39; or &#39;subtract&#39;. Default is &#39;divide&#39;.</span>
+<span class="sd">        hull: &#39;upper&#39; if a hull should be fitted to the top of the data (default), or &#39;lower&#39; if it should be fit to the bottom of the data.</span>
+<span class="sd">        vb: True if this should print output.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A hull corrected dataset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">BlackData</span><span class="p">):</span>
+
+        <span class="c1"># create copy containing the bands of interest</span>
+        <span class="k">if</span> <span class="n">band_range</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">band_range</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">band_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get_band_index</span><span class="p">(</span><span class="n">band_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">data</span><span class="o">.</span><span class="n">get_band_index</span><span class="p">(</span><span class="n">band_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">corrected</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">export_bands</span><span class="p">(</span><span class="n">band_range</span><span class="p">)</span>
+
+        <span class="c1"># convert integer data to floating point (we need floats for the hull correction)</span>
+        <span class="n">comp</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">corrected</span><span class="o">.</span><span class="n">is_int</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span> <span class="n">corrected</span><span class="o">.</span><span class="n">data</span> <span class="p">)</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span> <span class="c1"># check large number used in compressed form</span>
+                <span class="n">corrected</span><span class="o">.</span><span class="n">decompress</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">corrected</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">corrected</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="c1"># cast to float for hull correction</span>
+            <span class="n">comp</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># get valid pixels</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="n">corrected</span><span class="o">.</span><span class="n">get_raveled</span><span class="p">()</span>
+        <span class="n">nan</span> <span class="o">=</span> <span class="n">corrected</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get_data_ignore_value</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">nan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+    <span class="c1"># check values are all positive - negative values break the hull correction!</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span> <span class="p">)</span>
+
+    <span class="c1">#valid = (np.isfinite(D) &amp; (D != nan)).all(axis=1)  # drop nans/no-data values</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">nan</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">posinf</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">neginf</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># ensure all values are finite (and do not effect hul)</span>
+    <span class="n">valid</span> <span class="o">=</span> <span class="p">(</span><span class="n">D</span> <span class="o">!=</span> <span class="n">D</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">][:,</span> <span class="kc">None</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># drop flat spectra (e.g. all zeros)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">corrected</span>  <span class="c1"># quick exit for empty images</span>
+
+    <span class="c1"># do hull correction</span>
+    <span class="k">if</span> <span class="s1">&#39;upper&#39;</span> <span class="ow">in</span> <span class="n">hull</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">remove_hull</span><span class="p">(</span> <span class="n">D</span><span class="p">[</span><span class="n">valid</span><span class="p">],</span><span class="n">upper</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">div</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;div&#39;</span> <span class="ow">in</span> <span class="n">method</span><span class="p">),</span> <span class="n">vb</span><span class="o">=</span><span class="n">vb</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="s1">&#39;lower&#39;</span> <span class="ow">in</span> <span class="n">hull</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">remove_hull</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">D</span><span class="p">[</span><span class="n">valid</span><span class="p">])</span> <span class="o">-</span> <span class="n">D</span><span class="p">[</span><span class="n">valid</span><span class="p">],</span> <span class="n">upper</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">div</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;div&#39;</span> <span class="ow">in</span> <span class="n">method</span><span class="p">),</span> <span class="n">vb</span><span class="o">=</span><span class="n">vb</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Error = &#39;hull&#39; should be &#39;upper&#39; or &#39;lower&#39;, not </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="n">hull</span>
+    <span class="n">D</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span>  <span class="c1"># copy data back into original array</span>
+
+    <span class="c1"># do housekeeping and return</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">BlackData</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">corrected</span><span class="p">,</span> <span class="n">BlackLibrary</span><span class="p">):</span>
+            <span class="n">corrected</span><span class="o">.</span><span class="n">upper</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># reset upper and lower limits as these will now be incorrect</span>
+            <span class="n">corrected</span><span class="o">.</span><span class="n">lower</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># reset upper and lower limits as these will now be incorrect</span>
+        <span class="n">corrected</span><span class="o">.</span><span class="n">set_raveled</span><span class="p">(</span><span class="n">D</span><span class="p">)</span>
+        <span class="c1"># convert back to integer if need be</span>
+        <span class="k">if</span> <span class="n">comp</span><span class="p">:</span>
+            <span class="n">corrected</span><span class="o">.</span><span class="n">compress</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">corrected</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">D</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span> <span class="n">shape</span> <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,382 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.blacklibrary module &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="BlackTelperion.multiprocessing module" href="BlackTelperion.multiprocessing.html" />
+    <link rel="prev" title="BlackTelperion.blackimage module" href="BlackTelperion.blackimage.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="BlackTelperion.html">BlackTelperion package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.RGB"><code class="docutils literal notranslate"><span class="pre">RGB</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.VNIR"><code class="docutils literal notranslate"><span class="pre">VNIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.SWIR"><code class="docutils literal notranslate"><span class="pre">SWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.BROAD"><code class="docutils literal notranslate"><span class="pre">BROAD</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.MWIR"><code class="docutils literal notranslate"><span class="pre">MWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.LWIR"><code class="docutils literal notranslate"><span class="pre">LWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.band_select_threshold"><code class="docutils literal notranslate"><span class="pre">band_select_threshold</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="BlackTelperion.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackcollection.html">BlackTelperion.blackcollection module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html">BlackTelperion.blackdata module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackfeature.html">BlackTelperion.blackfeature module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html">BlackTelperion.blackheader module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html">BlackTelperion.blackimage module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">BlackTelperion.blacklibrary module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#BlackTelperion.blacklibrary.from_indices"><code class="docutils literal notranslate"><span class="pre">from_indices()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#BlackTelperion.blacklibrary.from_classification"><code class="docutils literal notranslate"><span class="pre">from_classification()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#BlackTelperion.blacklibrary.BlackLibrary"><code class="docutils literal notranslate"><span class="pre">BlackLibrary</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.multiprocessing.html">BlackTelperion.multiprocessing module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="BlackTelperion.html">BlackTelperion package</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.blacklibrary module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/BlackTelperion.blacklibrary.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-BlackTelperion.blacklibrary">
+<span id="blacktelperion-blacklibrary-module"></span><h1>BlackTelperion.blacklibrary module<a class="headerlink" href="#module-BlackTelperion.blacklibrary" title="Link to this heading"></a></h1>
+<p>Create, store and manipulate spectral libraries.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.blacklibrary.from_indices">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.blacklibrary.</span></span><span class="sig-name descname"><span class="pre">from_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blacklibrary.html#from_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blacklibrary.from_indices" title="Link to this definition"></a></dt>
+<dd><p>Extract a spectral library by sampling and averaging pixels within the specified distance of sample points.
+:param data: a BlackData instance containing the spectral data.
+:type data: BlackData
+:param indices: a list of sample indices to extract spectra from
+:type indices: list
+:param s: the number of adjacent points to include in each sample. For BlackImage data this will be a square patch of sxs</p>
+<blockquote>
+<div><p>pixels.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – a list containing names for each sample, or None to generate (numeric) sample ids.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a BlackLibrary instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.blacklibrary.from_classification">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.blacklibrary.</span></span><span class="sig-name descname"><span class="pre">from_classification</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blacklibrary.html#from_classification"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blacklibrary.from_classification" title="Link to this definition"></a></dt>
+<dd><p>Extract a spectral library from a labelled dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData" title="BlackTelperion.blackdata.BlackData"><em>BlackData</em></a>) – a BlackData instance containing the hyperspectral data.</p></li>
+<li><p><strong>labels</strong> (<a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData" title="BlackTelperion.blackdata.BlackData"><em>BlackData</em></a>) – a BlackData instance or numpy array containing class labels.</p></li>
+<li><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – a dictionary with numerical labels (integers) in labels.data as keys and corresponding string names
+as values. If None, class names will be pulled from the header, and if these don’t exist then integer
+names will be used.</p></li>
+<li><p><strong>ignore</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – a list of class IDs (integer values) to ignore. By default all nans and 0’s will be ignored.</p></li>
+<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – method used for reducing the number of spectra in this library. Options are ‘all’ (retain all
+measurements), an integer of the number of points to (randomly) sample, or a list containing
+percentiles to sample. Using the percentile method, samples will be ranked by median brightness
+(albedo) and the spectra corresponding to the desired percentiles kept in the library. Default is ‘all’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a BlackLibrary instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="BlackTelperion.blacklibrary.BlackLibrary">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">BlackTelperion.blacklibrary.</span></span><span class="sig-name descname"><span class="pre">BlackLibrary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lab</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wav</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blacklibrary.html#BlackLibrary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blacklibrary.BlackLibrary" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData" title="BlackTelperion.blackdata.BlackData"><code class="xref py py-class docutils literal notranslate"><span class="pre">BlackData</span></code></a></p>
+<p>A class for loading and managing spectral libraries and associated metadata.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blacklibrary.BlackLibrary.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blacklibrary.html#BlackLibrary.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blacklibrary.BlackLibrary.copy" title="Link to this definition"></a></dt>
+<dd><p>Make a deep copy of this BlackLibrary instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – True if a copy of the data should be made, otherwise only copy header.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a new BlackLibrary instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blacklibrary.BlackLibrary.as_image">
+<span class="sig-name descname"><span class="pre">as_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shallow</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blacklibrary.html#BlackLibrary.as_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blacklibrary.BlackLibrary.as_image" title="Link to this definition"></a></dt>
+<dd><p>Convert this library to a BlackImage dataset for e.g. visualisation using BlackImage.quick_plot(…).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>shallow</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – True if the underlying data array should be shared. Default is False as copies are dangerous.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a BlackImage instance of this dataset.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blacklibrary.BlackLibrary.merge">
+<span class="sig-name descname"><span class="pre">merge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">library2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blacklibrary.html#BlackLibrary.merge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blacklibrary.BlackLibrary.merge" title="Link to this definition"></a></dt>
+<dd><p>Return a copy of this library merged with another.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blacklibrary.BlackLibrary.sample_count">
+<span class="sig-name descname"><span class="pre">sample_count</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blacklibrary.html#BlackLibrary.sample_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blacklibrary.BlackLibrary.sample_count" title="Link to this definition"></a></dt>
+<dd><p>Number of samples/spectra in this library.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blacklibrary.BlackLibrary.has_sample_names">
+<span class="sig-name descname"><span class="pre">has_sample_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blacklibrary.html#BlackLibrary.has_sample_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blacklibrary.BlackLibrary.has_sample_names" title="Link to this definition"></a></dt>
+<dd><p>Has this library got associated sample names?</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blacklibrary.BlackLibrary.get_sample_names">
+<span class="sig-name descname"><span class="pre">get_sample_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blacklibrary.html#BlackLibrary.get_sample_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blacklibrary.BlackLibrary.get_sample_names" title="Link to this definition"></a></dt>
+<dd><p>Get list of sample names.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blacklibrary.BlackLibrary.set_sample_names">
+<span class="sig-name descname"><span class="pre">set_sample_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blacklibrary.html#BlackLibrary.set_sample_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blacklibrary.BlackLibrary.set_sample_names" title="Link to this definition"></a></dt>
+<dd><p>Set sample names</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blacklibrary.BlackLibrary.has_groups">
+<span class="sig-name descname"><span class="pre">has_groups</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blacklibrary.html#BlackLibrary.has_groups"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blacklibrary.BlackLibrary.has_groups" title="Link to this definition"></a></dt>
+<dd><p>Returns true if any groups are present in this dataset.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blacklibrary.BlackLibrary.get_groups">
+<span class="sig-name descname"><span class="pre">get_groups</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blacklibrary.html#BlackLibrary.get_groups"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blacklibrary.BlackLibrary.get_groups" title="Link to this definition"></a></dt>
+<dd><p>Return a list of groups that have been defined for the BlackLibrary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blacklibrary.BlackLibrary.get_group_ids">
+<span class="sig-name descname"><span class="pre">get_group_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blacklibrary.html#BlackLibrary.get_group_ids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blacklibrary.BlackLibrary.get_group_ids" title="Link to this definition"></a></dt>
+<dd><p>Return a list containing the indices of spectra associated with the specified group.  This can be useful for
+slicing the self.data matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – a string containing the name of the group.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list containing integer indices of the spectra in this group.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blacklibrary.BlackLibrary.get_group">
+<span class="sig-name descname"><span class="pre">get_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shallow</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blacklibrary.html#BlackLibrary.get_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blacklibrary.BlackLibrary.get_group" title="Link to this definition"></a></dt>
+<dd><p>Return a BlackLibrary instance containing only the spectra associated with the specified group.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – the name of the group.</p></li>
+<li><p><strong>shallow</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – True if the returned BlackLibrary instance should be a shallow copy (share the same underlying data
+array and header file) as this instance so changes propagate. Default is False - shallow copies
+are powerful but dangerous!.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a BlackLibrary instance containing the requested group of spectra.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blacklibrary.BlackLibrary.add_group">
+<span class="sig-name descname"><span class="pre">add_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blacklibrary.html#BlackLibrary.add_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blacklibrary.BlackLibrary.add_group" title="Link to this definition"></a></dt>
+<dd><p>Associate the specified spectra with some arbitrary grouping key for easy subsequent access. Note that if
+a group of this name already exists then it will be overwritten / updated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – the name of this group.</p></li>
+<li><p><strong>indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><em>ndarray</em>) – the indices (integer) or sample names (string) associated with each of the
+spectra in this group.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blacklibrary.BlackLibrary.get_sample_index">
+<span class="sig-name descname"><span class="pre">get_sample_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blacklibrary.html#BlackLibrary.get_sample_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blacklibrary.BlackLibrary.get_sample_index" title="Link to this definition"></a></dt>
+<dd><p>Get the index associated with a sample name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – the desired sample name. If an integer passed it is returned (assumed to be an index).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the sample index (int).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blacklibrary.BlackLibrary.get_sample_spectra">
+<span class="sig-name descname"><span class="pre">get_sample_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blacklibrary.html#BlackLibrary.get_sample_spectra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blacklibrary.BlackLibrary.get_sample_spectra" title="Link to this definition"></a></dt>
+<dd><p>Get the reflectance spectra of the specified sample.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – the sample name or index to extract.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a numpy array containing the specified spectra.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blacklibrary.BlackLibrary.collapse">
+<span class="sig-name descname"><span class="pre">collapse</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blacklibrary.html#BlackLibrary.collapse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blacklibrary.BlackLibrary.collapse" title="Link to this definition"></a></dt>
+<dd><p>Returns a copy of this BlackLibrary with any groups collapsed into individual samples.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blacklibrary.BlackLibrary.squash">
+<span class="sig-name descname"><span class="pre">squash</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blacklibrary.html#BlackLibrary.squash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blacklibrary.BlackLibrary.squash" title="Link to this definition"></a></dt>
+<dd><p>Returns a copy of this BlackLibrary instance with multiple measurements averaged to give a single spectra per sample.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blacklibrary.BlackLibrary.quick_plot">
+<span class="sig-name descname"><span class="pre">quick_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">band_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collapse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blacklibrary.html#BlackLibrary.quick_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blacklibrary.BlackLibrary.quick_plot" title="Link to this definition"></a></dt>
+<dd><p>Plots individual spectra in this library.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> – an axis to plot to. If None (default), a new axis is created.</p></li>
+<li><p><strong>band_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – the (min,max) band index (int) or wavelength (float) to plot.</p></li>
+<li><p><strong>labels</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – list of BlackFeature instances to plot on spectra. Default is reference.features.DIAGNOSTIC</p></li>
+<li><p><strong>pad</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – the spacing to add between individual spectra. Default is 5% of the range of reflectance values.</p></li>
+<li><p><strong>collapse</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – True if groups should be plotted rather than individual samples. Default is False.</p></li>
+<li><p><strong>hc</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – True if the plotted spectra should be hull corrected first. Default is False.</p></li>
+<li><p><strong>**kwds</strong> – <p>Keywords are passed to plt.plot( … ), except the following:</p>
+<ul>
+<li><p>clip = a tuple with the min, med and max percentiles to plot. Default is (5,50,95).</p></li>
+<li><p>figsize = a figsize for the figure to create (if ax is None).</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>Tuple containing</p>
+<ul class="simple">
+<li><p>fig: a matplotlib figure instance.</p></li>
+<li><p>ax: a matplotlib axes.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="BlackTelperion.blackimage.html" class="btn btn-neutral float-left" title="BlackTelperion.blackimage module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="BlackTelperion.multiprocessing.html" class="btn btn-neutral float-right" title="BlackTelperion.multiprocessing module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

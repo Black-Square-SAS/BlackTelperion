@@ -1,0 +1,267 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.analyse.indices &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/BlackTelperion.html">BlackTelperion package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../analyse.html">BlackTelperion.analyse</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.analyse.indices</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for BlackTelperion.analyse.indices</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<div class="viewcode-block" id="band_ratio">
+<a class="viewcode-back" href="../../../api/BlackTelperion.analyse.indices.html#BlackTelperion.analyse.indices.band_ratio">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">band_ratio</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">num</span><span class="p">,</span> <span class="n">den</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate a band ratio to map broad absorbion features (e.g. iron).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: HyData instance to calculate a band ratio for.</span>
+<span class="sd">        num: the numerator of the band ratio. Integers are treated as indices, floats as wavelengths.</span>
+
+<span class="sd">                If a tuple is passed then values between band1[0] and band1[1] will be averaged before computing the</span>
+<span class="sd">               band ratio. Lists of tuples/floats or indices will be summed (for calculating ratios of the form (a+b)/c).</span>
+
+<span class="sd">        den: the denominator of the band ratio. Values are treated like in band1.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        a new HyData instance containing the band ratio.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="p">[</span><span class="n">num</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">den</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">den</span> <span class="o">=</span> <span class="p">[</span><span class="n">den</span><span class="p">]</span>
+
+    <span class="c1"># calculate numerator and denominator</span>
+    <span class="n">numdata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">dendata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">D</span><span class="p">,</span> <span class="n">exp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="n">numdata</span><span class="p">,</span> <span class="n">dendata</span><span class="p">],</span> <span class="p">[</span><span class="n">num</span><span class="p">,</span> <span class="n">den</span><span class="p">]):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">exp</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="c1"># calculate addition or subtraction</span>
+                <span class="n">sign</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">sign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                    <span class="n">n</span> <span class="o">=</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+                <span class="k">assert</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;Error - invalid slice </span><span class="si">%.1f</span><span class="s2">:</span><span class="si">%.1f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">n</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get_band_index</span><span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                            <span class="n">data</span><span class="o">.</span><span class="n">get_band_index</span><span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%.1f</span><span class="s2">:</span><span class="si">%.1f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">n</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">sign</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">name</span> <span class="o">+=</span> <span class="s2">&quot; + </span><span class="si">%.1f</span><span class="s2">:</span><span class="si">%.1f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">n</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">name</span> <span class="o">+=</span> <span class="s2">&quot; - </span><span class="si">%.1f</span><span class="s2">:</span><span class="si">%.1f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">n</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sign</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;-&#39;</span><span class="p">:</span>
+                        <span class="n">n</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+                        <span class="n">sign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="k">elif</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">sign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                    <span class="n">n</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get_band_index</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">n</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%.1f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">n</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">sign</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                            <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;+</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">n</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">name</span> <span class="o">+=</span> <span class="s2">&quot;+</span><span class="si">%.1f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">n</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                            <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;-</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">n</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">name</span> <span class="o">+=</span> <span class="s2">&quot;-</span><span class="si">%.1f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">n</span>
+
+            <span class="c1"># accumulate</span>
+            <span class="n">slc</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">idx</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
+                <span class="n">slc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">slc</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">D</span> <span class="o">+=</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">slc</span>
+
+        <span class="c1"># store name</span>
+        <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="c1"># calculate output</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">drop_all_bands</span><span class="p">()</span>  <span class="c1"># drop band specific attributes</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span> <span class="p">(</span><span class="n">numdata</span> <span class="o">/</span> <span class="n">dendata</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">posinf</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">neginf</span><span class="o">=</span><span class="mi">0</span> <span class="p">)</span> <span class="c1"># replace infs, nans, etc. with 0</span>
+
+    <span class="c1"># set band name</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">set_band_names</span><span class="p">([</span><span class="s1">&#39;(</span><span class="si">%s</span><span class="s1">) / (</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">names</span><span class="p">[</span><span class="mi">1</span><span class="p">])])</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">push_to_header</span><span class="p">()</span>
+
+    <span class="c1"># return HyData instance</span>
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+
+<div class="viewcode-block" id="NDVI">
+<a class="viewcode-back" href="../../../api/BlackTelperion.analyse.indices.html#BlackTelperion.analyse.indices.NDVI">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">NDVI</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate NDVI.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: the HyData instance to calculate a NDVI for.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        a new HyData instance containing the band ratio.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">idxNIR</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get_band_index</span><span class="p">(</span><span class="mf">800.0</span><span class="p">)</span>
+    <span class="n">idxRed</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get_band_index</span><span class="p">(</span><span class="mf">670.0</span><span class="p">)</span>
+
+    <span class="c1"># create output HyData instance</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">drop_all_bands</span><span class="p">()</span>  <span class="c1"># drop band specific attributes</span>
+
+    <span class="c1"># calculate NDVI</span>
+    <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">):</span>  <span class="c1"># ignore div0 errors</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">((</span><span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">idxNIR</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">idxRed</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">idxNIR</span><span class="p">]</span> <span class="o">+</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">idxRed</span><span class="p">]))[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+
+    <span class="c1"># set band name</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">set_band_names</span><span class="p">([</span><span class="s1">&#39;NDVI&#39;</span><span class="p">])</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">push_to_header</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="SKY">
+<a class="viewcode-back" href="../../../api/BlackTelperion.analyse.indices.html#BlackTelperion.analyse.indices.SKY">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">SKY</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate ratio between blue (479.89 nm and featureless swir (1688.64 nm) to identify sky pixels and (sometimes)</span>
+<span class="sd">    very distance pixels due to blue scattering.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: the HyData instance to calculate a NDVI for.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        a new HyData instance containing the SKY band ratio.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">band_ratio</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mf">479.89</span><span class="p">,</span> <span class="mf">1688.64</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SHADE">
+<a class="viewcode-back" href="../../../api/BlackTelperion.analyse.indices.html#BlackTelperion.analyse.indices.SHADE">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">SHADE</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate ratio between blue (479.89 nm and near infrared (1688.64 nm) to identify shadow pixels (at least in theory).</span>
+
+<span class="sd">    Generally this should work well, except for objects that are very blue. Luckily blue things are not common in Geology.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: the HyData instance to calculate SHADE for.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        a new HyData instance containing the SHADE band ratio.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">band_ratio</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mf">480.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">)</span></div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

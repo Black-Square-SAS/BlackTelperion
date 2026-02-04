@@ -1,0 +1,587 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.blackfeature module &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="BlackTelperion.blackheader module" href="BlackTelperion.blackheader.html" />
+    <link rel="prev" title="BlackTelperion.blackdata module" href="BlackTelperion.blackdata.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="BlackTelperion.html">BlackTelperion package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.RGB"><code class="docutils literal notranslate"><span class="pre">RGB</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.VNIR"><code class="docutils literal notranslate"><span class="pre">VNIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.SWIR"><code class="docutils literal notranslate"><span class="pre">SWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.BROAD"><code class="docutils literal notranslate"><span class="pre">BROAD</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.MWIR"><code class="docutils literal notranslate"><span class="pre">MWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.LWIR"><code class="docutils literal notranslate"><span class="pre">LWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.band_select_threshold"><code class="docutils literal notranslate"><span class="pre">band_select_threshold</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="BlackTelperion.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackcollection.html">BlackTelperion.blackcollection module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html">BlackTelperion.blackdata module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">BlackTelperion.blackfeature module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#BlackTelperion.blackfeature.BlackFeature"><code class="docutils literal notranslate"><span class="pre">BlackFeature</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#BlackTelperion.blackfeature.MultiFeature"><code class="docutils literal notranslate"><span class="pre">MultiFeature</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#BlackTelperion.blackfeature.MixedFeature"><code class="docutils literal notranslate"><span class="pre">MixedFeature</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html">BlackTelperion.blackheader module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html">BlackTelperion.blackimage module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blacklibrary.html">BlackTelperion.blacklibrary module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.multiprocessing.html">BlackTelperion.multiprocessing module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="BlackTelperion.html">BlackTelperion package</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.blackfeature module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/BlackTelperion.blackfeature.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-BlackTelperion.blackfeature">
+<span id="blacktelperion-blackfeature-module"></span><h1>BlackTelperion.blackfeature module<a class="headerlink" href="#module-BlackTelperion.blackfeature" title="Link to this heading"></a></h1>
+<p>Fit and visualise individual hyperspectral features.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">BlackTelperion.blackfeature.</span></span><span class="sig-name descname"><span class="pre">BlackFeature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'g'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackfeature.html#BlackFeature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Utility class for representing and fitting individual or multiple absorption features.
+This class is most likely to be used by MWL calculator</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.get_start">
+<span class="sig-name descname"><span class="pre">get_start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackfeature.html#BlackFeature.get_start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.get_start" title="Link to this definition"></a></dt>
+<dd><p>Get start of feature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the feature position - 0.5 * feature width.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.get_end">
+<span class="sig-name descname"><span class="pre">get_end</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackfeature.html#BlackFeature.get_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.get_end" title="Link to this definition"></a></dt>
+<dd><p>Get approximate end of feature</p>
+<p>Returns:
+returns feature position - 0.5 * feature width.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.gaussian">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">gaussian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackfeature.html#BlackFeature.gaussian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.gaussian" title="Link to this definition"></a></dt>
+<dd><p>Static function for evaluating a gaussian feature model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>ndarray</em>) – wavelengths (nanometres) to evaluate the feature over</p></li>
+<li><p><strong>pos</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – position for the gaussian function (nanometres)</p></li>
+<li><p><strong>width</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – width for the gaussian function.</p></li>
+<li><p><strong>depth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – depth for the gaussian function (max to min)</p></li>
+<li><p><strong>offset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – the vertical offset of the functions. Default is 1.0.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.multi_gauss">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">multi_gauss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asym</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackfeature.html#BlackFeature.multi_gauss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.multi_gauss" title="Link to this definition"></a></dt>
+<dd><p>Static function for evaluating a multi-gaussian feature model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>ndarray</em>) – wavelengths (nanometres) to evaluate the feature over</p></li>
+<li><p><strong>pos</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – a list of positions for each individual gaussian function (nanometres)</p></li>
+<li><p><strong>width</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – a list of widths for each individual gaussian function.</p></li>
+<li><p><strong>depth</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – a list of depths for each individual gaussian function (max to min)</p></li>
+<li><p><strong>asym</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – a list of feature asymmetries. The right-hand width will be calculated as:
+w2 = asym * width. Default is 1.0.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.quick_plot">
+<span class="sig-name descname"><span class="pre">quick_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gauss'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'top'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lab_kwds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackfeature.html#BlackFeature.quick_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.quick_plot" title="Link to this definition"></a></dt>
+<dd><p>Quickly plot this feature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – <p>the method used to represent this feature. Options are:</p>
+<ul>
+<li><p>’gauss’ = represent using a gaussian function</p></li>
+<li><p>’range’ = draw vertical lines at pos - width / 2 and pos + width / 2.</p></li>
+<li><p>’fill’ = fill a rectangle in the region dominated by the feature with ‘color’ specifed in kwds.</p></li>
+<li><p>’line’ = plot a (vertical) line at the position of this feature.</p></li>
+<li><p>’all’ = plot with all of the above methods.</p></li>
+</ul>
+</p></li>
+<li><p><strong>ax</strong> – an axis to add the plot to. If None (default) a new axis is created.</p></li>
+<li><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Label this feature (using it’s name?). Options are None (no label), ‘top’, ‘middle’ or ‘lower’. Or,
+if an integer is passed, odd integers will be plotted as ‘top’ and even integers as ‘lower’.</p></li>
+<li><p><strong>lab_kwds</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Dictionary of keywords to pass to plt.text( … ) for controlling labels.</p></li>
+<li><p><strong>**kwds</strong> – Keywords are passed to ax.axvline(…) if method==’range’ or ax.plot(…) otherwise.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>Tuple containing</p>
+<ul class="simple">
+<li><p>fig: the figure that was plotted to.</p></li>
+<li><p>ax: the axis that was plotted to.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Features">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Features</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Features" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Specific absorption types. Useful for plotting etc. Not really used for anything and will probably be depreciated soon.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Features.AlOH">
+<span class="sig-name descname"><span class="pre">AlOH</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Features.AlOH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Features.CaCO3">
+<span class="sig-name descname"><span class="pre">CaCO3</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Features.CaCO3" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Features.Dy">
+<span class="sig-name descname"><span class="pre">Dy</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Features.Dy" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Features.Er">
+<span class="sig-name descname"><span class="pre">Er</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Features.Er" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Features.Eu">
+<span class="sig-name descname"><span class="pre">Eu</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Features.Eu" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Features.FeCO3">
+<span class="sig-name descname"><span class="pre">FeCO3</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Features.FeCO3" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Features.FeOH">
+<span class="sig-name descname"><span class="pre">FeOH</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Features.FeOH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Features.Ferric">
+<span class="sig-name descname"><span class="pre">Ferric</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Features.Ferric" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Features.Ferrous">
+<span class="sig-name descname"><span class="pre">Ferrous</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Features.Ferrous" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Features.H2O">
+<span class="sig-name descname"><span class="pre">H2O</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Features.H2O" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Features.Ho">
+<span class="sig-name descname"><span class="pre">Ho</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Features.Ho" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Features.MgCO3">
+<span class="sig-name descname"><span class="pre">MgCO3</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Features.MgCO3" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Features.MgOH">
+<span class="sig-name descname"><span class="pre">MgOH</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Features.MgOH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Features.Nd">
+<span class="sig-name descname"><span class="pre">Nd</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Features.Nd" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Features.OH">
+<span class="sig-name descname"><span class="pre">OH</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Features.OH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Features.Pr">
+<span class="sig-name descname"><span class="pre">Pr</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Features.Pr" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Features.Sm">
+<span class="sig-name descname"><span class="pre">Sm</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Features.Sm" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Features.Tm">
+<span class="sig-name descname"><span class="pre">Tm</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Features.Tm" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Features.Yb">
+<span class="sig-name descname"><span class="pre">Yb</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Features.Yb" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Minerals</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Common mineral absorption features. Useful for plotting etc. Not really used for anything and will probably be depreciated soon.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.AMPHIBOLE">
+<span class="sig-name descname"><span class="pre">AMPHIBOLE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;BlackTelperion.blackfeature.MultiFeature</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.AMPHIBOLE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.Amphibole_Fe">
+<span class="sig-name descname"><span class="pre">Amphibole_Fe</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.Amphibole_Fe" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.Amphibole_Mg">
+<span class="sig-name descname"><span class="pre">Amphibole_Mg</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.Amphibole_Mg" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.Ankerite">
+<span class="sig-name descname"><span class="pre">Ankerite</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.Ankerite" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.BIOTITE">
+<span class="sig-name descname"><span class="pre">BIOTITE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.MultiFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.MultiFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.BIOTITE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.Biotite_Fe">
+<span class="sig-name descname"><span class="pre">Biotite_Fe</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.Biotite_Fe" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.Biotite_Mg">
+<span class="sig-name descname"><span class="pre">Biotite_Mg</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.Biotite_Mg" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.CARBONATE">
+<span class="sig-name descname"><span class="pre">CARBONATE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;BlackTelperion.blackfeature.MultiFeature</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.CARBONATE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.CHLORITE">
+<span class="sig-name descname"><span class="pre">CHLORITE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.MultiFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.MultiFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.CHLORITE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.Calcite">
+<span class="sig-name descname"><span class="pre">Calcite</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.Calcite" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.Chlorite_Fe">
+<span class="sig-name descname"><span class="pre">Chlorite_Fe</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.Chlorite_Fe" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.Chlorite_Mg">
+<span class="sig-name descname"><span class="pre">Chlorite_Mg</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.Chlorite_Mg" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.Dickite">
+<span class="sig-name descname"><span class="pre">Dickite</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.Dickite" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.Dolomite">
+<span class="sig-name descname"><span class="pre">Dolomite</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.Dolomite" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.Epidote">
+<span class="sig-name descname"><span class="pre">Epidote</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.Epidote" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.Gypsum">
+<span class="sig-name descname"><span class="pre">Gypsum</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.Gypsum" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.Halloysite">
+<span class="sig-name descname"><span class="pre">Halloysite</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.Halloysite" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.Jarosite">
+<span class="sig-name descname"><span class="pre">Jarosite</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.Jarosite" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.KAOLIN">
+<span class="sig-name descname"><span class="pre">KAOLIN</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;BlackTelperion.blackfeature.MultiFeature</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.KAOLIN" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.Kaolinite">
+<span class="sig-name descname"><span class="pre">Kaolinite</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.Kaolinite" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.MICA">
+<span class="sig-name descname"><span class="pre">MICA</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;BlackTelperion.blackfeature.MultiFeature</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.MICA" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.Mica_K">
+<span class="sig-name descname"><span class="pre">Mica_K</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.Mica_K" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.Mica_MgFe">
+<span class="sig-name descname"><span class="pre">Mica_MgFe</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.Mica_MgFe" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.Mica_Na">
+<span class="sig-name descname"><span class="pre">Mica_Na</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.Mica_Na" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.Montmorillonite">
+<span class="sig-name descname"><span class="pre">Montmorillonite</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.Montmorillonite" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.Nacrite">
+<span class="sig-name descname"><span class="pre">Nacrite</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.Nacrite" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.Nontronite">
+<span class="sig-name descname"><span class="pre">Nontronite</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.Nontronite" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.Pyrophyllite">
+<span class="sig-name descname"><span class="pre">Pyrophyllite</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.Pyrophyllite" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.SMECTITE">
+<span class="sig-name descname"><span class="pre">SMECTITE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;BlackTelperion.blackfeature.MultiFeature</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.SMECTITE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.SULPHATE">
+<span class="sig-name descname"><span class="pre">SULPHATE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;BlackTelperion.blackfeature.MultiFeature</span> <span class="pre">object&gt;</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.SULPHATE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Minerals.Saponite">
+<span class="sig-name descname"><span class="pre">Saponite</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Minerals.Saponite" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Themes">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Themes</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Themes" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Some useful ‘themes’ (for plotting etc)</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Themes.ATMOSPHERE">
+<span class="sig-name descname"><span class="pre">ATMOSPHERE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Themes.ATMOSPHERE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Themes.CARBONATE">
+<span class="sig-name descname"><span class="pre">CARBONATE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.MultiFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Themes.CARBONATE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Themes.CLAY">
+<span class="sig-name descname"><span class="pre">CLAY</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.MultiFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.MultiFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Themes.CLAY" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Themes.DIAGNOSTIC">
+<span class="sig-name descname"><span class="pre">DIAGNOSTIC</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Themes.DIAGNOSTIC" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.BlackFeature.Themes.OH">
+<span class="sig-name descname"><span class="pre">OH</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;BlackTelperion.blackfeature.BlackFeature</span> <span class="pre">object&gt;]</span></span><a class="headerlink" href="#BlackTelperion.blackfeature.BlackFeature.Themes.OH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.MultiFeature">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">BlackTelperion.blackfeature.</span></span><span class="sig-name descname"><span class="pre">MultiFeature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endmembers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackfeature.html#MultiFeature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackfeature.MultiFeature" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#BlackTelperion.blackfeature.BlackFeature" title="BlackTelperion.blackfeature.BlackFeature"><code class="xref py py-class docutils literal notranslate"><span class="pre">BlackFeature</span></code></a></p>
+<p>A spectral feature with variable position due to a solid solution between known end-members.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.MultiFeature.count">
+<span class="sig-name descname"><span class="pre">count</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackfeature.html#MultiFeature.count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackfeature.MultiFeature.count" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.MultiFeature.quick_plot">
+<span class="sig-name descname"><span class="pre">quick_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fill+line'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suplabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('alternate',</span> <span class="pre">{})</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackfeature.html#MultiFeature.quick_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackfeature.MultiFeature.quick_plot" title="Link to this definition"></a></dt>
+<dd><p>Quickly plot this feature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – <p>the method used to represent this feature. Default is ‘fill+line’. Options are:</p>
+<ul>
+<li><p>’gauss’ = represent using a gaussian function at each endmember.</p></li>
+<li><p>’range’ = draw vertical lines at pos - width / 2 and pos + width / 2.</p></li>
+<li><p>’fill’ = fill a rectangle in the region dominated by the feature with ‘color’ specifed in kwds.</p></li>
+<li><p>’line’ = plot a (vertical) line at the position of each feature.</p></li>
+<li><p>’all’ = plot with all of the above methods.</p></li>
+</ul>
+</p></li>
+<li><p><strong>ax</strong> – an axis to add the plot to. If None (default) a new axis is created.</p></li>
+<li><p><strong>suplabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Label positions for this feature. Default is None (no labels). Options are ‘top’, ‘middle’ or ‘lower’.</p></li>
+<li><p><strong>sublabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Label positions for endmembers. Options are None (no labels), ‘top’, ‘middle’, ‘lower’ or ‘alternate’. Or, if an integer
+is passed then it will be used to initialise an alternating pattern (even = top, odd = lower).</p></li>
+<li><p><strong>lab_kwds</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Dictionary of keywords to pass to plt.text( … ) for controlling labels.</p></li>
+<li><p><strong>**kwds</strong> – Keywords are passed to ax.axvline(…) if method==’range’ or ax.plot(…) otherwise.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>Tuple containing</p>
+<ul class="simple">
+<li><p>fig: the figure that was plotted to</p></li>
+<li><p>ax: the axis that was plotted to</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.MixedFeature">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">BlackTelperion.blackfeature.</span></span><span class="sig-name descname"><span class="pre">MixedFeature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">components</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackfeature.html#MixedFeature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackfeature.MixedFeature" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#BlackTelperion.blackfeature.BlackFeature" title="BlackTelperion.blackfeature.BlackFeature"><code class="xref py py-class docutils literal notranslate"><span class="pre">BlackFeature</span></code></a></p>
+<p>A spectral feature resulting from a mixture of known sub-features.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackfeature.MixedFeature.count">
+<span class="sig-name descname"><span class="pre">count</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackfeature.html#MixedFeature.count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackfeature.MixedFeature.count" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="BlackTelperion.blackdata.html" class="btn btn-neutral float-left" title="BlackTelperion.blackdata module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="BlackTelperion.blackheader.html" class="btn btn-neutral float-right" title="BlackTelperion.blackheader module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,389 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.multiprocessing &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/BlackTelperion.html">BlackTelperion package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.multiprocessing</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for BlackTelperion.multiprocessing</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Generic tools for distributing computationally intensive tasks across multiple threads.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tempfile</span><span class="w"> </span><span class="kn">import</span> <span class="n">mkdtemp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">BlackTelperion</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlackImage</span><span class="c1">#, BlackCloud</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">BlackTelperion</span><span class="w"> </span><span class="kn">import</span> <span class="n">io</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_split</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nchunks</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Split the specified BlackCloud instance into a number of chunks.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data = the complete BlackData object to copy and split.</span>
+<span class="sd">        nchunks = the number of chunks to split into.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        a list of split</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># if isinstance(data, BlackCloud):  # special case for hyperclouds - split xyz, rgb and normals too</span>
+    <span class="c1">#     chunksize = int(np.floor(data.point_count() / nchunks))</span>
+    <span class="c1">#     chunks = [(i * chunksize, (i + 1) * chunksize) for i in range(nchunks)]</span>
+    <span class="c1">#     chunks[-1] = (chunks[-1][0], data.point_count())  # expand last chunk to include remainder</span>
+    <span class="c1">#</span>
+    <span class="c1">#     # split points</span>
+    <span class="c1">#     xyz = [data.xyz[c[0]:c[1], :].copy() for c in chunks]</span>
+    <span class="c1">#</span>
+    <span class="c1">#     # split data</span>
+    <span class="c1">#     bands = [None for c in chunks]</span>
+    <span class="c1">#     if data.has_bands():</span>
+    <span class="c1">#         X = data.get_raveled().copy()</span>
+    <span class="c1">#         bands = [X[c[0]:c[1], :] for c in chunks]</span>
+    <span class="c1">#</span>
+    <span class="c1">#     # split rgb</span>
+    <span class="c1">#     rgb = [None for c in chunks]</span>
+    <span class="c1">#     if data.has_rgb():</span>
+    <span class="c1">#         rgb = [data.rgb[c[0]:c[1], :].copy() for c in chunks]</span>
+    <span class="c1">#</span>
+    <span class="c1">#     # split normals</span>
+    <span class="c1">#     normals = [None for c in chunks]</span>
+    <span class="c1">#     if data.has_normals():</span>
+    <span class="c1">#         normals = [data.normals[c[0]:c[1], :].copy() for c in chunks]</span>
+    <span class="c1">#</span>
+    <span class="c1">#     return [BlackCloud(xyz[i],</span>
+    <span class="c1">#                     rgb=rgb[i],</span>
+    <span class="c1">#                     normals=normals[i],</span>
+    <span class="c1">#                     bands=bands[i],</span>
+    <span class="c1">#                     header=data.header.copy()) for i in range(len(chunks))]</span>
+    <span class="c1">#</span>
+    <span class="c1"># else:  # just split data (for BlackImage and other types)</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get_raveled</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">chunksize</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">nchunks</span><span class="p">))</span>
+    <span class="n">chunks</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span> <span class="o">*</span> <span class="n">chunksize</span><span class="p">,</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">chunksize</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nchunks</span><span class="p">)]</span>
+    <span class="n">chunks</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">chunks</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># expand last chunk to include remainder</span>
+
+    <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">chunks</span><span class="p">:</span>
+        <span class="n">_o</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># create copy</span>
+        <span class="n">_o</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">:][:,</span><span class="kc">None</span><span class="p">,:]</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_o</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">out</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_merge</span><span class="p">(</span><span class="n">chunks</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Merge a list of BlackData objects into a combined one (aka. do the opposite of split(...)).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        chunks = a list of BlackData chunks to merge.</span>
+<span class="sd">        shape = the output data shape.</span>
+<span class="sd">    Returns: a single merged BlackData instance (of the same type as the input).</span>
+<span class="sd">               The header of this instance will be a copy of chunks[0].header.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># merge data</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">c</span><span class="o">.</span><span class="n">data</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">chunks</span><span class="p">])</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">*</span><span class="n">shape</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="c1">#if not isinstance(chunks[0], BlackCloud): # easy!</span>
+        <span class="c1"># make copy</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">chunks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">X</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">chunks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">out</span>
+    <span class="c1"># else: # less easy</span>
+    <span class="c1">#     xyz = np.vstack([c.xyz for c in chunks])</span>
+    <span class="c1">#     rgb = None</span>
+    <span class="c1">#     if chunks[0].has_rgb():</span>
+    <span class="c1">#         rgb = np.vstack([c.rgb for c in chunks])</span>
+    <span class="c1">#     normals = None</span>
+    <span class="c1">#     if chunks[0].has_normals():</span>
+    <span class="c1">#         normals = np.vstack([c.normals for c in chunks])</span>
+    <span class="c1">#     return BlackCloud( xyz, rgb=rgb, normals=normals, bands=X, header=chunks[0].header.copy())</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_call</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">kwd</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function will be called by each thread. It loads each data chunk from disk, runs the operation, then saves</span>
+<span class="sd">    the results.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># print(&quot;Spawning thread %d.&quot; % n)</span>
+    <span class="c1"># func, path, arg, kwd = args</span>
+
+    <span class="c1"># load data chunk</span>
+    <span class="c1"># if &#39;.ply&#39; in path:</span>
+    <span class="c1">#     data = io.loadCloudPLY(path)  # load point cloud</span>
+    <span class="c1">#     result = func(data, *arg, **kwd)  # compute results</span>
+    <span class="c1">#     assert isinstance(result, BlackCloud), &quot;Error - function %s does not return a BlackCloud.&quot; % func</span>
+    <span class="c1">#     io.saveCloudPLY(path, result)  # save point cloud</span>
+    <span class="c1"># else:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>  <span class="c1"># load image</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kwd</span><span class="p">)</span>  <span class="c1"># compute results</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">BlackImage</span><span class="p">),</span> <span class="s2">&quot;Error - function </span><span class="si">%s</span><span class="s2"> does not return a BlackImage.&quot;</span> <span class="o">%</span> <span class="n">func</span>
+    <span class="n">io</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>  <span class="c1"># save result</span>
+
+    <span class="k">return</span> <span class="kc">True</span>  <span class="c1"># done</span>
+
+<div class="viewcode-block" id="parallel_chunks">
+<a class="viewcode-back" href="../../api/BlackTelperion.multiprocessing.html#BlackTelperion.multiprocessing.parallel_chunks">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parallel_chunks</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run a function that operates per-point or per-pixel on smaller chunks of a point cloud or image dataset</span>
+<span class="sd">    in parallel. Only use for expensive operations as otherwise overheads (writing files to cache, spawning threads,</span>
+<span class="sd">    loading files from cache) are too costly.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        function: the function to run on each chunk of the dataset. Must take a BlackCloud or BlackImage dataset as it&#39;s first</span>
+<span class="sd">                  argument and also return a BlackCloud or BlackImage dataset (cf., mwl(...), get_hull_corrected(...)).</span>
+<span class="sd">        data (BlackCloud or BlackImage): data to run the function on.</span>
+<span class="sd">        args (tuple): tuple of arguments to pass to the function.</span>
+<span class="sd">        nthreads (int): the number of threads to spawn. Default is the number of cores - 2. Negative numbers will be subtracted</span>
+<span class="sd">                   from the number of cores.</span>
+<span class="sd">        **kwds: any other keywords are passed to the function</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Nothing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">BlackImage</span><span class="p">)</span> <span class="c1">#or isinstance(data, BlackCloud)</span>
+
+    <span class="c1"># get number of threads</span>
+    <span class="k">if</span> <span class="s1">&#39;nthreads&#39;</span> <span class="ow">in</span> <span class="n">kwds</span><span class="p">:</span>
+        <span class="n">nthreads</span> <span class="o">=</span> <span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;nthreads&#39;</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;nthreads&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">nthreads</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
+    <span class="k">if</span> <span class="n">nthreads</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">nthreads</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">-</span> <span class="n">nthreads</span>
+    <span class="k">assert</span> <span class="n">nthreads</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Error - cannot spawn </span><span class="si">%d</span><span class="s2"> threads&quot;</span> <span class="o">%</span> <span class="n">nthreads</span>
+
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nthreads</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="s2">&quot;Error - nthreads must be an integer.&quot;</span>
+    <span class="k">assert</span> <span class="n">nthreads</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Error - could not identify CPU count. Please specify nthreads keyword.&quot;</span>
+
+    <span class="c1"># split data into chunks</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># store shape (important for images)</span>
+    <span class="n">chunks</span> <span class="o">=</span> <span class="n">_split</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">nthreads</span><span class="p">)</span>
+
+    <span class="c1"># dump chunks into temp directory</span>
+    <span class="n">pth</span> <span class="o">=</span> <span class="n">mkdtemp</span><span class="p">()</span>  <span class="c1"># make temp directory</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Writing thread cache to </span><span class="si">%s</span><span class="s2">:&quot;</span> <span class="o">%</span> <span class="n">pth</span><span class="p">)</span>
+
+    <span class="c1"># dump clouds to directory</span>
+    <span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chunks</span><span class="p">):</span>
+
+        <span class="c1"># if isinstance(c, BlackCloud):</span>
+        <span class="c1">#     p = str( Path(pth) / (&#39;%d.ply&#39; % i))</span>
+        <span class="c1">#     io.saveCloudPLY(p, c)</span>
+        <span class="c1"># else:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">pth</span><span class="p">)</span><span class="o">/</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">.hdr&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">))</span>
+        <span class="n">io</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+        <span class="n">paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+    <span class="c1"># make sure we don&#39;t multithread twice when using advanced scipy/numpy functions...</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;MKL_NUM_THREADS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;OMP_NUM_THREADS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;MKL_DYNAMIC&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;FALSE&#39;</span>
+
+    <span class="c1"># spawn worker processes</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="p">[</span><span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">_call</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwds</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">paths</span><span class="p">)]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">P</span><span class="p">:</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">P</span><span class="p">:</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+        <span class="c1"># successs! load data again...</span>
+        <span class="c1"># if isinstance(data, BlackCloud):</span>
+        <span class="c1">#     chunks = [io.loadCloudPLY(p) for p in paths]</span>
+        <span class="c1"># else:</span>
+        <span class="n">chunks</span> <span class="o">=</span> <span class="p">[</span><span class="n">io</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">]</span>
+
+        <span class="c1"># remove temp directory</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">pth</span><span class="p">)</span>  <span class="c1"># delete temp directory</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Process complete (thread cache cleaned successfully).&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">KeyboardInterrupt</span><span class="p">,</span> <span class="ne">SystemExit</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Job cancelled. Cleaning temp directory... &quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">pth</span><span class="p">)</span> <span class="c1"># delete temp directory</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Done.&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Multiprocessing job cancelled by KeyboardInterrupt or SystemExit.&quot;</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error thrown. Cleaning temp directory... &quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">pth</span><span class="p">)</span>  <span class="c1"># delete temp directory</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Done.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">e</span>
+
+    <span class="c1"># re-enable scipy/numpy multithreading</span>
+    <span class="k">del</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;MKL_NUM_THREADS&#39;</span><span class="p">]</span>
+    <span class="k">del</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;OMP_NUM_THREADS&#39;</span><span class="p">]</span>
+    <span class="k">del</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;MKL_DYNAMIC&#39;</span><span class="p">]</span>
+
+    <span class="c1"># merge back into one dataset</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">_merge</span><span class="p">(</span><span class="n">chunks</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_call2</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">in_paths</span><span class="p">,</span> <span class="n">out_paths</span><span class="p">,</span> <span class="n">kwd</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">o</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">in_paths</span><span class="p">,</span> <span class="n">out_paths</span><span class="p">):</span>  <span class="c1"># loop through paths managed by this thread</span>
+        <span class="n">func</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="o">**</span><span class="n">kwd</span><span class="p">)</span>  <span class="c1"># call function</span>
+
+<div class="viewcode-block" id="parallel_datasets">
+<a class="viewcode-back" href="../../api/BlackTelperion.multiprocessing.html#BlackTelperion.multiprocessing.parallel_datasets">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parallel_datasets</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">in_paths</span><span class="p">,</span> <span class="n">out_paths</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parallelise a single function across many BlackData datasets.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        function: the function to run on each dataset. This should take an input path (string) as its first input and</span>
+<span class="sd">                  output path (also string) as its second output. Anything returned by the function will be ignored.</span>
+<span class="sd">        in_paths (list): a list of input paths, each of which will be passed to function in each thread.</span>
+<span class="sd">        out_paths(list): a list of corresponding output paths that each function should write to. Defaults to in_paths.</span>
+<span class="sd">        nthreads (int): the number of threads to spawn. Default is the number of cores - 2. Negative numbers are subtracted</span>
+<span class="sd">                  from the total number of cores.</span>
+<span class="sd">        **kwds: any keywords are passed directly to function in each thread.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Nothing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">in_paths</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span> <span class="s2">&quot;Error - in_paths must be a list of file paths (string).&quot;</span>
+
+    <span class="k">if</span> <span class="n">out_paths</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">out_paths</span> <span class="o">=</span> <span class="n">in_paths</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out_paths</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span> <span class="s2">&quot;Error - out_paths must be a list of file paths (string).&quot;</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">out_paths</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">in_paths</span><span class="p">),</span> <span class="s2">&quot;Error - length of input and output paths must match.&quot;</span>
+
+    <span class="c1"># get number of threads</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nthreads</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="s2">&quot;Error - nthreads must be an integer.&quot;</span>
+    <span class="k">if</span> <span class="n">nthreads</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">nthreads</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">-</span> <span class="n">nthreads</span>
+    <span class="k">assert</span> <span class="n">nthreads</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Error - cannot spawn </span><span class="si">%d</span><span class="s2"> threads&quot;</span> <span class="o">%</span> <span class="n">nthreads</span>
+
+    <span class="c1"># distribute input paths across threads</span>
+    <span class="n">nthreads</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span> <span class="nb">len</span><span class="p">(</span><span class="n">in_paths</span><span class="p">),</span> <span class="n">nthreads</span> <span class="p">)</span> <span class="c1"># avoid case where we have more threads than paths</span>
+    <span class="n">stride</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span> <span class="nb">len</span><span class="p">(</span><span class="n">in_paths</span><span class="p">)</span> <span class="o">/</span> <span class="n">nthreads</span> <span class="p">)</span>
+    <span class="n">inP</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">outP</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nthreads</span><span class="p">):</span>
+        <span class="n">idx0</span> <span class="o">=</span> <span class="n">i</span><span class="o">*</span><span class="n">stride</span>
+        <span class="n">idx1</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">stride</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">in_paths</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">inP</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">in_paths</span><span class="p">[</span><span class="n">idx0</span><span class="p">:</span><span class="n">idx1</span><span class="p">]</span> <span class="p">)</span>
+        <span class="n">outP</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">out_paths</span><span class="p">[</span><span class="n">idx0</span><span class="p">:</span><span class="n">idx1</span><span class="p">]</span> <span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">in_paths</span><span class="p">)</span> <span class="o">%</span> <span class="n">nthreads</span><span class="p">):</span> <span class="c1"># and add remainder</span>
+        <span class="n">inP</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">in_paths</span><span class="p">[</span><span class="o">-</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">outP</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">out_paths</span><span class="p">[</span><span class="o">-</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1"># make sure we don&#39;t multithread twice when using advanced scipy/numpy functions...</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;MKL_NUM_THREADS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;OMP_NUM_THREADS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;MKL_DYNAMIC&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;FALSE&#39;</span>
+
+    <span class="c1"># spawn worker processes and wait for jobs to finish</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="p">[</span><span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">_call2</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">inP</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">outP</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">kwds</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nthreads</span><span class="p">)]</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">P</span><span class="p">:</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">P</span><span class="p">:</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+    <span class="c1"># re-enable scipy/numpy multithreading</span>
+    <span class="k">del</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;MKL_NUM_THREADS&#39;</span><span class="p">]</span>
+    <span class="k">del</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;OMP_NUM_THREADS&#39;</span><span class="p">]</span>
+    <span class="k">del</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;MKL_DYNAMIC&#39;</span><span class="p">]</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

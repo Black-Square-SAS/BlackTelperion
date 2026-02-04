@@ -1,0 +1,197 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.reference.generate &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/BlackTelperion.html">BlackTelperion package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.reference.generate</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for BlackTelperion.reference.generate</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">gfit</span><span class="w"> </span><span class="kn">import</span> <span class="n">mgauss</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">hylite</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">skimage.data</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">skdata</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">skimage.transform</span><span class="w"> </span><span class="kn">import</span> <span class="n">rotate</span><span class="p">,</span> <span class="n">swirl</span><span class="p">,</span> <span class="n">rescale</span>
+
+
+<div class="viewcode-block" id="randomSpectra">
+<a class="viewcode-back" href="../../../api/BlackTelperion.reference.generate.html#BlackTelperion.reference.generate.randomSpectra">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">randomSpectra</span><span class="p">(</span><span class="n">wav</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                  <span class="n">f</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2245.</span><span class="p">,</span> <span class="mf">2340.</span><span class="p">],</span>
+                  <span class="n">d</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span>
+                  <span class="n">w</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
+                  <span class="n">a</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">,</span>
+                  <span class="n">nrand</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span>
+                  <span class="n">noise</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+                  <span class="n">slope</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a random spectra.</span>
+<span class="sd">    :param wav: The wavelengths to generate a spectra across.</span>
+<span class="sd">    :param f: Fixed absorption feature positions.</span>
+<span class="sd">    :param d: Fixed absorption feature depths.</span>
+<span class="sd">    :param w: Fixed absorption feature widths.</span>
+<span class="sd">    :param a: Overall material brightness (from 0 to 1). Default is 0.9.</span>
+<span class="sd">    :param nrand: Number of random features to add.</span>
+<span class="sd">    :param noise: Depth of random features and additional white noise.</span>
+<span class="sd">    :param slope: Slope of overall spectra.</span>
+<span class="sd">    :return: A synthetic spectra</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># generate initial (pure) spectra</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">slope</span> <span class="o">*</span> <span class="p">(</span><span class="n">wav</span> <span class="o">-</span> <span class="n">wav</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">wav</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">wav</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>  <span class="c1"># slope</span>
+    <span class="n">R2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">wav</span><span class="p">)</span>
+    <span class="n">mgauss</span><span class="p">(</span><span class="n">wav</span><span class="p">,</span> <span class="n">R2</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">R</span> <span class="o">-</span> <span class="n">R2</span>
+
+    <span class="k">if</span> <span class="n">nrand</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">mgauss</span><span class="p">(</span><span class="n">wav</span><span class="p">,</span> <span class="n">R2</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="n">noise</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nrand</span><span class="p">)],</span>
+               <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">wav</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wav</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nrand</span><span class="p">)],</span>
+               <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">10</span> <span class="o">*</span> <span class="p">(</span><span class="n">wav</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">wav</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="p">(</span><span class="n">wav</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">wav</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nrand</span><span class="p">)])</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span> <span class="o">-</span> <span class="n">R2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">R</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">wav</span><span class="p">))</span> <span class="o">*</span> <span class="n">noise</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="genImage">
+<a class="viewcode-back" href="../../../api/BlackTelperion.reference.generate.html#BlackTelperion.reference.generate.genImage">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">genImage</span><span class="p">(</span><span class="n">wav</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">2100.</span><span class="p">,</span> <span class="mf">2400.</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span>
+             <span class="n">A</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="p">[</span><span class="mf">2200.</span><span class="p">,</span> <span class="mf">2340.</span><span class="p">],</span> <span class="n">a</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">nrand</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+             <span class="n">B</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="p">[</span><span class="mf">2160.</span><span class="p">,</span> <span class="mf">2210.</span><span class="p">],</span> <span class="n">a</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">nrand</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+             <span class="n">C</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="p">[</span><span class="mf">2250.</span><span class="p">,</span> <span class="mf">2350.</span><span class="p">],</span> <span class="n">a</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">nrand</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+             <span class="n">flip</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span> <span class="n">noise</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Use the Bricks() and Stones() images in skimage.data to create a synthetic hyperspectral image. Useful</span>
+<span class="sd">    for testing or demonstration purposes.</span>
+<span class="sd">    :param wav: Numpy array containing wavelengths of the desired HSI image. Default is np.linspace(2100., 2400., 200).</span>
+<span class="sd">    :param A: A dictionary containing arguments passed to randomSpectra(...) for phase A. Default is {f=[2200., 2340.], a=1.0}.</span>
+<span class="sd">    :param B: A dictionary containing arguments passed to randomSpectra(...) for phase B. Default is {f=[2160., 2200.], a=0.5}.</span>
+<span class="sd">    :param C: A dictionary containing arguments passed to randomSpectra(...) for phase C. Default is {f=[2250., 2350.], a=0.2}.</span>
+<span class="sd">    :param flip: True if the order of latent variables should be reversed. Useful for generating different styles of image.</span>
+<span class="sd">    :param seed: An integer seed for numpy.random(...). Default is 42.</span>
+<span class="sd">    :param noise: Amount of white noise to add. Default is 0.05.</span>
+<span class="sd">    :return: The synthetic hyperspectral image</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+    <span class="c1"># Define two latent variables</span>
+    <span class="n">lA</span> <span class="o">=</span> <span class="p">(</span><span class="mi">255</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">skdata</span><span class="o">.</span><span class="n">brick</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">))</span> <span class="o">/</span> <span class="mf">255.</span>
+    <span class="n">lA</span> <span class="o">=</span> <span class="n">swirl</span><span class="p">(</span><span class="n">rotate</span><span class="p">(</span><span class="n">lA</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;symmetric&#39;</span><span class="p">),</span> <span class="n">strength</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span>
+    <span class="n">lB</span> <span class="o">=</span> <span class="n">swirl</span><span class="p">(</span><span class="n">rescale</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">skdata</span><span class="o">.</span><span class="n">grass</span><span class="p">()</span> <span class="o">/</span> <span class="mf">255.</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)),</span> <span class="mf">0.5</span><span class="p">),</span> <span class="n">strength</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span>
+
+    <span class="c1"># Combine into three closed abundances (sum to 1)</span>
+    <span class="n">ab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">([</span><span class="n">lA</span><span class="p">,</span> <span class="n">lB</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="n">lA</span> <span class="o">+</span> <span class="n">lB</span><span class="p">)])</span>
+    <span class="n">ab</span><span class="p">[</span><span class="n">ab</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.01</span>
+    <span class="n">ab</span> <span class="o">=</span> <span class="n">ab</span> <span class="o">**</span> <span class="mi">2</span>  <span class="c1"># enhance contrast a little</span>
+    <span class="n">ab</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ab</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="c1"># ensure abundances sum to 1</span>
+    <span class="n">ab</span> <span class="o">=</span> <span class="n">ab</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="c1"># adjust abundance so that it isn&#39;t square (test data should never be square!)</span>
+    <span class="k">if</span> <span class="n">flip</span><span class="p">:</span>
+        <span class="n">ab</span> <span class="o">=</span> <span class="n">ab</span><span class="p">[:,:,::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Sample endmember spectra</span>
+    <span class="n">eA</span> <span class="o">=</span> <span class="n">randomSpectra</span><span class="p">(</span><span class="n">wav</span><span class="p">,</span> <span class="o">**</span><span class="n">A</span><span class="p">)</span>  <span class="c1"># Phase A</span>
+    <span class="n">eB</span> <span class="o">=</span> <span class="n">randomSpectra</span><span class="p">(</span><span class="n">wav</span><span class="p">,</span> <span class="o">**</span><span class="n">B</span><span class="p">)</span>  <span class="c1"># Phase B</span>
+    <span class="n">eC</span> <span class="o">=</span> <span class="n">randomSpectra</span><span class="p">(</span><span class="n">wav</span><span class="p">,</span> <span class="o">**</span><span class="n">C</span><span class="p">)</span>  <span class="c1"># Phase C</span>
+
+    <span class="c1"># mix to generate fake HSI data</span>
+    <span class="n">hsi</span> <span class="o">=</span> <span class="p">(</span><span class="n">ab</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">eA</span><span class="p">,</span> <span class="n">eB</span><span class="p">,</span> <span class="n">eC</span><span class="p">]))</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">ab</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">wav</span><span class="p">),))</span>
+    <span class="n">hsi</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="o">*</span><span class="n">hsi</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="n">noise</span>
+    <span class="c1"># put image and abundances in a HyImage object and return</span>
+    <span class="n">hsi</span> <span class="o">=</span> <span class="n">hylite</span><span class="o">.</span><span class="n">HyImage</span><span class="p">(</span><span class="n">hsi</span><span class="p">)</span>
+    <span class="n">hsi</span><span class="o">.</span><span class="n">set_wavelengths</span><span class="p">(</span><span class="n">wav</span><span class="p">)</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">hylite</span><span class="o">.</span><span class="n">HyImage</span><span class="p">(</span><span class="n">ab</span><span class="p">)</span>
+    <span class="n">A</span><span class="o">.</span><span class="n">set_band_names</span><span class="p">([</span><span class="s1">&#39;mineral_A&#39;</span><span class="p">,</span> <span class="s1">&#39;mineral_B&#39;</span><span class="p">,</span> <span class="s1">&#39;mineral_C&#39;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">hsi</span><span class="p">,</span> <span class="n">A</span></div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

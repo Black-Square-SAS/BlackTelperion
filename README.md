@@ -103,20 +103,20 @@ API documentation is generated from docstrings using [Sphinx](https://www.sphinx
 pip install sphinx sphinx-rtd-theme
 
 # Build HTML docs
-make -C docs/ html
+make -C docs_source/ html
 ```
 
-The generated documentation will be available at `docs/build/html/index.html`.
+The generated documentation will be available at `docs/html/index.html`.
 
 ### Regenerating API module files
 
 If you add new modules or subpackages, regenerate the `.rst` files:
 
 ```bash
-sphinx-apidoc -o docs/source/api/ BlackTelperion/ -f -e -M --implicit-namespaces
+sphinx-apidoc -o docs_source/source/api/ BlackTelperion/ -f -e -M --implicit-namespaces
 ```
 
-Then rebuild with `make -C docs/ html`.
+Then rebuild with `make -C docs_source/ html`.
 
 ## Basic Usage
 

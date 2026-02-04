@@ -1,0 +1,781 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.blackdata module &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="BlackTelperion.blackfeature module" href="BlackTelperion.blackfeature.html" />
+    <link rel="prev" title="BlackTelperion.blackcollection module" href="BlackTelperion.blackcollection.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="BlackTelperion.html">BlackTelperion package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.RGB"><code class="docutils literal notranslate"><span class="pre">RGB</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.VNIR"><code class="docutils literal notranslate"><span class="pre">VNIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.SWIR"><code class="docutils literal notranslate"><span class="pre">SWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.BROAD"><code class="docutils literal notranslate"><span class="pre">BROAD</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.MWIR"><code class="docutils literal notranslate"><span class="pre">MWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.LWIR"><code class="docutils literal notranslate"><span class="pre">LWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.band_select_threshold"><code class="docutils literal notranslate"><span class="pre">band_select_threshold</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="BlackTelperion.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackcollection.html">BlackTelperion.blackcollection module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">BlackTelperion.blackdata module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#BlackTelperion.blackdata.BlackData"><code class="docutils literal notranslate"><span class="pre">BlackData</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackfeature.html">BlackTelperion.blackfeature module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html">BlackTelperion.blackheader module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html">BlackTelperion.blackimage module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blacklibrary.html">BlackTelperion.blacklibrary module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.multiprocessing.html">BlackTelperion.multiprocessing module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="BlackTelperion.html">BlackTelperion package</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.blackdata module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/BlackTelperion.blackdata.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-BlackTelperion.blackdata">
+<span id="blacktelperion-blackdata-module"></span><h1>BlackTelperion.blackdata module<a class="headerlink" href="#module-BlackTelperion.blackdata" title="Link to this heading"></a></h1>
+<p>A base class for all types of hyperspectral data. Inherited by BlackImage and BlackLibrary.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">BlackTelperion.blackdata.</span></span><span class="sig-name descname"><span class="pre">BlackData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A generic class for encapsulating hyperspectral (points and images), and associated metadata such as georeferencing, bands etc.</p>
+<p>This class is based around a data numpy array containing the hyperspectral data in a representation such that the last dimension
+corresponds to individual bands (e.g. data[pointID, band] or data[px,py,band]). Note that the data array can be empty!</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.to_grey">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">to_grey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.to_grey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.to_grey" title="Link to this definition"></a></dt>
+<dd><p>Return a copy of the specified data array as uint8 greyscale. Useful for OpenCV operations, compression or mapping to RGB.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.copy" title="Link to this definition"></a></dt>
+<dd><p>Make a deep copy of this image instance.
+:param data: True if a copy of the data should be made, otherwise only copy header.
+:type data: bool</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a new BlackData instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.set_header">
+<span class="sig-name descname"><span class="pre">set_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.set_header"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.set_header" title="Link to this definition"></a></dt>
+<dd><p>Loads associated header data into self.header.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>header</strong> (<em>BlackTelperion.BlackHeader</em>) – a BlackHeader object or None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.push_to_header">
+<span class="sig-name descname"><span class="pre">push_to_header</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.push_to_header"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.push_to_header" title="Link to this definition"></a></dt>
+<dd><p>Update header data to match this hyperspectral data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.has_wavelengths">
+<span class="sig-name descname"><span class="pre">has_wavelengths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.has_wavelengths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.has_wavelengths" title="Link to this definition"></a></dt>
+<dd><p>True if the header data contains wavelength information.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.get_wavelengths">
+<span class="sig-name descname"><span class="pre">get_wavelengths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.get_wavelengths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.get_wavelengths" title="Link to this definition"></a></dt>
+<dd><p>Get the wavelength that corresponds with each band of this image, as stored in the .hdr file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.has_band_names">
+<span class="sig-name descname"><span class="pre">has_band_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.has_band_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.has_band_names" title="Link to this definition"></a></dt>
+<dd><p>True if the header data contains band names.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.get_band_names">
+<span class="sig-name descname"><span class="pre">get_band_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.get_band_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.get_band_names" title="Link to this definition"></a></dt>
+<dd><p>Return band names as defined in the header file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.has_fwhm">
+<span class="sig-name descname"><span class="pre">has_fwhm</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.has_fwhm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.has_fwhm" title="Link to this definition"></a></dt>
+<dd><p>True if the header data contains band names.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.get_fwhm">
+<span class="sig-name descname"><span class="pre">get_fwhm</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.get_fwhm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.get_fwhm" title="Link to this definition"></a></dt>
+<dd><p>Return band names as defined in the header file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.set_wavelengths">
+<span class="sig-name descname"><span class="pre">set_wavelengths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavelengths</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.set_wavelengths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.set_wavelengths" title="Link to this definition"></a></dt>
+<dd><p>Set the wavelengths associated with this hyperspectral data</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.set_band_names">
+<span class="sig-name descname"><span class="pre">set_band_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.set_band_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.set_band_names" title="Link to this definition"></a></dt>
+<dd><p>Set the band names associated with this hyperspectral data</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.set_fwhm">
+<span class="sig-name descname"><span class="pre">set_fwhm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fwhm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.set_fwhm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.set_fwhm" title="Link to this definition"></a></dt>
+<dd><p>Set the band widths associated with this hyperspectral data</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.is_image">
+<span class="sig-name descname"><span class="pre">is_image</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.is_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.is_image" title="Link to this definition"></a></dt>
+<dd><p>Return true if this dataset is an image (i.e. data array has dimension [x,y,b]).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.is_point">
+<span class="sig-name descname"><span class="pre">is_point</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.is_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.is_point" title="Link to this definition"></a></dt>
+<dd><p>Return true if this dataset is an point cloud or related dataset (i.e. data array has dimension [idx,b]). Note
+that this will return true for spectral libraries and other ‘cloud like’ datasets.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.is_classification">
+<span class="sig-name descname"><span class="pre">is_classification</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.is_classification"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.is_classification" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.band_count">
+<span class="sig-name descname"><span class="pre">band_count</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.band_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.band_count" title="Link to this definition"></a></dt>
+<dd><p>Return the number of bands in this dataset.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.samples">
+<span class="sig-name descname"><span class="pre">samples</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.samples" title="Link to this definition"></a></dt>
+<dd><p>Return number of samples in this dataset. For 2D data (images) this is the image height (number of pixels in a line
+scanner). For 1D data (point clouds) this is 1 (each point is like an individual sample).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.lines">
+<span class="sig-name descname"><span class="pre">lines</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.lines"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.lines" title="Link to this definition"></a></dt>
+<dd><p>Return number of lines in this dataset. For 2D data (images) this is the image height. For 1D data (point clouds)
+this is 1.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.is_int">
+<span class="sig-name descname"><span class="pre">is_int</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.is_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.is_int" title="Link to this definition"></a></dt>
+<dd><p>Return true if this dataset contains data with integer precision.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.is_float">
+<span class="sig-name descname"><span class="pre">is_float</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.is_float"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.is_float" title="Link to this definition"></a></dt>
+<dd><p>Return true if this dataset contains data with floating point precision.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.export_bands">
+<span class="sig-name descname"><span class="pre">export_bands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bands</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.export_bands"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.export_bands" title="Link to this definition"></a></dt>
+<dd><p>Export a specified band range to a new BlackData instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bands</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – <p>either:
+(1) a tuple containing the (min,max) wavelength to extract. If range is a tuple, -1 can be used to specify the</p>
+<blockquote>
+<div><p>last band index.</p>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>a list of bands or boolean mask such that image.data[:,:,range] is exported to the new image.</p></li>
+</ol>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.delete_nan_bands">
+<span class="sig-name descname"><span class="pre">delete_nan_bands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.delete_nan_bands"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.delete_nan_bands" title="Link to this definition"></a></dt>
+<dd><p>Remove bands in this image that contain only nans.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inplace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – True if this operation should be applied to the data in situ. Default is True.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>an image copy with the nan bands removed IF inplaces is False. Otherwise the image is modified inplace.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.set_as_nan">
+<span class="sig-name descname"><span class="pre">set_as_nan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.set_as_nan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.set_as_nan" title="Link to this definition"></a></dt>
+<dd><p>Sets data with the specified value to NaN. Useful for handling no-data values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – the value to (permanently) replace with np.nan.</p></li>
+<li><p><strong>strict</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – True if all bands must have this value to set it as nan. Default is True. If False, all occurences of
+value will be replaced with nan.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.mask_bands">
+<span class="sig-name descname"><span class="pre">mask_bands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nan</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.mask_bands"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.mask_bands" title="Link to this definition"></a></dt>
+<dd><p>Masks a specified range of bands, useful for removing water features etc.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – the start of the band mask (as per get_band_index(…)).</p></li>
+<li><p><strong>max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – the end of the band mask (as per get_band_index( … )). Can be None to mask individual bands. Default is
+None.</p></li>
+<li><p><strong>val</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – the value to set masked bands to. Default is np.nan. Set to None to keep values but flag bands in band band list.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.mask_water_features">
+<span class="sig-name descname"><span class="pre">mask_water_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.mask_water_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.mask_water_features" title="Link to this definition"></a></dt>
+<dd><p>Removes typical water features. By default this removes bands between:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>960 - 990 nm</p></li>
+<li><p>1320 - 1500 nm</p></li>
+<li><p>1780 - 2050 nm</p></li>
+<li><p>2400 - 2500 nm</p></li>
+</ul>
+</div></blockquote>
+<p>Custom wavelengths can be set using the mask keyword.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mask</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>,</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – mask custom bands. This should be a list of tuple band indices or wavelengths containing the
+minimum and maximum wavelenght/index of each region to mask.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.get_band">
+<span class="sig-name descname"><span class="pre">get_band</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.get_band"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.get_band" title="Link to this definition"></a></dt>
+<dd><p>Gets an individual band from this dataset. If an integer is passed it is treated as a band index. If a string is passed it is
+treated as a band name. If a float is passed then the closest band to this wavelength is retrieved.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>b</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>,</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>,</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – the band to get. Integers are treated as indices, strings as band names and floats as wavelengths.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a sliced np.array exposing the band. Note that this is NOT a copy.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.get_band_grey">
+<span class="sig-name descname"><span class="pre">get_band_grey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.get_band_grey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.get_band_grey" title="Link to this definition"></a></dt>
+<dd><p>Returns the specified band as a uint8 greyscale image compatable with opencv.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.get_raveled">
+<span class="sig-name descname"><span class="pre">get_raveled</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.get_raveled"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.get_raveled" title="Link to this definition"></a></dt>
+<dd><p>Get the data array as a 2D array of points/pixels, flattening spatial dimensions.</p>
+<p>This is a fundamental operation for spectral data processing, converting multi-dimensional
+hyperspectral data into the matrix format required by most spectral analysis algorithms.
+For images, this transforms [x, y, bands] → [pixels, bands]. For point clouds, this
+ensures consistent [points, bands] structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>A 2D view of the data array where each row is a spectrum and each column is a</dt><dd><p>band. Shape is (n_pixels, n_bands). This is a VIEW of the original data, not a
+copy, so modifications will affect the original dataset.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>ndarray</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method returns a view (not a copy) for memory efficiency when working with large
+hyperspectral datasets. Use .copy() if you need an independent array. This method is
+the foundation for X(), which adds additional filtering capabilities.</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>X(): Higher-level method with optional NaN filtering
+set_raveled(): Inverse operation to restore spatial structure</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.X">
+<span class="sig-name descname"><span class="pre">X</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">onlyFinite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.X"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.X" title="Link to this definition"></a></dt>
+<dd><p>A shorthand way of writing get_raveled(), as X is conventionally used for a vector of spectra.</p>
+<p>This method is essential for interfacing with many machine learning and spectral analysis
+libraries (such as scikit-learn and pysptools) that expect data in a 2D matrix format where
+each row represents a single spectrum. This is the standard representation in linear algebra
+for spectral unmixing, classification, and dimensionality reduction algorithms.</p>
+<p>The method name ‘X’ follows the mathematical convention where X represents a data matrix
+of observations (pixels/points) × features (spectral bands).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>onlyFinite</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – True if data points containing nan bands should be removed from the
+feature vector. Default is False. This is critical for many algorithms
+that cannot handle NaN values, as it filters out invalid or masked pixels
+while preserving the spectral integrity of valid measurements.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A 2D array where each row is a spectrum. Shape is (n_pixels, n_bands) if</dt><dd><p>onlyFinite=False, or (n_valid_pixels, n_bands) if onlyFinite=True.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method is commonly used in conjunction with set_raveled() to enable workflows
+that process data externally and then restore it to the original spatial structure.
+For example: X = data.X() → process X → data.set_raveled(X_processed)</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.eval">
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">print</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.eval" title="Link to this definition"></a></dt>
+<dd><p>Evaluate an arithmetic expression on the data array of this BlackData instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>op</strong> – <p>The operation string to evaluate. This should follow the following syntax:
+- all numbers are treated as wavelengths (and are passed as floats to get_band_index(…).
+- band indices should be prefixed by <cite>b</cite>. E.g., <cite>b10</cite>.
+- constants should be prefixed by the <cite>$</cite> character, e.g., <cite>$2</cite>.
+- standard python syntax should be used for basic arithmetic (<cite>+</cite>, <cite>-</cite>, <cite>*</cite>, <cite>/</cite>/, <cite>**</cite>).
+- the <cite>:</cite> operator can be used to average values over a band range, e.g., <cite>b10:b15 or `2190:2210</cite>.
+- the <cite>|</cite> operator can be used to include multiple operations that are evaluated to different output</p>
+<blockquote>
+<div><p>bands (e.g. ` b10+b9 | b12:b15 | b5/b6` will result in a 3-band output.</p>
+</div></blockquote>
+</p></li>
+<li><p><strong>print</strong> – Optionally print the python expression(s) that is/are generated for debugging or other reference. Default is False.</p></li>
+<li><p><strong>operations</strong> (<em>N.B. This function works by converting the operation string into python code including numpy</em>)</p></li>
+<li><p><strong>array</strong> (<em>on the data</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A copy of this BlackData instance but with an updated (single-band) data array.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.set_raveled">
+<span class="sig-name descname"><span class="pre">set_raveled</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onlyFinite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.set_raveled"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.set_raveled" title="Link to this definition"></a></dt>
+<dd><p>Fills the image/dataset from a flattened array, restoring spatial structure.</p>
+<p>This is the inverse operation of get_raveled()/X(), enabling workflows where data is
+processed in 2D matrix form (for compatibility with standard libraries) and then restored
+to its original multi-dimensional structure. This is essential for operations like spectral
+unmixing, where algorithms return abundance maps that must be reshaped back into image format.</p>
+<p>CRITICAL for spectral unmixing workflows: When unmixing, spectral bands are replaced with
+abundance bands (e.g., 55 spectral bands → 3 abundance bands). Set strict=False to allow
+this dimension change.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pix</strong> (<em>ndarray</em>) – A 2D array where each row represents a spectrum, with shape
+(n_pixels, n_bands). This should match the format returned by X() or
+get_raveled().</p></li>
+<li><p><strong>shape</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – The target reshaped dimensions. Defaults to the current dataset shape
+with automatic sizing for the last dimension (bands). For images, this is
+typically (x, y, -1) where -1 allows flexible band count.</p></li>
+<li><p><strong>onlyFinite</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – True if pix contains only values corresponding to non-NaN pixels in
+self.data (as returned by self.X(onlyFinite=True)). When True, only
+the finite pixels are updated while NaN pixels remain unchanged. This
+is critical when algorithms process only valid data and you need to
+restore it to a dataset that includes masked/invalid regions.</p></li>
+<li><p><strong>strict</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – True if the number of bands cannot change. Default is True. Set to False
+for operations that change dimensionality, such as:
+- Spectral unmixing (spectral bands → abundance bands)
+- Feature extraction (many bands → few components)
+- Band selection (full spectrum → subset)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AssertionError" title="(in Python v3.14)"><strong>AssertionError</strong></a> – If strict=True and pix has a different number of bands than self.data.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When onlyFinite=True, this method uses the CURRENT self.data to determine which pixels
+are finite, then updates only those pixels with the new values. This preserves the
+spatial structure of NaN/masked regions while updating valid data.</p>
+<p>The method modifies self.data in place, replacing the entire array when strict=False
+or updating specific pixels when onlyFinite=True.</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>X(): Get data in 2D format with optional NaN filtering
+get_raveled(): Get 2D view without NaN filtering</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.get_band_index">
+<span class="sig-name descname"><span class="pre">get_band_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.get_band_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.get_band_index" title="Link to this definition"></a></dt>
+<dd><p>Get the band index that corresponds with the given wavelength or band name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>w</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – the wavelength, index or band name search for. Note that if w is an integer it is treated
+as a band index and simply returned. If it is a string then the index of the matching band name
+is returned. If it is a wavelength then the closest band to this wavelength is returned.</p></li>
+<li><p><strong>**kwds</strong> – <p>This function takes one keyword:</p>
+<ul>
+<li><dl class="simple">
+<dt>thresh = the threshold (in nanometers) within which a band must fall to be valid. Default is</dt><dd><p>BlackTelperion.band_select_threshold (which defaults to 10 nm). If a wavelength is passed and a
+band exists within this distance, then it is returned. Otherwise an error is thrown).</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the matching band index.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.resample">
+<span class="sig-name descname"><span class="pre">resample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">partial</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.resample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.resample" title="Link to this definition"></a></dt>
+<dd><p>Return a copy of this dataset resampled onto the specified wavelength array. Note that this does not
+do any interpolation, but rather selects the nearest band(s) and averages them if need be. Hence it is useful
+for reducing spectral resolution to match e.g. another dataset, but should NOT be used</p>
+<blockquote>
+<div><p>to sample bands at higher spectral resolution.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>w</strong> (<em>ndarray</em>) – Either a 1-D numpy array containing the wavelengths to sample onto (see bw for setting the band width), or
+a (n,2) array containing (start, end) wavelength ranges for each band (in this case bw will be ignored).</p></li>
+<li><p><strong>agg</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – True if bands between each entry in w (i.e. w - bw -&gt; w + bw) should be averaged (i.e. spectral binning).
+Default is True. If False then the closest value will be used (i.e. spectral subsampling).</p></li>
+<li><p><strong>bw</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – the width of each band. If None (default) then this is calculated as w[1] - w[0] (i.e. assume regular
+spacing). This has no effect if agg is False.</p></li>
+<li><p><strong>partial</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – True if partial overlap between the source and target wavelengths is allowed. Non-overlapping areas will be
+replaced with nan. Default is False.</p></li>
+<li><p><strong>vb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – True if a progress bar should be created. Default is True.</p></li>
+<li><p><strong>**kwds</strong> – if provided, the thresh keyword will be passed to get_band_index(…) to control tolerances when selecting the
+closest bands. See documentation for get_band_index(…) for more details.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a copy of this BlackData instance resampled onto the new wavelength array.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.contiguous_chunks">
+<span class="sig-name descname"><span class="pre">contiguous_chunks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">75</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.contiguous_chunks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.contiguous_chunks" title="Link to this definition"></a></dt>
+<dd><p>Extract contiguous chunks of spectra, splitting a (1) completely nan bands or (2) large steps in wavelength.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – the percentile used to define a large change in wavelength. Default is 90. A “gap” is considered to be
+a change in wavelength greater than double this percentile.</p></li>
+<li><p><strong>min_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – the minimum number of bands required to consider a chunk valid. Default is 0 (return all chunks).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>Tuple containing</p>
+<dl class="simple">
+<dt>chunks (ndarray): copies of the orignal data array that contain continuous spectra. At least one pixel/point</dt><dd><p>in each slice of these bans is guaranteed to be finite.</p>
+</dd>
+</dl>
+<p>wav (ndarray): array containing the wavelengths corresponding to each band of each chunk.</p>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.smooth_median">
+<span class="sig-name descname"><span class="pre">smooth_median</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.smooth_median"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.smooth_median" title="Link to this definition"></a></dt>
+<dd><p>Applies running median filter on data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>window</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – size of running window, must be int.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Nothing - overwrites data with smoothed result.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.smooth_savgol">
+<span class="sig-name descname"><span class="pre">smooth_savgol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.smooth_savgol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.smooth_savgol" title="Link to this definition"></a></dt>
+<dd><p>Applies Savitzky-Golay-filter on data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>window</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – size of running window, must be an odd integer.</p></li>
+<li><p><strong>poly</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – degree of polynom, must be int.</p></li>
+<li><p><strong>chunk</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – True if the data should be split into chunks (removing e.g. nan bands) before filtering. Use with care!
+Default is False.</p></li>
+<li><p><strong>**kwds</strong> – Keywords are passed to scipy.signal.savgol_filter(…).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A copy of the input dataset with smoothed spectra.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.fill_gaps">
+<span class="sig-name descname"><span class="pre">fill_gaps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.fill_gaps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.fill_gaps" title="Link to this definition"></a></dt>
+<dd><p>Fill spectral gaps using nearest neighbour interpolation (in the spectral direction). This operation is applied in-place.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.plot_spectra">
+<span class="sig-name descname"><span class="pre">plot_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colours</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'blue'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.plot_spectra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.plot_spectra" title="Link to this definition"></a></dt>
+<dd><p>Plots a summary of all the spectra in this dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> – an axis to plot to. If None (default), a new axis is created.</p></li>
+<li><p><strong>band_range</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – tuple containing the (min,max) band index (int) or wavelength (float) to plot.</p></li>
+<li><p><strong>labels</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – Labels for spectral features such that labels[0] = [feat1,feat2,..] and labels[1] = [name1,name2,…]
+can be passed. Pass None (default) to disable labels.</p></li>
+<li><p><strong>indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – specific data point to plot. Should be a list containing index tuples, or an empty list if no pixels
+should be plotted (Default).</p></li>
+<li><p><strong>colours</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>,</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – a matplotlib colour string or list of colours corresponding to each index spectra. Default is ‘blue’.</p></li>
+<li><p><strong>**kwds</strong> – <p>keywords are passed to plt.plot( … ), except the following options:</p>
+<ul>
+<li><p>quantiles = True if summary quantiles of all pixels should be plotted. Default is True.</p></li>
+<li><p>median = True if the median spectra of all pixels should be plotted. Default is True.</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.compress">
+<span class="sig-name descname"><span class="pre">compress</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.compress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.compress" title="Link to this definition"></a></dt>
+<dd><p>Convert data array to int16 to save memory.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.decompress">
+<span class="sig-name descname"><span class="pre">decompress</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.decompress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.decompress" title="Link to this definition"></a></dt>
+<dd><p>Expand data array to floats to get actual values</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.getQuantized">
+<span class="sig-name descname"><span class="pre">getQuantized</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">255</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmeth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'KMeans'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vthresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smooth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.getQuantized"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.getQuantized" title="Link to this definition"></a></dt>
+<dd><p>Get a lossy compressed version of this hyperspectral dataset using the “quantisation” method.
+This uses a combination of PCA and K-means to cluster the image into n classes, for which a
+spectral library containing the minimum, median and maximum spectra is derived. This can be used
+to e.g., run computationally expensive operations on relatively few spectra or store lossy compressed
+versions of the hyperspectral data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The number of quanta (discrete spectral classes) to use. Default is class 1 to 255, + 0 for background.</p></li>
+<li><p><strong>cmeth</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Method used for clustering. Options are ‘Birch’ (default), ‘KMeans’ or ‘MiniBatch’ (KMeans).</p></li>
+<li><p><strong>vthresh</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>,</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – A float variance threshold (0-1) used to determine the number of PCA bands to use, or an integer
+to use n-bands. Default is 10 (bands).</p></li>
+<li><p><strong>smooth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The window width of a Savgol filter used to denoise spectra before fitting the PCA and K-means. Default is 5. Must be an odd integer. Set to 0 to disable.</p></li>
+<li><p><strong>subsample</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The stride used to subsample pixels when fitting the PCA and k-means. Higher values are faster but
+less accurate. Default is 50.</p></li>
+<li><p><strong>mask</strong> (<em>ndarray</em>) – A binary mask to apply before fitting the PCA and k-means. Masked data will be put in their own
+class. Data flagged with True in the mask will be retained, while those flagged as False will be removed.</p></li>
+<li><p><strong>normalise</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If True, PCA components are normalised before k-means clustering. Default is False.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns: An index dataset (BlackData) containing the class IDs, and a spectral library containing the minimum, median,</dt><dd><p>and maximum spectra of each class.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.fromQuanta">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fromQuanta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">library</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.fromQuanta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.fromQuanta" title="Link to this definition"></a></dt>
+<dd><p>Reconstruct a BlackData instance from an index and spectral library, as returned by <cite>BlackData.getQuantized(…)</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> (<a class="reference internal" href="#BlackTelperion.blackdata.BlackData" title="BlackTelperion.blackdata.BlackData"><em>BlackData</em></a>) – A classification index of the same type (e.g., BlackImage, HyCloud, etc.) as the desired output.</p></li>
+<li><p><strong>library</strong> (<a class="reference internal" href="BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary" title="BlackTelperion.blacklibrary.BlackLibrary"><em>BlackLibrary</em></a>) – A spectral library containing the spectral information associated with each class. Note
+that this could be a transformed (e.g., by minimum wavelength mapping) version of the
+spectral library created by <cite>getQuantized( … )</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.normalise">
+<span class="sig-name descname"><span class="pre">normalise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">minv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.normalise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.normalise" title="Link to this definition"></a></dt>
+<dd><p>Normalizes individual data points to account for variations in illumination and overall reflectivity. This can be done
+in two ways: if minv and maxv are both none, each pixel vector will be normalized to length 1. Otherwise, if minv
+and maxv are specified, every data point is normalised to the average of the bands between minv and maxv.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the normalising factor used for each data point.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.percent_clip">
+<span class="sig-name descname"><span class="pre">percent_clip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">minv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">98</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_band</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.percent_clip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.percent_clip" title="Link to this definition"></a></dt>
+<dd><p>Scale self.data such that the specified percentiles become 0 and 1 respectively. Note that this
+normalisation is applied in situ.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>minv</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – the lower percentile. Default is 2.</p></li>
+<li><p><strong>maxv</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – the upper percentile. Default is 98.</p></li>
+<li><p><strong>per_band</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – apply scaling to bands independently. Default is False.</p></li>
+<li><p><strong>clip</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – True if values &lt; minv or &gt; maxv should be clipped to 0 or 1. Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the percentile clip thresholds used for the normalisation</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>vmin, vmax (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="BlackTelperion.blackcollection.html" class="btn btn-neutral float-left" title="BlackTelperion.blackcollection module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="BlackTelperion.blackfeature.html" class="btn btn-neutral float-right" title="BlackTelperion.blackfeature module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

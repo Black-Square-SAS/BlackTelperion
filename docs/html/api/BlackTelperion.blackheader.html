@@ -1,0 +1,405 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.blackheader module &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="BlackTelperion.blackimage module" href="BlackTelperion.blackimage.html" />
+    <link rel="prev" title="BlackTelperion.blackfeature module" href="BlackTelperion.blackfeature.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="BlackTelperion.html">BlackTelperion package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.RGB"><code class="docutils literal notranslate"><span class="pre">RGB</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.VNIR"><code class="docutils literal notranslate"><span class="pre">VNIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.SWIR"><code class="docutils literal notranslate"><span class="pre">SWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.BROAD"><code class="docutils literal notranslate"><span class="pre">BROAD</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.MWIR"><code class="docutils literal notranslate"><span class="pre">MWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.LWIR"><code class="docutils literal notranslate"><span class="pre">LWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.band_select_threshold"><code class="docutils literal notranslate"><span class="pre">band_select_threshold</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="BlackTelperion.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackcollection.html">BlackTelperion.blackcollection module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html">BlackTelperion.blackdata module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackfeature.html">BlackTelperion.blackfeature module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">BlackTelperion.blackheader module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#BlackTelperion.blackheader.BlackHeader"><code class="docutils literal notranslate"><span class="pre">BlackHeader</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html">BlackTelperion.blackimage module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blacklibrary.html">BlackTelperion.blacklibrary module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.multiprocessing.html">BlackTelperion.multiprocessing module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="BlackTelperion.html">BlackTelperion package</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.blackheader module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/BlackTelperion.blackheader.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-BlackTelperion.blackheader">
+<span id="blacktelperion-blackheader-module"></span><h1>BlackTelperion.blackheader module<a class="headerlink" href="#module-BlackTelperion.blackheader" title="Link to this heading"></a></h1>
+<p>Manage metadata and other header file information.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">BlackTelperion.blackheader.</span></span><span class="sig-name descname"><span class="pre">BlackHeader</span></span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></p>
+<p>A generic class for encapsulating header files (.hdr) data. We use these for point clouds and spectral
+libraries as well as images.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.has_band_names">
+<span class="sig-name descname"><span class="pre">has_band_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.has_band_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.has_band_names" title="Link to this definition"></a></dt>
+<dd><p>Return true if band names are defined</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.has_wavelengths">
+<span class="sig-name descname"><span class="pre">has_wavelengths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.has_wavelengths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.has_wavelengths" title="Link to this definition"></a></dt>
+<dd><p>Return true if wavelengths are defined.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.has_fwhm">
+<span class="sig-name descname"><span class="pre">has_fwhm</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.has_fwhm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.has_fwhm" title="Link to this definition"></a></dt>
+<dd><p>Return true if FWHM are defined.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.has_bbl">
+<span class="sig-name descname"><span class="pre">has_bbl</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.has_bbl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.has_bbl" title="Link to this definition"></a></dt>
+<dd><p>Returns true if a bad band list has been defined.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.band_count">
+<span class="sig-name descname"><span class="pre">band_count</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.band_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.band_count" title="Link to this definition"></a></dt>
+<dd><p>Return the number of bands specified in this header file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.get_band_names">
+<span class="sig-name descname"><span class="pre">get_band_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.get_band_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.get_band_names" title="Link to this definition"></a></dt>
+<dd><p>Get list of band names from header file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.get_wavelengths">
+<span class="sig-name descname"><span class="pre">get_wavelengths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.get_wavelengths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.get_wavelengths" title="Link to this definition"></a></dt>
+<dd><p>Get list of band wavelengths from header file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.get_bbl">
+<span class="sig-name descname"><span class="pre">get_bbl</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.get_bbl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.get_bbl" title="Link to this definition"></a></dt>
+<dd><p>Get the list of bad bands from header file. This will return an
+array scored True if a band is good and False if it is bad.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.get_fwhm">
+<span class="sig-name descname"><span class="pre">get_fwhm</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.get_fwhm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.get_fwhm" title="Link to this definition"></a></dt>
+<dd><p>Get list of band widths from header file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.set_band_names">
+<span class="sig-name descname"><span class="pre">set_band_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">band_names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.set_band_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.set_band_names" title="Link to this definition"></a></dt>
+<dd><p>Set list of band names from header file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>band_names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – a list of band names.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.set_wavelengths">
+<span class="sig-name descname"><span class="pre">set_wavelengths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavelengths</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.set_wavelengths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.set_wavelengths" title="Link to this definition"></a></dt>
+<dd><p>Set list of band wavelengths from header file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>wavelengths</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><em>ndarray</em>) – a list or numpy array of wavelengths.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.set_fwhm">
+<span class="sig-name descname"><span class="pre">set_fwhm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fwhm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.set_fwhm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.set_fwhm" title="Link to this definition"></a></dt>
+<dd><p>Set list of band wavelengths from header file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fwhm</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><em>ndarray</em>) – a list or numpy array of band widths.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.set_bbl">
+<span class="sig-name descname"><span class="pre">set_bbl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bbl</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.set_bbl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.set_bbl" title="Link to this definition"></a></dt>
+<dd><p>Set list of bad bands.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bbl</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><em>ndarray</em>) – a list or numpy array scored True for good bads and False for bad ones, or None to remove bbl.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.drop_bands">
+<span class="sig-name descname"><span class="pre">drop_bands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.drop_bands"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.drop_bands" title="Link to this definition"></a></dt>
+<dd><p>Remove all header data (e.g. band names, wavelengths) associated with the specified bands. Used when removing or
+deleting bands from an image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mask</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><em>ndarray</em>) – either a list of band indices to remove or a boolean numpy array with True for bands that should remove.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.drop_all_bands">
+<span class="sig-name descname"><span class="pre">drop_all_bands</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.drop_all_bands"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.drop_all_bands" title="Link to this definition"></a></dt>
+<dd><p>Remove all attributes in the header file that are specified per band. Useful if a dataset is copied and the bands
+overwritten.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.copy" title="Link to this definition"></a></dt>
+<dd><p>Make a deep copy of this header class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a new header instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.print">
+<span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.print"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.print" title="Link to this definition"></a></dt>
+<dd><p>Print metadata to console</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.get_list">
+<span class="sig-name descname"><span class="pre">get_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;class</span> <span class="pre">'float'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.get_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.get_list" title="Link to this definition"></a></dt>
+<dd><p>Get generic list data from the header as a numpy array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – the header key used to access the list.</p></li>
+<li><p><strong>dtype</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – the numpy data type that should be returned. Default is float.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a numpy array containing the header data, or None if the key does not exist.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.set_camera">
+<span class="sig-name descname"><span class="pre">set_camera</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">camera</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.set_camera"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.set_camera" title="Link to this definition"></a></dt>
+<dd><p>Store information on the position and orientation of this image to the image header.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>camera</strong> (<em>hylite.project.Camera</em>) – the camera instance to store.</p></li>
+<li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – the camera id (integer), if multiple cameras are stored (e.g. for hyperclouds). Default is 0.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.get_camera">
+<span class="sig-name descname"><span class="pre">get_camera</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.get_camera"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.get_camera" title="Link to this definition"></a></dt>
+<dd><p>Extract a camera object containing the internal and external camera properties (or None if they don’t exist).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – the camera id (integer), if multiple cameras are stored (e.g. for hyperclouds). Default is 0.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.has_camera">
+<span class="sig-name descname"><span class="pre">has_camera</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.has_camera"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.has_camera" title="Link to this definition"></a></dt>
+<dd><p>Return true if this header file has defined camera pose information.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.get_panel_names">
+<span class="sig-name descname"><span class="pre">get_panel_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.get_panel_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.get_panel_names" title="Link to this definition"></a></dt>
+<dd><p>Get the name of all panels defined in this header file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.add_panel">
+<span class="sig-name descname"><span class="pre">add_panel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">panel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.add_panel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.add_panel" title="Link to this definition"></a></dt>
+<dd><p>Add the specified panel to  the header file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>panel</strong> (<em>hylite.correct.Panel</em>) – the panel reflectance and measured radiance spectra.</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – the name of this panel. If None (default) then the name of the panel material will be used (e.g., ‘R90’).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.get_panel">
+<span class="sig-name descname"><span class="pre">get_panel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.get_panel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.get_panel" title="Link to this definition"></a></dt>
+<dd><p>Get the specified panel from this header</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – the name of the target to return.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a Panel instance containing the reflectance and radiance data, or None if it does not exist.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.remove_panel">
+<span class="sig-name descname"><span class="pre">remove_panel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.remove_panel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.remove_panel" title="Link to this definition"></a></dt>
+<dd><p>Removes the specified calibration panel from this header.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – the name of the panel to remove. If None (default) then all panels will be removed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.get_data_ignore_value">
+<span class="sig-name descname"><span class="pre">get_data_ignore_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.get_data_ignore_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.get_data_ignore_value" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.set_data_ignore_value">
+<span class="sig-name descname"><span class="pre">set_data_ignore_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.set_data_ignore_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.set_data_ignore_value" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.get_class_names">
+<span class="sig-name descname"><span class="pre">get_class_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.get_class_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.get_class_names" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.get_sample_points">
+<span class="sig-name descname"><span class="pre">get_sample_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.get_sample_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.get_sample_points" title="Link to this definition"></a></dt>
+<dd><p>Get points that are associated with the specified sample name.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackheader.BlackHeader.set_sample_points">
+<span class="sig-name descname"><span class="pre">set_sample_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackheader.html#BlackHeader.set_sample_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackheader.BlackHeader.set_sample_points" title="Link to this definition"></a></dt>
+<dd><p>Set points that are associated with the specified sample name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – the name of the sample points to set</p></li>
+<li><p><strong>points</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – a list of points: [(x1,y1), (x2,y2) … ] or [id1,id2,id3, …]</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="BlackTelperion.blackfeature.html" class="btn btn-neutral float-left" title="BlackTelperion.blackfeature module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="BlackTelperion.blackimage.html" class="btn btn-neutral float-right" title="BlackTelperion.blackimage module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

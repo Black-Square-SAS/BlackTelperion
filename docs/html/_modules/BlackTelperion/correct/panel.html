@@ -1,0 +1,559 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.correct.panel &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/BlackTelperion.html">BlackTelperion package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.correct.panel</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for BlackTelperion.correct.panel</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">NOTE: unsure if this model will be useful, but keep it just in case.</span>
+<span class="sd">Utility class for storing information on calibration panels and combining measured radiance values with known</span>
+<span class="sd">reflectance spectra.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">least_squares</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">patches</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">BlackTelperion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">BlackTelperion.reference.features</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlackFeature</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">BlackTelperion</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlackData</span>
+<span class="c1">#from BlackTelperion.project import pix_to_ray_pano, pix_to_ray_persp</span>
+
+
+<div class="viewcode-block" id="Panel">
+<a class="viewcode-back" href="../../../api/BlackTelperion.correct.panel.html#BlackTelperion.correct.panel.Panel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Panel</span><span class="p">(</span> <span class="n">BlackData</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class for identifying calibration reference in images and storing</span>
+<span class="sd">    the observed pixel radiances and known target reflectance values. This is used</span>
+<span class="sd">    by, e.g., empirical line calibration procedures.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">material</span><span class="p">,</span> <span class="n">radiance</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generic constructor. Can be of the following forms:</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            material: a BlackTelperion.reference.Target instance containing target reflectance data for this panel.</span>
+<span class="sd">            radiance: either a BlackImage object (which contains some reference pixels) or a</span>
+<span class="sd">                        NxM numpy array containing radiance values for N pixels across M bands.</span>
+<span class="sd">            strict: True if measured radiance wavelengths must be entirely within the range of the reference material</span>
+<span class="sd">                    spectra. Default is True. Use with care!</span>
+<span class="sd">            **kwds: Keywords can include the following:</span>
+
+<span class="sd">                 - wavelengths = wavelengths corresponding to the radiance values (if radiance is an array rather than a BlackImage</span>
+<span class="sd">                                 object).</span>
+<span class="sd">                 - method = &#39;manual&#39; (default) to manually pick reference in image (using an interactive plot). Can also be</span>
+<span class="sd">                             &#39;sobel&#39; or &#39;laplace&#39; to use the corresponding edge detectors to automatically identify the</span>
+<span class="sd">                             calibration target (using OpenCV contouring).</span>
+<span class="sd">                 - bands = list of band indices (integer) or wavelengths (float) to use when selecting the target.</span>
+<span class="sd">                 - edge_thresh = the edge threshold (as percentile of gradient values) used when automatically identifying reference.</span>
+<span class="sd">                                 Default is 95.</span>
+<span class="sd">                 - area_thresh = the minimum area (in pixels) of candidate panels. Used to discard small/bright areas. Default is 100.</span>
+<span class="sd">                 - shrink = a shrink factor to reduce the size of reference identified automatically (and so remove dodgy pixels</span>
+<span class="sd">                            near the target edge/frame. Default is 0.4.</span>
+<span class="sd">                 - db = If True, visualisation of the edge detection layers will be plotted for debug purposes. Default is false.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>  <span class="c1"># initialise header etc.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">source_image</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># init defaults</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outline</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normal</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">skyview</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">radiance</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>  <span class="c1"># radiance is a list of pixels</span>
+
+            <span class="c1"># check and copy radiance data</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">radiance</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># we&#39;ve been given mean radiances</span>
+                <span class="n">radiance</span> <span class="o">=</span> <span class="n">radiance</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">radiance</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Error, radiance must be a 2-D array (N pixels by M bands).&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">radiance</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+            <span class="c1"># check and copy wavelength data</span>
+            <span class="k">assert</span> <span class="s1">&#39;wavelengths&#39;</span> <span class="ow">in</span> <span class="n">kwds</span><span class="p">,</span> <span class="s2">&quot;Error - wavelengths must be provided for pixel array.&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_wavelengths</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">kwds</span><span class="p">[</span><span class="s2">&quot;wavelengths&quot;</span><span class="p">]))</span>
+
+        <span class="k">elif</span> <span class="n">radiance</span><span class="o">.</span><span class="n">is_image</span><span class="p">():</span>  <span class="c1"># radiance is a hyimage</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">source_image</span> <span class="o">=</span> <span class="n">radiance</span>  <span class="c1"># store reference to original image</span>
+
+            <span class="n">method</span> <span class="o">=</span> <span class="n">kwds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="s1">&#39;manual&#39;</span><span class="p">)</span>  <span class="c1"># what method to use to pick target?</span>
+            <span class="n">bands</span> <span class="o">=</span> <span class="n">kwds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;bands&quot;</span><span class="p">,</span> <span class="mf">428.0</span><span class="p">)</span>
+
+            <span class="c1"># select target region</span>
+            <span class="k">if</span> <span class="s1">&#39;manual&#39;</span> <span class="ow">in</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>  <span class="c1"># pick region using interactive plot</span>
+                <span class="n">verts</span> <span class="o">=</span> <span class="n">radiance</span><span class="o">.</span><span class="n">pickPolygons</span><span class="p">(</span><span class="n">region_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Target&#39;</span><span class="p">],</span> <span class="n">bands</span><span class="o">=</span><span class="n">bands</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">verts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">verts</span><span class="p">,</span> <span class="n">verts</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]])</span>  <span class="c1"># add return to first point</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">outline</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">verts</span><span class="p">)</span>  <span class="c1"># make matplotlib path from selected region</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span> <span class="c1"># import this here to avoid errors if opencv is not installed properly</span>
+                
+                <span class="n">db</span> <span class="o">=</span> <span class="n">kwds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;db&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>  <span class="c1"># draw plots?</span>
+
+                <span class="c1"># calculate greyscale image</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bands</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bands</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="n">bands</span> <span class="o">=</span> <span class="p">[</span><span class="n">radiance</span><span class="o">.</span><span class="n">get_band_index</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bands</span><span class="p">]</span>  <span class="c1"># convert to indices</span>
+                    <span class="n">gray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">radiance</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">bands</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">radiance</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">bands</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">bands</span> <span class="o">=</span> <span class="n">radiance</span><span class="o">.</span><span class="n">get_band_index</span><span class="p">(</span><span class="n">bands</span><span class="p">)</span>
+                    <span class="n">gray</span> <span class="o">=</span> <span class="n">radiance</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">bands</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">radiance</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">bands</span><span class="p">])</span>
+                <span class="n">gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">GaussianBlur</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># apply slight blur to improve edge detection</span>
+
+                <span class="k">if</span> <span class="n">db</span><span class="p">:</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">gray</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Greyscale&quot;</span><span class="p">)</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+                <span class="c1"># extract edges</span>
+                <span class="k">if</span> <span class="s1">&#39;sobel&#39;</span> <span class="ow">in</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> <span class="s1">&#39;auto&#39;</span> <span class="ow">in</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>  <span class="c1"># pick edges using sobel filter</span>
+                    <span class="n">sobelx</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">Sobel</span><span class="p">(</span><span class="n">gray</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">CV_64F</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ksize</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>  <span class="c1"># x</span>
+                    <span class="n">sobely</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">Sobel</span><span class="p">(</span><span class="n">gray</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">CV_64F</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ksize</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>  <span class="c1"># y</span>
+                    <span class="n">sobel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sobelx</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">sobely</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+                    <span class="n">thresh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">sobel</span><span class="p">,</span> <span class="n">kwds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;edge_thresh&#39;</span><span class="p">,</span> <span class="mi">95</span><span class="p">))</span>
+                    <span class="n">edge</span> <span class="o">=</span> <span class="n">sobel</span> <span class="o">&gt;</span> <span class="n">thresh</span>
+                <span class="k">elif</span> <span class="s1">&#39;laplace&#39;</span> <span class="ow">in</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>  <span class="c1"># pick edges using laplace filter</span>
+                    <span class="n">laplacian</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">Laplacian</span><span class="p">(</span><span class="n">gray</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">CV_32F</span><span class="p">)</span>
+                    <span class="n">thresh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">laplacian</span><span class="p">,</span> <span class="n">kwds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;edge_thresh&#39;</span><span class="p">,</span> <span class="mi">95</span><span class="p">))</span>
+                    <span class="n">edge</span> <span class="o">=</span> <span class="n">laplacian</span> <span class="o">&gt;</span> <span class="n">thresh</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Error - </span><span class="si">%s</span><span class="s2"> is not a recognised extraction method. Try &#39;sobel&#39; or &#39;laplace&#39;.&quot;</span> <span class="o">%</span> <span class="n">method</span>
+
+                <span class="k">if</span> <span class="n">db</span><span class="p">:</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">edge</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Edge&quot;</span><span class="p">)</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+                <span class="c1"># contour and find object contours</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">threshold</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">edge</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span> <span class="o">*</span> <span class="mi">254</span><span class="p">,</span> <span class="mi">240</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">THRESH_BINARY</span><span class="p">)</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">contours</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">findContours</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">RETR_TREE</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">CHAIN_APPROX_SIMPLE</span><span class="p">)</span>
+
+                <span class="c1"># find brightest quadrilateral with area above threshold</span>
+                <span class="n">maxCtr</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">maxBright</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="n">area_thresh</span> <span class="o">=</span> <span class="n">kwds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;area_thresh&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">cnt</span> <span class="ow">in</span> <span class="n">contours</span><span class="p">:</span>
+
+                    <span class="c1"># simplify/approximate contour</span>
+                    <span class="n">approx</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">approxPolyDP</span><span class="p">(</span><span class="n">cnt</span><span class="p">,</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">cv2</span><span class="o">.</span><span class="n">arcLength</span><span class="p">(</span><span class="n">cnt</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span> <span class="kc">True</span><span class="p">)</span>
+
+                    <span class="c1"># is it a quadrilateral?</span>
+                    <span class="k">if</span> <span class="n">approx</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                        <span class="c1"># calculate area</span>
+                        <span class="n">area</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">contourArea</span><span class="p">(</span><span class="n">approx</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">area</span> <span class="o">&gt;</span> <span class="n">area_thresh</span><span class="p">:</span>  <span class="c1"># large enough?</span>
+                            <span class="c1"># calculate approx brightness (by summing bounding box)</span>
+                            <span class="n">verts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">approx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">approx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span>
+                            <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">verts</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">verts</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+                            <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">verts</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">verts</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+                            <span class="n">patch</span> <span class="o">=</span> <span class="n">gray</span><span class="p">[</span><span class="n">xmin</span><span class="p">:</span><span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">:</span><span class="n">ymax</span><span class="p">]</span>
+                            <span class="n">bright</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">patch</span><span class="p">)</span>
+
+                            <span class="k">if</span> <span class="n">db</span><span class="p">:</span>
+                                <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">gray</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+                                <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Candidate panel&quot;</span><span class="p">)</span>
+                                <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+                                <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">xmax</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+                                <span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">ymin</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+                                <span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">ymax</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+                                <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+                            <span class="c1"># store?</span>
+                            <span class="k">if</span> <span class="n">maxBright</span> <span class="o">&lt;</span> <span class="n">bright</span><span class="p">:</span>
+                                <span class="n">maxCtr</span> <span class="o">=</span> <span class="n">approx</span>
+                                <span class="n">maxBright</span> <span class="o">=</span> <span class="n">bright</span>
+
+                <span class="c1"># convert to maplotlib path</span>
+                <span class="n">verts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">maxCtr</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">maxCtr</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span>
+                <span class="n">verts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">verts</span><span class="p">,</span> <span class="n">verts</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]])</span>  <span class="c1"># add return to first point</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">outline</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">verts</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># make matplotlib path from selected region</span>
+
+                <span class="c1"># shrink to 40% of original size (to remove frame and dodgy edge pixels)</span>
+                <span class="n">centroid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outline</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">1</span><span class="p">::,</span> <span class="p">:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">verts</span> <span class="o">=</span> <span class="n">kwds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;shrink&quot;</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outline</span><span class="o">.</span><span class="n">vertices</span> <span class="o">-</span> <span class="n">centroid</span><span class="p">)</span> <span class="o">+</span> <span class="n">centroid</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">outline</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">verts</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="c1"># calculate pixels within selected region</span>
+            <span class="n">xx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">radiance</span><span class="o">.</span><span class="n">xdim</span><span class="p">()),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">radiance</span><span class="o">.</span><span class="n">ydim</span><span class="p">()))</span>
+            <span class="n">xx</span> <span class="o">=</span> <span class="n">xx</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">yy</span> <span class="o">=</span> <span class="n">yy</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>  <span class="c1"># coordinates of each pixel</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outline</span><span class="o">.</span><span class="n">contains_points</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>  <span class="c1"># identify points within path</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">radiance</span><span class="o">.</span><span class="n">ydim</span><span class="p">(),</span> <span class="n">radiance</span><span class="o">.</span><span class="n">xdim</span><span class="p">()))</span><span class="o">.</span><span class="n">T</span>  <span class="c1"># reshape to pixel mask</span>
+
+            <span class="c1"># extract pixel reflectance values based on this mask</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">radiance</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">b</span><span class="p">][</span><span class="n">mask</span><span class="p">]</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">radiance</span><span class="o">.</span><span class="n">band_count</span><span class="p">())])</span><span class="o">.</span><span class="n">T</span>
+
+            <span class="c1"># also copy across wavelength info</span>
+            <span class="k">assert</span> <span class="n">radiance</span><span class="o">.</span><span class="n">has_wavelengths</span><span class="p">(),</span> <span class="s2">&quot;Error - radiance image must have wavelength information.&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_wavelengths</span><span class="p">(</span><span class="n">radiance</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">())</span>  <span class="c1"># get wavelength data</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Error: radiance argument must be a BlackImage instance or a numpy array of pixels.&quot;</span>
+
+        <span class="c1"># if we have lots of target pixels (we don&#39;t need that many), only keep top 50% [as darker ones likely result from</span>
+        <span class="c1"># dodgy border effects</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">30</span><span class="p">:</span>
+            <span class="n">brightness</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">brightness</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">brightness</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="c1"># extract reflectance data from target</span>
+        <span class="n">target_bands</span> <span class="o">=</span> <span class="n">material</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">strict</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">target_bands</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">()),</span> <span class="s2">&quot;Error - calibration range does not cover pixel range. &quot;</span> \
+                                         <span class="s2">&quot;Radiance data starts at </span><span class="si">%.1f</span><span class="s2"> nm but calibration data starts </span><span class="si">%.1f</span><span class="s2"> nm.&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                                             <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">()),</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">target_bands</span><span class="p">))</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">target_bands</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">()),</span> <span class="s2">&quot;Error - calibration range does not cover pixel range. &quot;</span> \
+                                         <span class="s2">&quot;Radiance data ends at </span><span class="si">%.1f</span><span class="s2"> nm but calibration data ends </span><span class="si">%.1f</span><span class="s2"> nm.&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                                             <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">()),</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">target_bands</span><span class="p">))</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">target_bands</span> <span class="o">-</span> <span class="n">w</span><span class="p">))</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">()]</span>  <span class="c1"># matching wavelengths</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reflectance</span> <span class="o">=</span> <span class="n">material</span><span class="o">.</span><span class="n">get_reflectance</span><span class="p">()[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">material</span> <span class="o">=</span> <span class="n">material</span>
+
+<div class="viewcode-block" id="Panel.set_outline">
+<a class="viewcode-back" href="../../../api/BlackTelperion.correct.panel.html#BlackTelperion.correct.panel.Panel.set_outline">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_outline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coords</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Define a panel outline (for e.g., estimating orientation) based on a known camera pose.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            coords: the coordinates of the four panel corners.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Error - coords must have shape (4,2) not </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outline</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Panel.copy">
+<a class="viewcode-back" href="../../../api/BlackTelperion.correct.panel.html#BlackTelperion.correct.panel.Panel.copy">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make a deep copy of this panel instance.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">             a new Panel instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Panel</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">material</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">wavelengths</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">()</span> <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Panel.get_mean_radiance">
+<a class="viewcode-back" href="../../../api/BlackTelperion.correct.panel.html#BlackTelperion.correct.panel.Panel.get_mean_radiance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_mean_radiance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate and return the mean radiance for each band of all the pixels in this calibration region.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Panel.get_reflectance">
+<a class="viewcode-back" href="../../../api/BlackTelperion.correct.panel.html#BlackTelperion.correct.panel.Panel.get_reflectance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_reflectance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the known (reference) reflectance of this panel.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reflectance</span></div>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    def get_normal(self, cam=None, recalc=False):</span>
+<span class="sd">        </span>
+<span class="sd">        Get the normal vector of this panel by assuming its outline is square (prior to projection onto the camera).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cam: a Camera object describing the pose of the camera from which the panel is viewed. Default is None (to retrieve</span>
+<span class="sd">                 previously stored normals)</span>
+<span class="sd">            recalc: True if a precomputed (or otherwise defined) normal vector should be recalculated. Default is False.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            the normal vector of the panel (in world coordinates). This is also stored as self.normal.</span>
+<span class="sd">        </span>
+
+<span class="sd">        if recalc or self.normal is None:</span>
+
+<span class="sd">            # check outline is available</span>
+<span class="sd">            assert cam is not None, &quot;Error - normal vector not previously defined. Please specify a camera object (cam) to estimate normal.&quot;</span>
+<span class="sd">            assert self.outline is not None, &quot;Error - self.outline must contain four points to estimate this panels normal vector...&quot;</span>
+
+<span class="sd">            # get corners of panel and convert to rays</span>
+<span class="sd">            corners = np.array([self.outline.vertices[i, :] for i in range(4)])</span>
+
+<span class="sd">            #if cam.is_panoramic():</span>
+<span class="sd">                ray1 = pix_to_ray_pano(corners[0, 0], corners[0, 1], cam.fov, cam.step, cam.dims)</span>
+<span class="sd">                ray2 = pix_to_ray_pano(corners[1, 0], corners[1, 1], cam.fov, cam.step, cam.dims)</span>
+<span class="sd">                ray3 = pix_to_ray_pano(corners[2, 0], corners[2, 1], cam.fov, cam.step, cam.dims)</span>
+<span class="sd">                ray4 = pix_to_ray_pano(corners[3, 0], corners[3, 1], cam.fov, cam.step, cam.dims)</span>
+<span class="sd">            else:</span>
+<span class="sd">                ray1 = pix_to_ray_persp(corners[0, 0], corners[0, 1], cam.fov, cam.dims)</span>
+<span class="sd">                ray2 = pix_to_ray_persp(corners[1, 0], corners[1, 1], cam.fov, cam.dims)</span>
+<span class="sd">                ray3 = pix_to_ray_persp(corners[2, 0], corners[2, 1], cam.fov, cam.dims)</span>
+<span class="sd">                ray4 = pix_to_ray_persp(corners[3, 0], corners[3, 1], cam.fov, cam.dims)</span>
+
+<span class="sd">            a = 1.0  # length of each square (in arbitrary coordinates)</span>
+<span class="sd">            h = np.sqrt(2)  # length of hypot relative to sides</span>
+
+<span class="sd">            def opt(x, sol=False):</span>
+<span class="sd">                # get test depths</span>
+<span class="sd">                z1, z2, z3, z4 = x</span>
+
+<span class="sd">                # calculate edge coordinates</span>
+<span class="sd">                A = ray1 * z1</span>
+<span class="sd">                B = ray2 * z2</span>
+<span class="sd">                C = ray3 * z3</span>
+<span class="sd">                D = ray4 * z4</span>
+
+<span class="sd">                # and errors with edge lengths</span>
+<span class="sd">                AB = np.linalg.norm(B - A)</span>
+<span class="sd">                BC = np.linalg.norm(C - B)</span>
+<span class="sd">                CD = np.linalg.norm(D - C)</span>
+<span class="sd">                DA = np.linalg.norm(A - D)</span>
+<span class="sd">                AC = np.linalg.norm(C - A)</span>
+<span class="sd">                BD = np.linalg.norm(D - B)</span>
+
+<span class="sd">                if not sol:</span>
+<span class="sd">                    return [AB - a, BC - a, CD - a, DA - a, AC - h, BD - h]  # return for optimiser</span>
+<span class="sd">                else:  # return solution (normal vector)</span>
+<span class="sd">                    AB = (B - A) / AB</span>
+<span class="sd">                    BC = (C - B) / BC</span>
+<span class="sd">                    return np.cross(AB, BC)</span>
+
+<span class="sd">            # get normal vector in camera coords</span>
+<span class="sd">            sol = least_squares(opt, (10.0, 10.0, 10.0, 10.0))</span>
+<span class="sd">            norm = opt(sol.x, sol=True)</span>
+
+<span class="sd">            # rotate to world coords</span>
+<span class="sd">            norm = np.dot(cam.get_rotation_matrix(), norm)</span>
+<span class="sd">            self.set_normal(norm)</span>
+
+<span class="sd">        return self.normal</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Panel.set_normal">
+<a class="viewcode-back" href="../../../api/BlackTelperion.correct.panel.html#BlackTelperion.correct.panel.Panel.set_normal">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_normal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set panel normal vector to a known vector.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            n: a (3,) numpy array containing the normal vector in world coordinates.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normal</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># remove normal</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Error - n must be a (3,) normal vector.&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="c1"># enforce n has length 1.0</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normal</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">normal</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span> <span class="c1"># panel always points upwards</span></div>
+
+
+<div class="viewcode-block" id="Panel.get_skyview">
+<a class="viewcode-back" href="../../../api/BlackTelperion.correct.panel.html#BlackTelperion.correct.panel.Panel.get_skyview">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_skyview</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hori_elev</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">up</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get this panels skyview factor. Normal vector must be defined, otherwise an error will be thrown.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hori_elev: the angle from the panel to the horizon (perpendicular to the panel&#39;s orientation) in degrees.</span>
+<span class="sd">                       Used to reduce the sky view factor if the panel is below the horizon (e.g. in an open pit mine).</span>
+<span class="sd">                       Default is 0.0 (i.e. assume a flat horizon). Can also be negative if sky is visible below the</span>
+<span class="sd">                       (flat) horizon.</span>
+<span class="sd">            up: the vertical (up) vector. Default is [0,0,1].</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            this panels sky view factor (assuming the panel is relatively unoccluded and the horizon is flat).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># proportion of sky visible assuming horizontal horizon</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">up</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">normal</span><span class="p">)))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+
+        <span class="c1"># adjust according to hori_elev [ and enforce range from 0 - 1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">skyview</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">s</span> <span class="o">-</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">hori_elev</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)),</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">skyview</span></div>
+
+
+<div class="viewcode-block" id="Panel.get_alpha">
+<a class="viewcode-back" href="../../../api/BlackTelperion.correct.panel.html#BlackTelperion.correct.panel.Panel.get_alpha">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_alpha</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">illudir</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the reflected light fraction of this panel based on the specified illumination direction using</span>
+<span class="sd">        Lamberts&#39; cosine law.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">illudir</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Error - illudir must be a (3,) numpy array.&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">normal</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;Error - normal vector must be defined to estimate alpha.&#39;</span>
+        <span class="k">if</span> <span class="n">illudir</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># check illudir is pointing downwards</span>
+            <span class="n">illudir</span> <span class="o">=</span> <span class="n">illudir</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">normal</span><span class="p">,</span> <span class="n">illudir</span> <span class="p">)</span> <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span></div>
+
+
+<div class="viewcode-block" id="Panel.quick_plot">
+<a class="viewcode-back" href="../../../api/BlackTelperion.correct.panel.html#BlackTelperion.correct.panel.Panel.quick_plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">quick_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bands</span><span class="o">=</span><span class="n">BlackTelperion</span><span class="o">.</span><span class="n">RGB</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Quickly plot the outline of this calibration target for quality checking etc.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            bands: the image bands to plot as a preview. Default is io.BlackImage.RGB.</span>
+<span class="sd">            **kwds: keywords are passed to BlackData.plot_spectra( ... ).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_image</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># plot including preview of panel</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;width_ratios&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]})</span>
+
+            <span class="c1"># plot base image</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">source_image</span><span class="o">.</span><span class="n">quick_plot</span><span class="p">(</span><span class="n">bands</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+
+            <span class="c1"># plot target on image and set extents</span>
+            <span class="n">patch</span> <span class="o">=</span> <span class="n">patches</span><span class="o">.</span><span class="n">PathPatch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outline</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">bbox</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outline</span><span class="o">.</span><span class="n">get_extents</span><span class="p">()</span>
+            <span class="n">padx</span> <span class="o">=</span> <span class="p">(</span><span class="n">bbox</span><span class="o">.</span><span class="n">max</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">bbox</span><span class="o">.</span><span class="n">min</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="mf">1.5</span>
+            <span class="n">pady</span> <span class="o">=</span> <span class="p">(</span><span class="n">bbox</span><span class="o">.</span><span class="n">max</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">bbox</span><span class="o">.</span><span class="n">min</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="mf">1.5</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">patch</span><span class="p">)</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">bbox</span><span class="o">.</span><span class="n">min</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">padx</span><span class="p">,</span> <span class="n">bbox</span><span class="o">.</span><span class="n">max</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">padx</span><span class="p">)</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">bbox</span><span class="o">.</span><span class="n">max</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">pady</span><span class="p">,</span> <span class="n">bbox</span><span class="o">.</span><span class="n">min</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">pady</span><span class="p">)</span>
+
+            <span class="c1"># plot radiance spectra</span>
+            <span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;labels&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;labels&#39;</span><span class="p">,</span> <span class="n">BlackFeature</span><span class="o">.</span><span class="n">Themes</span><span class="o">.</span><span class="n">ATMOSPHERE</span><span class="p">)</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_spectra</span><span class="p">(</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">**</span><span class="n">kwds</span> <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># no image data, just plot radiance spectra</span>
+            <span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;labels&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;labels&#39;</span><span class="p">,</span> <span class="n">BlackFeature</span><span class="o">.</span><span class="n">Themes</span><span class="o">.</span><span class="n">ATMOSPHERE</span><span class="p">)</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_spectra</span><span class="p">(</span><span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Downwelling Radiance&#39;</span><span class="p">)</span>
+
+        <span class="c1"># plot reflectance</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Radiance&quot;</span><span class="p">)</span>
+        <span class="n">ax2</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Reflectance&quot;</span><span class="p">)</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_reflectance</span><span class="p">(),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;g&#39;</span> <span class="p">)</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s1">&#39;right&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="s1">&#39;g&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
+
+
+<div class="viewcode-block" id="Panel.plot_ratio">
+<a class="viewcode-back" href="../../../api/BlackTelperion.correct.panel.html#BlackTelperion.correct.panel.Panel.plot_ratio">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plots the ratio between known reflectance and observed radiance for each band in this target.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ax: the axes to plot on. If None (default) then a new axes is created.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            fig, ax = the figure and axes objects containing the plot.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+
+        <span class="c1"># calculate ratio</span>
+        <span class="n">ratio</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mean_radiance</span><span class="p">()</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_reflectance</span><span class="p">()</span>
+
+        <span class="c1"># plot</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">(),</span> <span class="n">ratio</span> <span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;radiance / reflectance&quot;</span> <span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Wavelength (nm)&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
+</div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

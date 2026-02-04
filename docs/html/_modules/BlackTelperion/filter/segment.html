@@ -1,0 +1,815 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.filter.segment &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/BlackTelperion.html">BlackTelperion package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../filter.html">BlackTelperion.filter</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.filter.segment</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for BlackTelperion.filter.segment</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functions for segmenting regions of images for individual analyses. E.g., segmenting core trays or hand samples</span>
+<span class="sd">from images taken with a core scannner.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">BlackTelperion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">BlackTelperion</span><span class="w"> </span><span class="kn">import</span> <span class="n">io</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+
+<div class="viewcode-block" id="readAnnotations">
+<a class="viewcode-back" href="../../../api/BlackTelperion.filter.segment.html#BlackTelperion.filter.segment.readAnnotations">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">readAnnotations</span><span class="p">(</span><span class="n">annot</span><span class="p">,</span> <span class="n">hsi</span><span class="p">,</span> <span class="n">mask_patches</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mask_panels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mask_points</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;average&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract pixel positions and region spectra (e.g. calibration panels) based on an annotation image.</span>
+<span class="sd">    This image should have three RGB bands (0 - 255) and will be parsed as follows:</span>
+
+<span class="sd">     - [0,0,0] = black = retain data.</span>
+<span class="sd">     - [255,255,255] = white = mask data (replace with nan).</span>
+<span class="sd">     - [aaa,aaa,aaa] = grays = extract regions and add averaged spectra to header file indexed by grey value.</span>
+<span class="sd">     - [0,255,255],[255,0,255],[255,255,0]  = cyan, magenta, yellow = extract calibration panels A, B and C (respectively).</span>
+<span class="sd">     - [n,0,0] (reds), [0,n,0] (blues), [0,0,n] (greens) = extract pixel locations and add to header file as points A, B and C (respectively). These will be ordered based on the corresponding channel value.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        annot: the annotations image (three channels, 0-255, uint8) matching the format described above.</span>
+<span class="sd">        hsi: a hyperspectral image with matching x- and y- dimensions to the annotation image.</span>
+<span class="sd">        mask_patches: True if patches should be removed from output. Default is False. [ i.e. these will be retained in the image ].</span>
+<span class="sd">        mask_panels: True if panels should be removed from output. Default is False. [ i.e. these will be retained in the image ].</span>
+<span class="sd">        mask_points: True if points should be removed from output. Default is False. [ i.e. these will be retained in the image ].</span>
+<span class="sd">        mode: function used to aggregate pixel values. Options are &#39;average&#39; (default) or &#39;median&#39;.</span>
+<span class="sd">        inplace: True if the hsi image should be modified in-place or copied (default).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        a copy of the input file (if inplace is False) with the extracted points and spectra added to the header file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># check inputs</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">annot</span><span class="p">,</span> <span class="n">BlackTelperion</span><span class="o">.</span><span class="n">BlackImage</span><span class="p">),</span> <span class="s1">&#39;Error - annot (</span><span class="si">%s</span><span class="s1">) is not a BlackImage instance&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">annot</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hsi</span><span class="p">,</span> <span class="n">BlackTelperion</span><span class="o">.</span><span class="n">BlackImage</span><span class="p">),</span> <span class="s1">&#39;Error - hsi (</span><span class="si">%s</span><span class="s1">) is not a BlackImage instance&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">hsi</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">annot</span><span class="o">.</span><span class="n">band_count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;error - annot has </span><span class="si">%d</span><span class="s1"> bands (should = 3).&#39;</span> <span class="o">%</span> <span class="n">annot</span><span class="o">.</span><span class="n">band_count</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">annot</span><span class="o">.</span><span class="n">xdim</span><span class="p">()</span> <span class="o">==</span> <span class="n">hsi</span><span class="o">.</span><span class="n">xdim</span><span class="p">(),</span> <span class="s1">&#39;error - xdim </span><span class="si">%d</span><span class="s1"> != </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">annot</span><span class="o">.</span><span class="n">xdim</span><span class="p">(),</span> <span class="n">hsi</span><span class="o">.</span><span class="n">xdim</span><span class="p">())</span>
+    <span class="k">assert</span> <span class="n">annot</span><span class="o">.</span><span class="n">ydim</span><span class="p">()</span> <span class="o">==</span> <span class="n">hsi</span><span class="o">.</span><span class="n">ydim</span><span class="p">(),</span> <span class="s1">&#39;error - xdim </span><span class="si">%d</span><span class="s1"> != </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">annot</span><span class="o">.</span><span class="n">ydim</span><span class="p">(),</span> <span class="n">hsi</span><span class="o">.</span><span class="n">ydim</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="s1">&#39;average&#39;</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="n">agg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span>
+    <span class="k">elif</span> <span class="s1">&#39;median&#39;</span> <span class="ow">in</span> <span class="n">mode</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="n">agg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Error - </span><span class="si">%s</span><span class="s2"> is an unknown mode. Should be &#39;average&#39; or &#39;median&#39;.&quot;</span> <span class="o">%</span> <span class="n">mode</span>
+
+    <span class="c1"># create output</span>
+    <span class="k">if</span> <span class="n">inplace</span><span class="p">:</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">hsi</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">hsi</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># build masks</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">annot</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">retain_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">annot</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">remove_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">annot</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">patch_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">diff</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">remove_mask</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">retain_mask</span><span class="p">)</span>
+    <span class="n">panel_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">annot</span><span class="o">.</span><span class="n">data</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="n">point_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">annot</span><span class="o">.</span><span class="n">data</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+
+    <span class="c1"># extract patches</span>
+    <span class="n">patches</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">annot</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">patch_mask</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">patches</span><span class="p">):</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">patch_mask</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">annot</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">v</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mask</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">S</span> <span class="o">=</span> <span class="n">agg</span><span class="p">(</span><span class="n">hsi</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="p">:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;patch </span><span class="si">%d</span><span class="s1"> size&#39;</span> <span class="o">%</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;patch </span><span class="si">%d</span><span class="s1"> spectra&#39;</span> <span class="o">%</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)]</span> <span class="o">=</span> <span class="n">S</span>
+
+    <span class="c1"># extract panels</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="s1">&#39;abc&#39;</span><span class="p">):</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">panel_mask</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">annot</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mask</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">S</span> <span class="o">=</span> <span class="n">agg</span><span class="p">(</span><span class="n">hsi</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="p">:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;panel </span><span class="si">%s</span><span class="s1"> size&#39;</span> <span class="o">%</span> <span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;panel </span><span class="si">%s</span><span class="s1"> spectra&#39;</span> <span class="o">%</span> <span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">S</span>
+
+    <span class="c1"># extract points</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="s1">&#39;abc&#39;</span><span class="p">):</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">point_mask</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">annot</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mask</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">annot</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>
+            <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;points </span><span class="si">%s</span><span class="s1"> x&#39;</span> <span class="o">%</span> <span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;points </span><span class="si">%s</span><span class="s1"> y&#39;</span> <span class="o">%</span> <span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># apply mask</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">remove_mask</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="k">if</span> <span class="n">mask_patches</span><span class="p">:</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">patch_mask</span><span class="p">,</span> <span class="p">:</span> <span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="k">if</span> <span class="n">mask_panels</span><span class="p">:</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">panel_mask</span><span class="p">,</span> <span class="p">:</span> <span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="k">if</span> <span class="n">mask_points</span><span class="p">:</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">point_mask</span><span class="p">,</span> <span class="p">:</span> <span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+    <span class="c1"># return</span>
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+<span class="c1"># create foreground and background masks for grab cut algorithm</span>
+<div class="viewcode-block" id="label_blocks">
+<a class="viewcode-back" href="../../../api/BlackTelperion.filter.segment.html#BlackTelperion.filter.segment.label_blocks">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">label_blocks</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">epad</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">boost</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">erode</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">bands</span><span class="o">=</span><span class="n">BlackTelperion</span><span class="o">.</span><span class="n">RGB</span><span class="p">,</span> <span class="n">vb</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Segments an image into background and different hand samples based on point labels.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        image: the image to segment.</span>
+<span class="sd">        fg: the foreground definition (labelled with sample IDs). If None (default) then samples are pulled from the header file.</span>
+<span class="sd">        s: the number of pixels to label at each label point (if fg is not specified).</span>
+<span class="sd">        epad: padding around the edge of the image to be specified as background. Default is 20 pixels.</span>
+<span class="sd">        boost: multiplication factor to exaggurate foreground background contrast.</span>
+<span class="sd">        erode: Amount of erosion to apply to remove small regions labelled as sample. Default is 3. Set to 0 to disable.</span>
+<span class="sd">        bands: the bands to use for segmentation. Default is BlackTelperion.RGB.</span>
+<span class="sd">        vb: True if figures should be generated for QAQC. Default is True.</span>
+<span class="sd">        **kwds: keywords are passed to BlackImage.quick_plot( ... ) if vb is true.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># create fg array?</span>
+    <span class="k">if</span> <span class="n">fg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="p">[</span> <span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get_sample_points</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get_class_names</span><span class="p">()</span> <span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Error - image has no defined sample points. Call image.pickSamples(...) before segmenting.&quot;</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">fp</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>  <span class="c1"># enumerate samples</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">fp</span><span class="p">:</span>  <span class="c1"># enumerate points</span>
+                <span class="n">fg</span><span class="p">[</span><span class="nb">max</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span> <span class="nb">min</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">s</span><span class="p">,</span> <span class="n">fg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                <span class="nb">max</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span> <span class="nb">min</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">s</span><span class="p">,</span> <span class="n">fg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span> <span class="c1"># import this here to avoid errors if opencv is not installed properly</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">GC_PR_BGD</span><span class="p">)</span>
+    <span class="n">mask</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">epad</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">GC_BGD</span>
+    <span class="n">mask</span><span class="p">[</span><span class="o">-</span><span class="n">epad</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">GC_BGD</span>
+    <span class="n">mask</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="n">epad</span><span class="p">]</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">GC_BGD</span>
+    <span class="n">mask</span><span class="p">[:,</span> <span class="o">-</span><span class="n">epad</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">GC_BGD</span>
+
+    <span class="c1"># add foreground pixels</span>
+    <span class="n">mask</span><span class="p">[</span><span class="n">fg</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">GC_FGD</span>
+
+    <span class="c1"># extract RGB image and boost contrast</span>
+    <span class="n">rgb</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">[</span><span class="n">image</span><span class="o">.</span><span class="n">get_band_index</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bands</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">rgb</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">rgb</span><span class="p">)</span>
+    <span class="n">rgb</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">rgb</span><span class="p">)</span>
+    <span class="n">rgb</span> <span class="o">*=</span> <span class="n">boost</span>
+    <span class="n">rgb</span><span class="p">[</span><span class="n">rgb</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">rgb</span> <span class="o">=</span> <span class="p">(</span><span class="n">rgb</span> <span class="o">*</span> <span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+
+    <span class="c1"># do grab cut</span>
+    <span class="n">bgdModel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">65</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">fgdModel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">65</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">mask</span><span class="p">,</span> <span class="n">bgdModel</span><span class="p">,</span> <span class="n">fgdModel</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">grabCut</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">),</span> <span class="kc">None</span><span class="p">,</span> <span class="n">bgdModel</span><span class="p">,</span> <span class="n">fgdModel</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span>
+                                           <span class="n">cv2</span><span class="o">.</span><span class="n">GC_INIT_WITH_MASK</span><span class="p">)</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">mask</span> <span class="o">==</span> <span class="n">cv2</span><span class="o">.</span><span class="n">GC_PR_FGD</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">mask</span> <span class="o">==</span> <span class="n">cv2</span><span class="o">.</span><span class="n">GC_FGD</span><span class="p">)</span>  <span class="c1"># convert to boolean foreground maks</span>
+
+    <span class="c1"># erode</span>
+    <span class="k">if</span> <span class="n">erode</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">kernel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">erode</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">),</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span> <span class="o">==</span> <span class="mi">1</span>
+
+    <span class="c1"># extract contours and create label mask</span>
+    <span class="n">contours</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">findContours</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span> <span class="o">*</span> <span class="mi">255</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">RETR_TREE</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">CHAIN_APPROX_SIMPLE</span><span class="p">)</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">xx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">xx</span> <span class="o">=</span> <span class="n">xx</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">yy</span> <span class="o">=</span> <span class="n">yy</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>  <span class="c1"># coordinates of each pixel</span>
+    <span class="k">for</span> <span class="n">cnt</span> <span class="ow">in</span> <span class="n">contours</span><span class="p">:</span>
+
+        <span class="c1"># convert to matplotlib path</span>
+        <span class="n">verts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">cnt</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">cnt</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">verts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">verts</span><span class="p">,</span> <span class="n">verts</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]])</span>
+        <span class="k">if</span> <span class="n">verts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">pth</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">verts</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># get internal labels</span>
+        <span class="n">inside</span> <span class="o">=</span> <span class="n">pth</span><span class="o">.</span><span class="n">contains_points</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+        <span class="n">inside</span> <span class="o">=</span> <span class="n">inside</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">mask</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">mask</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">if</span> <span class="n">inside</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">labels</span><span class="p">[</span><span class="n">inside</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">fg</span><span class="p">[</span><span class="n">inside</span><span class="p">])</span>  <span class="c1"># fill label</span>
+
+    <span class="c1"># plot</span>
+    <span class="k">if</span> <span class="n">vb</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">quick_plot</span><span class="p">(</span><span class="n">bands</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">(</span><span class="n">fg</span><span class="p">,</span> <span class="n">fg</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">labels</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1"># create classification file</span>
+    <span class="bp">cls</span> <span class="o">=</span> <span class="n">BlackTelperion</span><span class="o">.</span><span class="n">BlackImage</span><span class="p">(</span><span class="n">labels</span><span class="p">[:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">])</span>
+    <span class="bp">cls</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;file type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;ENVI Classification&quot;</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">fg</span><span class="p">))</span>
+    <span class="bp">cls</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;classes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get_class_names</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;class names&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;background&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">names</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">&#39;viridis&#39;</span><span class="p">)</span>
+    <span class="bp">cls</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;class lookup&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">cmap</span><span class="p">(</span><span class="n">i</span><span class="p">)[:</span><span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">)])</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="o">*</span> <span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="bp">cls</span></div>
+
+
+
+<span class="c1"># do extraction</span>
+<div class="viewcode-block" id="extract_tiles">
+<a class="viewcode-back" href="../../../api/BlackTelperion.filter.segment.html#BlackTelperion.filter.segment.extract_tiles">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_tiles</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">connected</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">erode</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract tiles that each contain a single contiguous block based on the specified classification. Useful for</span>
+<span class="sd">    extracting individual samples from core-scanner imagery.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        image: the hyperspectral image to extract blocks from</span>
+<span class="sd">        labels: a BlackImage instance or numpy array with different samples labelled as non-0 values.</span>
+<span class="sd">        connected: True if separate groups of pixels with the same label should be split</span>
+<span class="sd">                   into different tiles using cv2.connectedComponents. Default is True.</span>
+<span class="sd">        ids: a list of label ids to extract. If None (default), all non-zero classes will</span>
+<span class="sd">             be extracted.</span>
+<span class="sd">        erode: number of pixels to erode from mask before extracting tiles. Default is 0.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># get labels array</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">BlackTelperion</span><span class="o">.</span><span class="n">BlackImage</span><span class="p">):</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># get ids</span>
+    <span class="k">if</span> <span class="n">ids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="n">ids</span><span class="p">[</span><span class="n">ids</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># remove zero</span>
+
+    <span class="c1"># extract tiles</span>
+    <span class="n">tiles</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">sampleID</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">:</span>  <span class="c1"># loop through labels</span>
+
+        <span class="c1"># get mask</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">labels</span> <span class="o">==</span> <span class="n">i</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">mask</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="k">continue</span>  <span class="c1"># can be the case if erode removed entire labels</span>
+
+        <span class="k">if</span> <span class="n">erode</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span> <span class="c1"># import this here to avoid errors if opencv is not installed properly</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">erode</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">erode</span><span class="p">,</span> <span class="n">erode</span><span class="p">,)))</span> <span class="o">==</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">connected</span><span class="p">:</span>
+            <span class="c1"># easy - don&#39;t bother to separate</span>
+            <span class="n">pixels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>  <span class="c1"># get valid pixels</span>
+            <span class="n">local</span> <span class="o">=</span> <span class="n">pixels</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">pixels</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># translate to get pixels in tile</span>
+
+            <span class="n">tile</span> <span class="o">=</span> <span class="n">BlackTelperion</span><span class="o">.</span><span class="n">BlackImage</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">local</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                                           <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">local</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">image</span><span class="o">.</span><span class="n">band_count</span><span class="p">()),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">))</span>
+            <span class="n">tile</span><span class="p">[</span><span class="n">local</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">local</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">pixels</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">pixels</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">:]</span>
+            <span class="n">tile</span><span class="o">.</span><span class="n">set_wavelengths</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">())</span>
+
+            <span class="c1"># store label and tile</span>
+            <span class="n">sampleID</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">tiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tile</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># check connected components first</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span> <span class="c1"># import this here to avoid errors if opencv is not installed properly</span>
+            <span class="n">nc</span><span class="p">,</span> <span class="n">cl</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">connectedComponents</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nc</span><span class="p">):</span>  <span class="c1"># loop through components</span>
+                <span class="n">comp_mask</span> <span class="o">=</span> <span class="n">cl</span> <span class="o">==</span> <span class="n">n</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">mask</span><span class="p">[</span><span class="n">comp_mask</span><span class="p">]</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+                    <span class="k">continue</span>  <span class="c1"># this component is background</span>
+
+                <span class="n">mask2</span> <span class="o">=</span> <span class="n">mask</span> <span class="o">&amp;</span> <span class="n">comp_mask</span>
+
+                <span class="c1"># extact pixels</span>
+                <span class="n">pixels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">mask2</span><span class="p">)</span>  <span class="c1"># get valid pixels</span>
+                <span class="n">local</span> <span class="o">=</span> <span class="n">pixels</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">pixels</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># translate to get pixels in tile</span>
+
+                <span class="n">tile</span> <span class="o">=</span> <span class="n">BlackTelperion</span><span class="o">.</span><span class="n">BlackImage</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">local</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                                               <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">local</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">image</span><span class="o">.</span><span class="n">band_count</span><span class="p">()),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">))</span>
+                <span class="n">tile</span><span class="p">[</span><span class="n">local</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">local</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">pixels</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">pixels</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">:]</span>
+                <span class="n">tile</span><span class="o">.</span><span class="n">set_wavelengths</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">())</span>
+
+                <span class="c1"># store label and tile</span>
+                <span class="n">sampleID</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="n">tiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tile</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">tiles</span><span class="p">,</span> <span class="n">sampleID</span></div>
+
+
+<div class="viewcode-block" id="group_tiles">
+<a class="viewcode-back" href="../../../api/BlackTelperion.filter.segment.html#BlackTelperion.filter.segment.group_tiles">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">group_tiles</span><span class="p">(</span> <span class="n">tiles</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rotate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="p">[]</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Group a list of image tiles based on corresponding group IDs.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tiles: a list of BlackImage tiles.</span>
+<span class="sd">        groups: a list of integers corresponding to the grouping to arrange tiles by.</span>
+<span class="sd">        ids: a list of sample IDs to create an id classification (or None).</span>
+<span class="sd">        rotate: True if tiles should be rotated such that they&#39;re longer dimension aligns with the x-axis.</span>
+<span class="sd">        ignore: a list of group id&#39;s that should be ignored/excluded from this grouping.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: A tuple containing:</span>
+
+<span class="sd">            - tiled_image = a BlackImage instance containing the arranged tiles.</span>
+<span class="sd">            - tiled_label = a BlackImage classification containing the class indices used to arrange the tiles.</span>
+<span class="sd">            - [tiled_id] = a BlackImage classification containing individual sample IDs (if ids is not None).</span>
+<span class="sd">            - bounds = the bounds (x,y,width,height) of each group of tiles. Useful for labelling or separation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># rotate tiles</span>
+    <span class="k">if</span> <span class="n">rotate</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tiles</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">xdim</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">t</span><span class="o">.</span><span class="n">ydim</span><span class="p">():</span>
+                <span class="n">t</span><span class="o">.</span><span class="n">rot90</span><span class="p">()</span>
+
+    <span class="c1"># calculate output image dimensions</span>
+    <span class="n">widths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">heights</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">groups</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span>
+    <span class="n">tiles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tiles</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">groups</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">ignore</span><span class="p">:</span>
+            <span class="k">continue</span> <span class="c1"># skip ignored groups</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">groups</span> <span class="o">==</span> <span class="n">t</span><span class="p">)[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">widths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">xdim</span><span class="p">()</span><span class="o">+</span><span class="mi">1</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tiles</span><span class="p">[</span><span class="n">samples</span><span class="p">]]))</span>
+        <span class="n">heights</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">ydim</span><span class="p">()</span><span class="o">+</span><span class="mi">1</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tiles</span><span class="p">[</span><span class="n">samples</span><span class="p">]]))</span>
+
+    <span class="c1"># create output arrays</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">widths</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">heights</span><span class="p">),</span> <span class="n">tiles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">band_count</span><span class="p">()),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tiles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">widths</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">heights</span><span class="p">),</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">)</span>
+        <span class="n">sid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">widths</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">heights</span><span class="p">),</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">)</span>
+
+    <span class="c1"># transfer data and labels</span>
+    <span class="n">_yoffs</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">bounds</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">groups</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">ignore</span><span class="p">:</span>
+            <span class="k">continue</span> <span class="c1"># skip ignored groups</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">groups</span> <span class="o">==</span> <span class="n">n</span><span class="p">)[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">_xoffs</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">bb</span> <span class="o">=</span> <span class="p">[</span><span class="n">_xoffs</span><span class="p">,</span><span class="n">_yoffs</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_t</span><span class="p">,</span><span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tiles</span><span class="p">[</span><span class="n">samples</span><span class="p">]):</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">_xoffs</span><span class="p">:(</span><span class="n">_xoffs</span> <span class="o">+</span> <span class="n">_t</span><span class="o">.</span><span class="n">xdim</span><span class="p">()),</span> <span class="n">_yoffs</span><span class="p">:(</span><span class="n">_yoffs</span> <span class="o">+</span> <span class="n">_t</span><span class="o">.</span><span class="n">ydim</span><span class="p">()),</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">_t</span><span class="o">.</span><span class="n">data</span>
+            <span class="n">label</span><span class="p">[</span><span class="n">_xoffs</span><span class="p">:(</span><span class="n">_xoffs</span> <span class="o">+</span> <span class="n">_t</span><span class="o">.</span><span class="n">xdim</span><span class="p">()),</span> <span class="n">_yoffs</span><span class="p">:(</span><span class="n">_yoffs</span> <span class="o">+</span> <span class="n">_t</span><span class="o">.</span><span class="n">ydim</span><span class="p">()),</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">ids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">sid</span><span class="p">[</span><span class="n">_xoffs</span><span class="p">:(</span><span class="n">_xoffs</span> <span class="o">+</span> <span class="n">_t</span><span class="o">.</span><span class="n">xdim</span><span class="p">()),</span> <span class="n">_yoffs</span><span class="p">:(</span><span class="n">_yoffs</span> <span class="o">+</span> <span class="n">_t</span><span class="o">.</span><span class="n">ydim</span><span class="p">()),</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ids</span><span class="p">[</span><span class="n">samples</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="n">_xoffs</span> <span class="o">+=</span> <span class="n">_t</span><span class="o">.</span><span class="n">xdim</span><span class="p">()</span><span class="o">+</span><span class="mi">1</span>
+        <span class="n">_yoffs</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">ydim</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tiles</span><span class="p">[</span><span class="n">samples</span><span class="p">]])</span><span class="o">+</span><span class="mi">1</span>
+        <span class="n">bb</span> <span class="o">+=</span> <span class="p">[</span><span class="n">_xoffs</span> <span class="o">-</span> <span class="n">bb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">_yoffs</span> <span class="o">-</span> <span class="n">bb</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">bounds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bb</span><span class="p">)</span>
+        <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+    <span class="c1"># label areas with no data as background</span>
+    <span class="n">label</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">))]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sid</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">))]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># make output images</span>
+    <span class="n">tiled_image</span> <span class="o">=</span> <span class="n">BlackTelperion</span><span class="o">.</span><span class="n">BlackImage</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="n">tiles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+
+    <span class="n">tiled_label</span> <span class="o">=</span> <span class="n">BlackTelperion</span><span class="o">.</span><span class="n">BlackImage</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+    <span class="n">tiled_label</span><span class="o">.</span><span class="n">set_band_names</span><span class="p">([</span><span class="s2">&quot;Class&quot;</span><span class="p">])</span>
+    <span class="n">tiled_label</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;file type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;ENVI Classification&#39;</span>
+    <span class="n">tiled_label</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;class names&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Background&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Class </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">g</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">names</span><span class="p">]</span>
+    <span class="n">tiled_label</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;classes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tiled_id</span> <span class="o">=</span> <span class="n">BlackTelperion</span><span class="o">.</span><span class="n">BlackImage</span><span class="p">(</span><span class="n">sid</span><span class="p">)</span>
+        <span class="n">tiled_id</span><span class="o">.</span><span class="n">set_band_names</span><span class="p">([</span><span class="s2">&quot;ID&quot;</span><span class="p">])</span>
+        <span class="n">tiled_id</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;file type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;ENVI Classification&#39;</span>
+        <span class="n">tiled_id</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;class names&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Background&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">ids</span><span class="p">))]</span>
+        <span class="n">tiled_id</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;classes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">tiled_image</span><span class="p">,</span> <span class="n">tiled_label</span><span class="p">,</span> <span class="n">tiled_id</span><span class="p">,</span> <span class="n">bounds</span>
+
+    <span class="k">return</span> <span class="n">tiled_image</span><span class="p">,</span> <span class="n">tiled_label</span><span class="p">,</span> <span class="n">bounds</span></div>
+
+
+<div class="viewcode-block" id="build_core_template">
+<a class="viewcode-back" href="../../../api/BlackTelperion.filter.segment.html#BlackTelperion.filter.segment.build_core_template">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_core_template</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">vb</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Overlay images of core trays from e.g. a drillhole to calculate a template that is used for extracting</span>
+<span class="sd">    individual core segments and is robust to data quirks (e.g. empty trays). All images must be identical</span>
+<span class="sd">    dimensions and properly co-aligned.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        images: a list of co-aligned images of different core trays build template with.</span>
+<span class="sd">        N: the number of cores per tray. Default is 5.</span>
+<span class="sd">        thresh: percentile used to separate foreground from background. Default is 40. Higher values ensure</span>
+<span class="sd">                proper separation of cores, but will crop data more closely.</span>
+<span class="sd">        vb: True if a tqdm progress bar should be printed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># sum valid pixels</span>
+    <span class="n">valid</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">loop</span> <span class="o">=</span> <span class="n">images</span>
+    <span class="k">if</span> <span class="n">vb</span><span class="p">:</span>
+        <span class="n">loop</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Building template&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">loop</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>  <span class="c1"># load image if need be</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">valid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># init valid if need be</span>
+            <span class="n">valid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">valid</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># accumulate valid pixels</span>
+
+    <span class="c1"># do threshold</span>
+    <span class="n">valid</span> <span class="o">=</span> <span class="n">valid</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">valid</span><span class="p">,</span> <span class="n">thresh</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">valid</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">valid</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="n">valid</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="c1"># label components</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span> <span class="c1"># import this here to avoid errors if opencv is not installed properly</span>
+    <span class="n">num_labels</span><span class="p">,</span> <span class="n">labels_im</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">connectedComponents</span><span class="p">((</span><span class="n">valid</span><span class="o">.</span><span class="n">T</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">valid</span><span class="p">,</span> <span class="mi">40</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">))</span>
+
+    <span class="c1"># take top N labels by area.</span>
+    <span class="n">area</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">labels_im</span> <span class="o">==</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_labels</span><span class="p">)]</span>
+    <span class="n">thresh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">area</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">N</span><span class="p">]</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_labels</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">area</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">thresh</span><span class="p">:</span>
+            <span class="n">labels_im</span><span class="p">[</span><span class="n">labels_im</span> <span class="o">==</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">l</span>
+            <span class="n">l</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">labels_im</span><span class="p">[</span><span class="n">labels_im</span> <span class="o">==</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># background</span>
+
+    <span class="c1"># return</span>
+    <span class="k">return</span> <span class="n">BlackTelperion</span><span class="o">.</span><span class="n">BlackImage</span><span class="p">(</span><span class="n">labels_im</span><span class="o">.</span><span class="n">T</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="unwrap_core">
+<a class="viewcode-back" href="../../../api/BlackTelperion.filter.segment.html#BlackTelperion.filter.segment.unwrap_core">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">unwrap_core</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">template</span><span class="p">,</span> <span class="n">stack</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Unwrap drillholes in a core tray and stack them end to end along the x-axis, with the top at the left. Note that</span>
+<span class="sd">    the top-left of the core tray is considered to be the &quot;top&quot;, so the image may need to be flipped/mirrored prior</span>
+<span class="sd">    to calling this function.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        image: the image to unwrap. Background (non-core pixels) must have already been masked and set as np.nan.</span>
+<span class="sd">        template: A labelled template</span>
+<span class="sd">        stack: &#39;line&#39; or &#39;separate&#39;; either align cores in a single stick (&#39;line&#39;),</span>
+<span class="sd">                or return individual tiles (&#39;separate&#39;).</span>
+<span class="sd">        **kwds: Keywords can include:</span>
+
+<span class="sd">             - start = the meterage of the top of the core. Will be added to the image header.</span>
+<span class="sd">             - end = the meterage of the bottom of the core. Will be added to the image header.</span>
+<span class="sd">             - id = the id of this core tray.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># extract tiles</span>
+    <span class="n">tiles</span><span class="p">,</span> <span class="n">ids</span> <span class="o">=</span> <span class="n">extract_tiles</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">template</span><span class="p">)</span>
+
+    <span class="c1"># sort tiles into order</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
+    <span class="n">tiles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tiles</span><span class="p">)[</span><span class="n">idx</span><span class="p">]</span>
+
+    <span class="c1"># stack</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;sep&#39;</span> <span class="ow">in</span> <span class="n">stack</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+
+        <span class="c1"># attribute tiles with position</span>
+        <span class="k">if</span> <span class="s1">&#39;start&#39;</span> <span class="ow">in</span> <span class="n">kwds</span> <span class="ow">and</span> <span class="s1">&#39;end&#39;</span> <span class="ow">in</span> <span class="n">kwds</span><span class="p">:</span>
+            <span class="n">l</span> <span class="o">=</span> <span class="p">(</span><span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="n">N</span>  <span class="c1"># length of a single stick of core</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">],</span> <span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">l</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tiles</span><span class="p">):</span>
+                <span class="n">t</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;core start&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">start</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>  <span class="c1"># start of each stick of core</span>
+                <span class="n">t</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;core end&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">start</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">l</span>  <span class="c1"># end of each stick of core</span>
+        <span class="k">if</span> <span class="s1">&#39;id&#39;</span> <span class="ow">in</span> <span class="n">kwds</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tiles</span><span class="p">):</span>
+                <span class="n">t</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;core id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+
+        <span class="c1"># return</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">tiles</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="s1">&#39;lin&#39;</span> <span class="ow">in</span> <span class="n">stack</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+
+        <span class="c1"># attribute output with position</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s1">&#39;start&#39;</span> <span class="ow">in</span> <span class="n">kwds</span><span class="p">:</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;core start&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s1">&#39;end&#39;</span> <span class="ow">in</span> <span class="n">kwds</span><span class="p">:</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;core end&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s1">&#39;id&#39;</span> <span class="ow">in</span> <span class="n">kwds</span><span class="p">:</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;core id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+
+        <span class="c1"># calculate width</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">ydim</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tiles</span><span class="p">]))</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">xdim</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tiles</span><span class="p">])</span>
+
+        <span class="c1"># reshape image</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">length</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">image</span><span class="o">.</span><span class="n">band_count</span><span class="p">()),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">x0</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tiles</span><span class="p">):</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">x0</span><span class="p">:(</span><span class="n">x0</span> <span class="o">+</span> <span class="n">t</span><span class="o">.</span><span class="n">xdim</span><span class="p">()),</span> <span class="mi">0</span><span class="p">:</span><span class="n">t</span><span class="o">.</span><span class="n">ydim</span><span class="p">(),</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">data</span>
+            <span class="n">x0</span> <span class="o">+=</span> <span class="n">t</span><span class="o">.</span><span class="n">xdim</span><span class="p">()</span>
+
+        <span class="n">out</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="k">return</span> <span class="n">out</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Error - </span><span class="si">%s</span><span class="s2"> is an unknown stacking.&quot;</span> <span class="o">%</span> <span class="n">stack</span></div>
+
+
+<div class="viewcode-block" id="tray_to_stick">
+<a class="viewcode-back" href="../../../api/BlackTelperion.filter.segment.html#BlackTelperion.filter.segment.tray_to_stick">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">tray_to_stick</span><span class="p">(</span><span class="n">tray</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Break a unwrapped tray into individual sticks.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tray: a BlackImage instance containing a linearly unwrapped tray.</span>
+<span class="sd">        N: the number of chunks of core to break it into.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># check orientation</span>
+    <span class="k">if</span> <span class="n">tray</span><span class="o">.</span><span class="n">ydim</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">tray</span><span class="o">.</span><span class="n">xdim</span><span class="p">():</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">tray</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">tray</span><span class="o">.</span><span class="n">data</span>
+    <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;Error - invalid shape? </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">tray</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+    <span class="c1"># slice</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">N</span><span class="p">)</span>
+    <span class="n">slices</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">[(</span><span class="n">step</span> <span class="o">*</span> <span class="n">i</span><span class="p">):(</span><span class="n">step</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span> <span class="p">:,</span> <span class="p">:]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
+
+    <span class="c1"># build images</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">tray</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;core start&#39;</span><span class="p">])</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">tray</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;core end&#39;</span><span class="p">])</span>
+    <span class="n">zz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">N</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">images</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">BlackTelperion</span><span class="o">.</span><span class="n">BlackImage</span><span class="p">(</span><span class="n">slices</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">header</span><span class="o">=</span><span class="n">tray</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+        <span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;core start&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">zz</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;core end&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">zz</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">images</span></div>
+
+
+<div class="viewcode-block" id="composite_cores">
+<a class="viewcode-back" href="../../../api/BlackTelperion.filter.segment.html#BlackTelperion.filter.segment.composite_cores">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">composite_cores</span><span class="p">(</span><span class="n">trays</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Composites a list of uwrapped core trays (cf. unwrap_core(...)) into a single image such that each column</span>
+<span class="sd">    represents a single tray (arranged vertically).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        trays: a list of BlackImage instances containing unwrapped core trays. The header of these</span>
+<span class="sd">               images must contain localisation information; specifically the &quot;core start&quot; and &quot;core end&quot;</span>
+<span class="sd">               keywords.</span>
+<span class="sd">        pad: the padding (in pixels) between core segments.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># calculate order and identify breaks in core</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;core start&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trays</span><span class="p">])</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;core end&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trays</span><span class="p">])</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+    <span class="n">breaks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">end</span><span class="p">[</span><span class="n">idx</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">start</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># rotate cores if need be</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">trays</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">xdim</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">ydim</span><span class="p">():</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">t</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+            <span class="n">trays</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
+
+    <span class="c1"># calculate dims and create output</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">xdim</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trays</span><span class="p">])</span> <span class="o">+</span> <span class="n">pad</span>
+    <span class="n">height</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">ydim</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trays</span><span class="p">])</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">width</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">trays</span><span class="p">),</span> <span class="n">height</span><span class="p">,</span> <span class="n">trays</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">band_count</span><span class="p">()),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+    <span class="c1"># transfer data</span>
+    <span class="n">x0</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">y0</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">px</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span>
+        <span class="n">core</span> <span class="o">=</span> <span class="n">trays</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">+</span> <span class="n">core</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">x0</span><span class="p">:</span><span class="n">x1</span><span class="p">,</span> <span class="n">y0</span><span class="p">:</span><span class="n">y1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">core</span>
+        <span class="n">x0</span> <span class="o">+=</span> <span class="n">width</span>
+        <span class="n">px</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span>
+
+    <span class="c1"># create output image</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">BlackTelperion</span><span class="o">.</span><span class="n">BlackImage</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">set_wavelengths</span><span class="p">(</span><span class="n">trays</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">())</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;wavelength units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">trays</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;wavelength units&#39;</span><span class="p">,</span> <span class="s1">&#39;nm&#39;</span><span class="p">)</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;core starts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">start</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;core ends&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">end</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;core width&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">width</span>  <span class="c1"># width, in pixels, of individual core</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">breaks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;core breaks&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">breaks</span>
+
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="plot_drillhole">
+<a class="viewcode-back" href="../../../api/BlackTelperion.filter.segment.html#BlackTelperion.filter.segment.plot_drillhole">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_drillhole</span><span class="p">(</span><span class="n">composite</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">maxN</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot a composite drillhole as created by composite_core. This plots the image data, but includes annotations</span>
+<span class="sd">    the specify the distances along/down hole.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        N: the number of sticks per tray. Used to ensure start/end labels are in the correct place.</span>
+<span class="sd">        max_trays: the maximum number of trays per row. Default is 25.</span>
+<span class="sd">    *Keywords*: are passed to BlackImage.quick_plot( ... )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">assert</span> <span class="s1">&#39;core width&#39;</span> <span class="ow">in</span> <span class="n">composite</span><span class="o">.</span><span class="n">header</span><span class="p">,</span> <span class="s2">&quot;Error - no core width information in header file.&quot;</span>
+    <span class="k">assert</span> <span class="s1">&#39;core starts&#39;</span> <span class="ow">in</span> <span class="n">composite</span><span class="o">.</span><span class="n">header</span><span class="p">,</span> <span class="s2">&quot;Error - no core position information in header file.&quot;</span>
+    <span class="k">assert</span> <span class="s1">&#39;core ends&#39;</span> <span class="ow">in</span> <span class="n">composite</span><span class="o">.</span><span class="n">header</span><span class="p">,</span> <span class="s2">&quot;Error - no core position information in header file.&quot;</span>
+
+    <span class="c1"># get data on dimensions and position</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">composite</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;core width&#39;</span><span class="p">])</span>
+    <span class="n">starts</span> <span class="o">=</span> <span class="n">composite</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;core starts&#39;</span><span class="p">]</span>
+    <span class="n">ends</span> <span class="o">=</span> <span class="n">composite</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;core ends&#39;</span><span class="p">]</span>
+    <span class="n">trayWidth</span> <span class="o">=</span> <span class="n">width</span> <span class="o">*</span> <span class="n">N</span>  <span class="c1"># width of one tray</span>
+    <span class="n">nTrays</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">composite</span><span class="o">.</span><span class="n">xdim</span><span class="p">()</span> <span class="o">/</span> <span class="n">trayWidth</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">starts</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">starts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">starts</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ends</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">ends</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">ends</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+
+    <span class="c1"># break into subimages</span>
+    <span class="n">nrows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">nTrays</span> <span class="o">/</span> <span class="n">maxN</span><span class="p">))</span>
+    <span class="n">row_images</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nrows</span><span class="p">):</span>
+        <span class="c1"># copy data subset</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">trayWidth</span> <span class="o">*</span> <span class="n">maxN</span><span class="p">,</span> <span class="n">composite</span><span class="o">.</span><span class="n">ydim</span><span class="p">(),</span> <span class="n">composite</span><span class="o">.</span><span class="n">band_count</span><span class="p">()),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">x0</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="n">trayWidth</span> <span class="o">*</span> <span class="n">maxN</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="nb">min</span><span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">trayWidth</span> <span class="o">*</span> <span class="n">maxN</span><span class="p">,</span> <span class="n">composite</span><span class="o">.</span><span class="n">xdim</span><span class="p">())</span>
+        <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">:(</span><span class="n">x1</span> <span class="o">-</span> <span class="n">x0</span><span class="p">),</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">composite</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">x0</span><span class="p">:</span><span class="n">x1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+
+        <span class="c1"># make new BlackImage and store</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">BlackTelperion</span><span class="o">.</span><span class="n">BlackImage</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">composite</span><span class="o">.</span><span class="n">has_wavelengths</span><span class="p">():</span>
+            <span class="n">img</span><span class="o">.</span><span class="n">set_wavelengths</span><span class="p">(</span><span class="n">composite</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">())</span>
+        <span class="n">row_images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+    <span class="c1"># make axes and plot sub-images</span>
+    <span class="n">dims</span> <span class="o">=</span> <span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="n">nrows</span> <span class="o">*</span> <span class="mi">18</span> <span class="o">*</span> <span class="n">row_images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ydim</span><span class="p">()</span> <span class="o">/</span> <span class="n">row_images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">xdim</span><span class="p">())</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">dims</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="c1"># ensure ax is an array</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">im</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">nrows</span><span class="p">),</span> <span class="n">ax</span><span class="p">,</span> <span class="n">row_images</span><span class="p">):</span>
+        <span class="n">im</span><span class="o">.</span><span class="n">quick_plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="n">a</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+
+        <span class="c1"># set xticks</span>
+        <span class="n">_ends</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ends</span><span class="p">[(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">maxN</span> <span class="o">*</span> <span class="n">N</span><span class="p">):</span> <span class="nb">min</span><span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">N</span> <span class="o">*</span> <span class="n">maxN</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ends</span><span class="p">))][::</span><span class="n">N</span><span class="p">])</span>
+        <span class="n">_starts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">starts</span><span class="p">[(</span><span class="n">i</span> <span class="o">*</span> <span class="n">maxN</span> <span class="o">*</span> <span class="n">N</span><span class="p">):</span> <span class="nb">min</span><span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">N</span> <span class="o">*</span> <span class="n">maxN</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">starts</span><span class="p">))][::</span><span class="n">N</span><span class="p">])</span>
+        <span class="n">breaks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">_starts</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">!=</span> <span class="n">_ends</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># calculate breaks where core trays don&#39;t line up</span>
+
+        <span class="c1"># set ticks</span>
+        <span class="n">xticks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">trayWidth</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_ends</span><span class="p">))</span> <span class="o">*</span> <span class="n">trayWidth</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">_ends</span><span class="p">))</span>
+        <span class="n">a</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">xticks</span><span class="p">)</span>
+        <span class="n">a</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([</span><span class="s2">&quot;</span><span class="si">%.2f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">l</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">_ends</span><span class="p">])</span>
+
+        <span class="c1"># add breaks</span>
+        <span class="c1"># if len(breaks) &gt; 0:</span>
+        <span class="c1">#    for b in breaks[0]:</span>
+        <span class="c1">#        a.axvline(xticks[b],color=&#39;r&#39;)</span>
+
+    <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
+
+
+<div class="viewcode-block" id="map_depth">
+<a class="viewcode-back" href="../../../api/BlackTelperion.filter.segment.html#BlackTelperion.filter.segment.map_depth">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">map_depth</span><span class="p">(</span><span class="n">image</span><span class="p">):</span>
+    <span class="c1"># check we have the necessary info</span>
+    <span class="k">assert</span> <span class="s1">&#39;core width&#39;</span> <span class="ow">in</span> <span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="p">,</span> <span class="s2">&quot;Error - no core width information in header file.&quot;</span>
+    <span class="k">assert</span> <span class="s1">&#39;core starts&#39;</span> <span class="ow">in</span> <span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="p">,</span> <span class="s2">&quot;Error - no core position information in header file.&quot;</span>
+    <span class="k">assert</span> <span class="s1">&#39;core ends&#39;</span> <span class="ow">in</span> <span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="p">,</span> <span class="s2">&quot;Error - no core position information in header file.&quot;</span>
+
+    <span class="c1"># get data on dimensions and position</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;core width&#39;</span><span class="p">])</span>
+    <span class="n">starts</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;core starts&#39;</span><span class="p">]</span>
+    <span class="n">ends</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;core ends&#39;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">starts</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">starts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">starts</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ends</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">ends</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">ends</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+
+    <span class="c1"># build distance from top of each stick of core</span>
+    <span class="n">zz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">zz</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">ends</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">starts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># add value from previous core</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">width</span><span class="p">)):</span>
+        <span class="n">zz</span><span class="p">[</span><span class="n">x</span><span class="p">:</span><span class="nb">min</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">width</span><span class="p">,</span> <span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span> <span class="o">+=</span> <span class="n">starts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="c1"># mask</span>
+    <span class="n">zz</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">))]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+    <span class="k">return</span> <span class="n">zz</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

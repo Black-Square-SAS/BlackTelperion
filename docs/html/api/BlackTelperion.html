@@ -1,0 +1,701 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion package &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="BlackTelperion.analyse package" href="BlackTelperion.analyse.html" />
+    <link rel="prev" title="BlackTelperion Documentation" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">BlackTelperion package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#BlackTelperion.RGB"><code class="docutils literal notranslate"><span class="pre">RGB</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#BlackTelperion.VNIR"><code class="docutils literal notranslate"><span class="pre">VNIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#BlackTelperion.SWIR"><code class="docutils literal notranslate"><span class="pre">SWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#BlackTelperion.BROAD"><code class="docutils literal notranslate"><span class="pre">BROAD</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#BlackTelperion.MWIR"><code class="docutils literal notranslate"><span class="pre">MWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#BlackTelperion.LWIR"><code class="docutils literal notranslate"><span class="pre">LWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#BlackTelperion.band_select_threshold"><code class="docutils literal notranslate"><span class="pre">band_select_threshold</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.analyse.html">BlackTelperion.analyse package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.html">BlackTelperion.correct package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.filter.html">BlackTelperion.filter package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.io.html">BlackTelperion.io package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.reference.html">BlackTelperion.reference package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.utils.html">BlackTelperion.utils namespace</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackcollection.html">BlackTelperion.blackcollection module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html">BlackTelperion.blackdata module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackfeature.html">BlackTelperion.blackfeature module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html">BlackTelperion.blackheader module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html">BlackTelperion.blackimage module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blacklibrary.html">BlackTelperion.blacklibrary module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.multiprocessing.html">BlackTelperion.multiprocessing module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">BlackTelperion package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/BlackTelperion.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-BlackTelperion">
+<span id="blacktelperion-package"></span><h1>BlackTelperion package<a class="headerlink" href="#module-BlackTelperion" title="Link to this heading"></a></h1>
+<p>An open-source python toolbox for hyperspectral data preprocessing, correction, projection and analysis.</p>
+<hr class="docutils" />
+<p>### Tutorials</p>
+<p>A variety of interactive notebook tutorials are available for <em>hylite</em>:</p>
+<p>Basic:
+- [Introduction tutorial using GoogleColab](<a class="reference external" href="https://drive.google.com/drive/folders/1hkr4gtP1OY_PIK7cynl3dWd3sYi_9s5F?usp=drive_link">https://drive.google.com/drive/folders/1hkr4gtP1OY_PIK7cynl3dWd3sYi_9s5F?usp=drive_link</a>)
+- [Another introduction from the VGC conference](<a class="reference external" href="https://drive.google.com/drive/folders/1_gDRMrccNG3OMyIPYy0mkpkbN6nn92OW?usp=sharing">https://drive.google.com/drive/folders/1_gDRMrccNG3OMyIPYy0mkpkbN6nn92OW?usp=sharing</a>)</p>
+<p>Advanced:
+- [Building corrected hyperclouds](<a class="reference external" href="https://tinyurl.com/Maamorilik01">https://tinyurl.com/Maamorilik01</a>)
+- [Minimum wavelength mapping](<a class="reference external" href="https://tinyurl.com/Maamorilik02">https://tinyurl.com/Maamorilik02</a>)
+- [Visualising hyperclouds](<a class="reference external" href="https://tinyurl.com/Maamorilik03">https://tinyurl.com/Maamorilik03</a>)</p>
+<hr class="docutils" />
+<p>### Publications</p>
+<p>If you use hylite for your work then please cite:</p>
+<ul class="simple">
+<li><p>Thiele, S. T., Lorenz, S., et al., (2021). Multi-scale, multi-sensor data integration for automated 3-D geological</p></li>
+</ul>
+<p>mapping using hylite. <em>Ore Geology Reviews</em>. <a class="reference external" href="https://doi.org/10.1016/j.oregeorev.2021.104252">https://doi.org/10.1016/j.oregeorev.2021.104252</a></p>
+<p>Other relevant papers include:</p>
+<ul class="simple">
+<li><p>Thiele, S.T., Bnoulkacem, Z., Lorenz, S., Bordenave, A., Menegoni, N., Madriz, Y., Dujoncquoy, E., Gloaguen, R. and Kenter, J., 2021.</p></li>
+</ul>
+<p>Mineralogical Mapping with Accurately Corrected Shortwave Infrared Hyperspectral Data Acquired Obliquely from UAVs.
+<em>Remote Sensing</em>, 14(1), p.5. <a class="reference external" href="https://doi.org/10.3390/rs14010005">https://doi.org/10.3390/rs14010005</a></p>
+<ul class="simple">
+<li><p>Thiele, S. T., Lorenz, S., Kirsch, M., &amp; Gloaguen, R. (2021).</p></li>
+</ul>
+<p>A Novel and Open-Source Illumination Correction for Hyperspectral Digital Outcrop Models. <em>IEEE Transactions on
+Geoscience and Remote Sensing</em>. <a class="reference external" href="https://doi.org/10.1109/TGRS.2021.3098725">https://doi.org/10.1109/TGRS.2021.3098725</a></p>
+<ul class="simple">
+<li><p>Lorenz, S., Thiele, S.T., Kirsch, M., Unger, G., Zimmermann, R., Guarnieri, P., Baker, N.,</p></li>
+</ul>
+<p>Sørensen, E.V., Rosa, D. and Gloaguen, R., 2022. Three-Dimensional, Km-Scale Hyperspectral Data of Well-Exposed Zn–Pb
+Mineralization at Black Angel Mountain, Greenland. <em>Data</em>, 7(8), p.104. <a class="reference external" href="https://doi.org/10.3390/data7080104">https://doi.org/10.3390/data7080104</a></p>
+<ul class="simple">
+<li><p>Guarnieri, P., Thiele, S.T., Baker, N., Sørensen, E.V., Kirsch, M., Lorenz, S., Rosa, D., Unger, G. and Zimmermann, R., 2022.</p></li>
+</ul>
+<p>Unravelling the Deformation of Paleoproterozoic Marbles and Zn-Pb Ore Bodies by Combining 3D-Photogeology and
+Hyperspectral Data (Black Angel Mine, Central West Greenland). <em>Minerals</em>, 12(7), p.800. <a class="reference external" href="https://doi.org/10.3390/min12070800">https://doi.org/10.3390/min12070800</a></p>
+<ul class="simple">
+<li><p>Kirsch, M., Mavroudi, M., Thiele, S., Lorenz, S., Tusa, L., Booysen, R., Herrmann, E., Fatihi, A., Möckel, R., Dittrich, T. and Gloaguen, R.,</p></li>
+</ul>
+<p>2023. Underground hyperspectral outcrop scanning for automated mine‐face mapping: The lithium deposit of Zinnwald/Cínovec.
+The Photogrammetric Record, 38(183), pp.408-429. <a class="reference external" href="https://doi.org/10.1111/phor.12457">https://doi.org/10.1111/phor.12457</a></p>
+<hr class="docutils" />
+<p># Documentation</p>
+<p>Almost all of the modules, classes and functions in <em>hylite</em> have docstrings. These can be viewed in a notebook or
+python console using the help(…) function or by typing “?” after a class or function name. Searchable documentation
+is also available online.</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="BlackTelperion.RGB">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.</span></span><span class="sig-name descname"><span class="pre">RGB</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(680.0,</span> <span class="pre">550.0,</span> <span class="pre">505.0)</span></span><a class="headerlink" href="#BlackTelperion.RGB" title="Link to this definition"></a></dt>
+<dd><p>Wavelengths for red [680.0], green [550.0] and blue [505.0]- useful for plotting.
+Note that we use the upper end of blue as this is the first band of rikola data.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="BlackTelperion.VNIR">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.</span></span><span class="sig-name descname"><span class="pre">VNIR</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(800.0,</span> <span class="pre">550.0,</span> <span class="pre">505.0)</span></span><a class="headerlink" href="#BlackTelperion.VNIR" title="Link to this definition"></a></dt>
+<dd><p>Useful preview for VNIR data using (infrared [1972.0], green [644.0], blue [1450.0]).</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="BlackTelperion.SWIR">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.</span></span><span class="sig-name descname"><span class="pre">SWIR</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(2200.0,</span> <span class="pre">2250.0,</span> <span class="pre">2350.0)</span></span><a class="headerlink" href="#BlackTelperion.SWIR" title="Link to this definition"></a></dt>
+<dd><p>Useful preview for SWIR data (2200.0, 2250.0, 2350.0) sensitive to clay, mica, carbonate and amphibole absorbtions.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="BlackTelperion.BROAD">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.</span></span><span class="sig-name descname"><span class="pre">BROAD</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(1972.0,</span> <span class="pre">644.0,</span> <span class="pre">1450.0)</span></span><a class="headerlink" href="#BlackTelperion.BROAD" title="Link to this definition"></a></dt>
+<dd><p>Useful preview that covers VNIR and SWIR range (1972.0,644.0,1450.0) .</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="BlackTelperion.MWIR">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.</span></span><span class="sig-name descname"><span class="pre">MWIR</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(3000.0,</span> <span class="pre">3400.0,</span> <span class="pre">3800.0)</span></span><a class="headerlink" href="#BlackTelperion.MWIR" title="Link to this definition"></a></dt>
+<dd><p>Useful preview for MWIR range (3000., 3400., 3800. ).</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="BlackTelperion.LWIR">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.</span></span><span class="sig-name descname"><span class="pre">LWIR</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(10113.0,</span> <span class="pre">9156.31,</span> <span class="pre">8527.01)</span></span><a class="headerlink" href="#BlackTelperion.LWIR" title="Link to this definition"></a></dt>
+<dd><p>Useful preview for TIR range (10101.01, 9174.31, 8547.01).</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="BlackTelperion.band_select_threshold">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.</span></span><span class="sig-name descname"><span class="pre">band_select_threshold</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">25.0</span></span><a class="headerlink" href="#BlackTelperion.band_select_threshold" title="Link to this definition"></a></dt>
+<dd><p>Maximum distance (in nanometers) to use when matching wavelengths with band indices. See BlackData.get_band_index(…) for more detail.</p>
+</dd></dl>
+
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="BlackTelperion.analyse.html">BlackTelperion.analyse package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.analyse.html#BlackTelperion.analyse.saveLegend"><code class="docutils literal notranslate"><span class="pre">saveLegend()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.analyse.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.analyse.dtree.html">BlackTelperion.analyse.dtree module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.analyse.dtree.html#BlackTelperion.analyse.dtree.decision_tree"><code class="docutils literal notranslate"><span class="pre">decision_tree()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.analyse.indices.html">BlackTelperion.analyse.indices module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.analyse.indices.html#BlackTelperion.analyse.indices.band_ratio"><code class="docutils literal notranslate"><span class="pre">band_ratio()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.analyse.indices.html#BlackTelperion.analyse.indices.NDVI"><code class="docutils literal notranslate"><span class="pre">NDVI()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.analyse.indices.html#BlackTelperion.analyse.indices.SKY"><code class="docutils literal notranslate"><span class="pre">SKY()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.analyse.indices.html#BlackTelperion.analyse.indices.SHADE"><code class="docutils literal notranslate"><span class="pre">SHADE()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.analyse.mwl.html">BlackTelperion.analyse.mwl module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.analyse.mwl.html#BlackTelperion.analyse.mwl.MWL"><code class="docutils literal notranslate"><span class="pre">MWL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.analyse.mwl.html#BlackTelperion.analyse.mwl.minimum_wavelength"><code class="docutils literal notranslate"><span class="pre">minimum_wavelength()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.analyse.mwl.html#BlackTelperion.analyse.mwl.mwl_legend"><code class="docutils literal notranslate"><span class="pre">mwl_legend</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.analyse.mwl.html#BlackTelperion.analyse.mwl.colourise_mwl"><code class="docutils literal notranslate"><span class="pre">colourise_mwl()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.analyse.mwl.html#BlackTelperion.analyse.mwl.plot_ternary"><code class="docutils literal notranslate"><span class="pre">plot_ternary()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.analyse.sam.html">BlackTelperion.analyse.sam module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.analyse.sam.html#BlackTelperion.analyse.sam.spectral_angles"><code class="docutils literal notranslate"><span class="pre">spectral_angles()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.analyse.sam.html#BlackTelperion.analyse.sam.SAM"><code class="docutils literal notranslate"><span class="pre">SAM()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.analyse.supervised.html">BlackTelperion.analyse.supervised module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.analyse.supervised.html#BlackTelperion.analyse.supervised.get_feature_vectors"><code class="docutils literal notranslate"><span class="pre">get_feature_vectors()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.analyse.supervised.html#BlackTelperion.analyse.supervised.balance"><code class="docutils literal notranslate"><span class="pre">balance()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.analyse.supervised.html#BlackTelperion.analyse.supervised.split"><code class="docutils literal notranslate"><span class="pre">split()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.analyse.unmixing.html">BlackTelperion.analyse.unmixing module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.analyse.unmixing.html#BlackTelperion.analyse.unmixing.mix"><code class="docutils literal notranslate"><span class="pre">mix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.analyse.unmixing.html#BlackTelperion.analyse.unmixing.unmix"><code class="docutils literal notranslate"><span class="pre">unmix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.analyse.unmixing.html#BlackTelperion.analyse.unmixing.endmembers"><code class="docutils literal notranslate"><span class="pre">endmembers()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.analyse.unsupervised.html">BlackTelperion.analyse.unsupervised module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.analyse.unsupervised.html#BlackTelperion.analyse.unsupervised.cluster_hierarchical"><code class="docutils literal notranslate"><span class="pre">cluster_hierarchical()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="BlackTelperion.correct.html">BlackTelperion.correct package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.correct.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.illumination.html">BlackTelperion.correct.illumination package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.correct.illumination.html#BlackTelperion.correct.illumination.sph2cart"><code class="docutils literal notranslate"><span class="pre">sph2cart()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.correct.illumination.html#BlackTelperion.correct.illumination.cart2sph"><code class="docutils literal notranslate"><span class="pre">cart2sph()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.correct.illumination.html#BlackTelperion.correct.illumination.estimate_sun_vec"><code class="docutils literal notranslate"><span class="pre">estimate_sun_vec()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.correct.illumination.html#BlackTelperion.correct.illumination.estimate_skyview"><code class="docutils literal notranslate"><span class="pre">estimate_skyview()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.correct.illumination.html#BlackTelperion.correct.illumination.UAC"><code class="docutils literal notranslate"><span class="pre">UAC()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.correct.illumination.html#BlackTelperion.correct.illumination.estimate_illu"><code class="docutils literal notranslate"><span class="pre">estimate_illu()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.correct.illumination.html#BlackTelperion.correct.illumination.IlluModel"><code class="docutils literal notranslate"><span class="pre">IlluModel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.correct.illumination.html#BlackTelperion.correct.illumination.ELC"><code class="docutils literal notranslate"><span class="pre">ELC</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.correct.illumination.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.correct.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.detrend.html">BlackTelperion.correct.detrend module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.correct.detrend.html#BlackTelperion.correct.detrend.polynomial"><code class="docutils literal notranslate"><span class="pre">polynomial()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.correct.detrend.html#BlackTelperion.correct.detrend.get_hull_corrected"><code class="docutils literal notranslate"><span class="pre">get_hull_corrected()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.equalize.html">BlackTelperion.correct.equalize module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.correct.equalize.html#BlackTelperion.correct.equalize.hist_eq"><code class="docutils literal notranslate"><span class="pre">hist_eq()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.correct.equalize.html#BlackTelperion.correct.equalize.norm_eq"><code class="docutils literal notranslate"><span class="pre">norm_eq()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.panel.html">BlackTelperion.correct.panel module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.correct.panel.html#BlackTelperion.correct.panel.Panel"><code class="docutils literal notranslate"><span class="pre">Panel</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="BlackTelperion.filter.html">BlackTelperion.filter package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.filter.html#BlackTelperion.filter.boost_saturation"><code class="docutils literal notranslate"><span class="pre">boost_saturation()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.filter.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.filter.combine.html">BlackTelperion.filter.combine module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.filter.combine.html#BlackTelperion.filter.combine.combine"><code class="docutils literal notranslate"><span class="pre">combine()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.filter.dimension_reduction.html">BlackTelperion.filter.dimension_reduction module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.filter.dimension_reduction.html#BlackTelperion.filter.dimension_reduction.PCA"><code class="docutils literal notranslate"><span class="pre">PCA()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.filter.dimension_reduction.html#BlackTelperion.filter.dimension_reduction.MNF"><code class="docutils literal notranslate"><span class="pre">MNF()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.filter.dimension_reduction.html#BlackTelperion.filter.dimension_reduction.from_loadings"><code class="docutils literal notranslate"><span class="pre">from_loadings()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.filter.sample.html">BlackTelperion.filter.sample module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.filter.sample.html#BlackTelperion.filter.sample.getClassLibrary"><code class="docutils literal notranslate"><span class="pre">getClassLibrary()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.filter.sample.html#BlackTelperion.filter.sample.Resample"><code class="docutils literal notranslate"><span class="pre">Resample</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.filter.sample.html#BlackTelperion.filter.sample.ASTER"><code class="docutils literal notranslate"><span class="pre">ASTER</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.filter.sample.html#BlackTelperion.filter.sample.SENTINEL"><code class="docutils literal notranslate"><span class="pre">SENTINEL</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.filter.segment.html">BlackTelperion.filter.segment module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.filter.segment.html#BlackTelperion.filter.segment.readAnnotations"><code class="docutils literal notranslate"><span class="pre">readAnnotations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.filter.segment.html#BlackTelperion.filter.segment.label_blocks"><code class="docutils literal notranslate"><span class="pre">label_blocks()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.filter.segment.html#BlackTelperion.filter.segment.extract_tiles"><code class="docutils literal notranslate"><span class="pre">extract_tiles()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.filter.segment.html#BlackTelperion.filter.segment.group_tiles"><code class="docutils literal notranslate"><span class="pre">group_tiles()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.filter.segment.html#BlackTelperion.filter.segment.build_core_template"><code class="docutils literal notranslate"><span class="pre">build_core_template()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.filter.segment.html#BlackTelperion.filter.segment.unwrap_core"><code class="docutils literal notranslate"><span class="pre">unwrap_core()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.filter.segment.html#BlackTelperion.filter.segment.tray_to_stick"><code class="docutils literal notranslate"><span class="pre">tray_to_stick()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.filter.segment.html#BlackTelperion.filter.segment.composite_cores"><code class="docutils literal notranslate"><span class="pre">composite_cores()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.filter.segment.html#BlackTelperion.filter.segment.plot_drillhole"><code class="docutils literal notranslate"><span class="pre">plot_drillhole()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.filter.segment.html#BlackTelperion.filter.segment.map_depth"><code class="docutils literal notranslate"><span class="pre">map_depth()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.filter.tpt.html">BlackTelperion.filter.tpt module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.filter.tpt.html#BlackTelperion.filter.tpt.build_kernel"><code class="docutils literal notranslate"><span class="pre">build_kernel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.filter.tpt.html#BlackTelperion.filter.tpt.TPT"><code class="docutils literal notranslate"><span class="pre">TPT()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.filter.tpt.html#BlackTelperion.filter.tpt.TPT2MWL"><code class="docutils literal notranslate"><span class="pre">TPT2MWL()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="BlackTelperion.io.html">BlackTelperion.io package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.io.html#BlackTelperion.io.save"><code class="docutils literal notranslate"><span class="pre">save()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.io.html#BlackTelperion.io.load"><code class="docutils literal notranslate"><span class="pre">load()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.io.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.io.create_spectral_cubes.html">BlackTelperion.io.create_spectral_cubes module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.io.headers.html">BlackTelperion.io.headers module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.io.headers.html#BlackTelperion.io.headers.makeDirs"><code class="docutils literal notranslate"><span class="pre">makeDirs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.io.headers.html#BlackTelperion.io.headers.saveHeader"><code class="docutils literal notranslate"><span class="pre">saveHeader()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.io.headers.html#BlackTelperion.io.headers.loadHeader"><code class="docutils literal notranslate"><span class="pre">loadHeader()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.io.headers.html#BlackTelperion.io.headers.matchHeader"><code class="docutils literal notranslate"><span class="pre">matchHeader()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.io.images.html">BlackTelperion.io.images module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.io.images.html#BlackTelperion.io.images.loadWithGDAL"><code class="docutils literal notranslate"><span class="pre">loadWithGDAL()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.io.images.html#BlackTelperion.io.images.loadWithSPy"><code class="docutils literal notranslate"><span class="pre">loadWithSPy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.io.images.html#BlackTelperion.io.images.loadSubset"><code class="docutils literal notranslate"><span class="pre">loadSubset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.io.images.html#BlackTelperion.io.images.loadWithNumpy"><code class="docutils literal notranslate"><span class="pre">loadWithNumpy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.io.images.html#BlackTelperion.io.images.saveWithNumpy"><code class="docutils literal notranslate"><span class="pre">saveWithNumpy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.io.images.html#BlackTelperion.io.images.saveWithGDAL"><code class="docutils literal notranslate"><span class="pre">saveWithGDAL()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.io.images.html#BlackTelperion.io.images.saveWithSPy"><code class="docutils literal notranslate"><span class="pre">saveWithSPy()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.io.libraries.html">BlackTelperion.io.libraries module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.io.libraries.html#BlackTelperion.io.libraries.loadLibrarySED"><code class="docutils literal notranslate"><span class="pre">loadLibrarySED()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.io.libraries.html#BlackTelperion.io.libraries.loadLibraryTSG"><code class="docutils literal notranslate"><span class="pre">loadLibraryTSG()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.io.libraries.html#BlackTelperion.io.libraries.saveLibraryCSV"><code class="docutils literal notranslate"><span class="pre">saveLibraryCSV()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.io.libraries.html#BlackTelperion.io.libraries.loadLibraryCSV"><code class="docutils literal notranslate"><span class="pre">loadLibraryCSV()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.io.libraries.html#BlackTelperion.io.libraries.loadLibraryTXT"><code class="docutils literal notranslate"><span class="pre">loadLibraryTXT()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.io.libraries.html#BlackTelperion.io.libraries.loadLibraryDIR"><code class="docutils literal notranslate"><span class="pre">loadLibraryDIR()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.io.libraries.html#BlackTelperion.io.libraries.saveLibraryTXT"><code class="docutils literal notranslate"><span class="pre">saveLibraryTXT()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.io.libraries.html#BlackTelperion.io.libraries.saveLibraryLIB"><code class="docutils literal notranslate"><span class="pre">saveLibraryLIB()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.io.libraries.html#BlackTelperion.io.libraries.loadLibraryLIB"><code class="docutils literal notranslate"><span class="pre">loadLibraryLIB()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="BlackTelperion.reference.html">BlackTelperion.reference package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.reference.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.reference.features.html">BlackTelperion.reference.features package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.reference.features.html#BlackTelperion.reference.features.Features"><code class="docutils literal notranslate"><span class="pre">Features</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.reference.features.html#BlackTelperion.reference.features.Minerals"><code class="docutils literal notranslate"><span class="pre">Minerals</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.reference.features.html#BlackTelperion.reference.features.Themes"><code class="docutils literal notranslate"><span class="pre">Themes</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.reference.spectra.html">BlackTelperion.reference.spectra package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.reference.spectra.html#BlackTelperion.reference.spectra.Target"><code class="docutils literal notranslate"><span class="pre">Target</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.reference.spectra.html#BlackTelperion.reference.spectra.loadTarget"><code class="docutils literal notranslate"><span class="pre">loadTarget()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.reference.spectra.html#BlackTelperion.reference.spectra.loadDirectory"><code class="docutils literal notranslate"><span class="pre">loadDirectory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.reference.spectra.html#subpackages">Subpackages</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.reference.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.reference.generate.html">BlackTelperion.reference.generate module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.reference.generate.html#BlackTelperion.reference.generate.randomSpectra"><code class="docutils literal notranslate"><span class="pre">randomSpectra()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.reference.generate.html#BlackTelperion.reference.generate.genImage"><code class="docutils literal notranslate"><span class="pre">genImage()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="BlackTelperion.utils.html">BlackTelperion.utils namespace</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.utils.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.utils.metadata.html">BlackTelperion.utils.metadata module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.utils.visualization.html">BlackTelperion.utils.visualization module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="BlackTelperion.blackcollection.html">BlackTelperion.blackcollection module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.blackcollection.html#BlackTelperion.blackcollection.External"><code class="docutils literal notranslate"><span class="pre">External</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackcollection.html#BlackTelperion.blackcollection.External.get"><code class="docutils literal notranslate"><span class="pre">External.get()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.blackcollection.html#BlackTelperion.blackcollection.BlackCollection"><code class="docutils literal notranslate"><span class="pre">BlackCollection</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackcollection.html#BlackTelperion.blackcollection.BlackCollection.get_file_dictionary"><code class="docutils literal notranslate"><span class="pre">BlackCollection.get_file_dictionary()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackcollection.html#BlackTelperion.blackcollection.BlackCollection.clean"><code class="docutils literal notranslate"><span class="pre">BlackCollection.clean()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackcollection.html#BlackTelperion.blackcollection.BlackCollection.get_path"><code class="docutils literal notranslate"><span class="pre">BlackCollection.get_path()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackcollection.html#BlackTelperion.blackcollection.BlackCollection.getDirectory"><code class="docutils literal notranslate"><span class="pre">BlackCollection.getDirectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackcollection.html#BlackTelperion.blackcollection.BlackCollection.getAttributes"><code class="docutils literal notranslate"><span class="pre">BlackCollection.getAttributes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackcollection.html#BlackTelperion.blackcollection.BlackCollection.query"><code class="docutils literal notranslate"><span class="pre">BlackCollection.query()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackcollection.html#BlackTelperion.blackcollection.BlackCollection.loaded"><code class="docutils literal notranslate"><span class="pre">BlackCollection.loaded()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackcollection.html#BlackTelperion.blackcollection.BlackCollection.print"><code class="docutils literal notranslate"><span class="pre">BlackCollection.print()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackcollection.html#BlackTelperion.blackcollection.BlackCollection.save"><code class="docutils literal notranslate"><span class="pre">BlackCollection.save()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackcollection.html#BlackTelperion.blackcollection.BlackCollection.save_attr"><code class="docutils literal notranslate"><span class="pre">BlackCollection.save_attr()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackcollection.html#BlackTelperion.blackcollection.BlackCollection.free"><code class="docutils literal notranslate"><span class="pre">BlackCollection.free()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackcollection.html#BlackTelperion.blackcollection.BlackCollection.free_attr"><code class="docutils literal notranslate"><span class="pre">BlackCollection.free_attr()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackcollection.html#BlackTelperion.blackcollection.BlackCollection.addExternal"><code class="docutils literal notranslate"><span class="pre">BlackCollection.addExternal()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackcollection.html#BlackTelperion.blackcollection.BlackCollection.addSub"><code class="docutils literal notranslate"><span class="pre">BlackCollection.addSub()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackcollection.html#BlackTelperion.blackcollection.BlackCollection.get"><code class="docutils literal notranslate"><span class="pre">BlackCollection.get()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackcollection.html#BlackTelperion.blackcollection.BlackCollection.set"><code class="docutils literal notranslate"><span class="pre">BlackCollection.set()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="BlackTelperion.blackdata.html">BlackTelperion.blackdata module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData"><code class="docutils literal notranslate"><span class="pre">BlackData</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.to_grey"><code class="docutils literal notranslate"><span class="pre">BlackData.to_grey()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.copy"><code class="docutils literal notranslate"><span class="pre">BlackData.copy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.set_header"><code class="docutils literal notranslate"><span class="pre">BlackData.set_header()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.push_to_header"><code class="docutils literal notranslate"><span class="pre">BlackData.push_to_header()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.has_wavelengths"><code class="docutils literal notranslate"><span class="pre">BlackData.has_wavelengths()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.get_wavelengths"><code class="docutils literal notranslate"><span class="pre">BlackData.get_wavelengths()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.has_band_names"><code class="docutils literal notranslate"><span class="pre">BlackData.has_band_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.get_band_names"><code class="docutils literal notranslate"><span class="pre">BlackData.get_band_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.has_fwhm"><code class="docutils literal notranslate"><span class="pre">BlackData.has_fwhm()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.get_fwhm"><code class="docutils literal notranslate"><span class="pre">BlackData.get_fwhm()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.set_wavelengths"><code class="docutils literal notranslate"><span class="pre">BlackData.set_wavelengths()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.set_band_names"><code class="docutils literal notranslate"><span class="pre">BlackData.set_band_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.set_fwhm"><code class="docutils literal notranslate"><span class="pre">BlackData.set_fwhm()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.is_image"><code class="docutils literal notranslate"><span class="pre">BlackData.is_image()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.is_point"><code class="docutils literal notranslate"><span class="pre">BlackData.is_point()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.is_classification"><code class="docutils literal notranslate"><span class="pre">BlackData.is_classification()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.band_count"><code class="docutils literal notranslate"><span class="pre">BlackData.band_count()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.samples"><code class="docutils literal notranslate"><span class="pre">BlackData.samples()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.lines"><code class="docutils literal notranslate"><span class="pre">BlackData.lines()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.is_int"><code class="docutils literal notranslate"><span class="pre">BlackData.is_int()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.is_float"><code class="docutils literal notranslate"><span class="pre">BlackData.is_float()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.export_bands"><code class="docutils literal notranslate"><span class="pre">BlackData.export_bands()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.delete_nan_bands"><code class="docutils literal notranslate"><span class="pre">BlackData.delete_nan_bands()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.set_as_nan"><code class="docutils literal notranslate"><span class="pre">BlackData.set_as_nan()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.mask_bands"><code class="docutils literal notranslate"><span class="pre">BlackData.mask_bands()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.mask_water_features"><code class="docutils literal notranslate"><span class="pre">BlackData.mask_water_features()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.get_band"><code class="docutils literal notranslate"><span class="pre">BlackData.get_band()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.get_band_grey"><code class="docutils literal notranslate"><span class="pre">BlackData.get_band_grey()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.get_raveled"><code class="docutils literal notranslate"><span class="pre">BlackData.get_raveled()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.X"><code class="docutils literal notranslate"><span class="pre">BlackData.X()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.eval"><code class="docutils literal notranslate"><span class="pre">BlackData.eval()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.set_raveled"><code class="docutils literal notranslate"><span class="pre">BlackData.set_raveled()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.get_band_index"><code class="docutils literal notranslate"><span class="pre">BlackData.get_band_index()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.resample"><code class="docutils literal notranslate"><span class="pre">BlackData.resample()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.contiguous_chunks"><code class="docutils literal notranslate"><span class="pre">BlackData.contiguous_chunks()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.smooth_median"><code class="docutils literal notranslate"><span class="pre">BlackData.smooth_median()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.smooth_savgol"><code class="docutils literal notranslate"><span class="pre">BlackData.smooth_savgol()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.fill_gaps"><code class="docutils literal notranslate"><span class="pre">BlackData.fill_gaps()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.plot_spectra"><code class="docutils literal notranslate"><span class="pre">BlackData.plot_spectra()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.compress"><code class="docutils literal notranslate"><span class="pre">BlackData.compress()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.decompress"><code class="docutils literal notranslate"><span class="pre">BlackData.decompress()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.getQuantized"><code class="docutils literal notranslate"><span class="pre">BlackData.getQuantized()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.fromQuanta"><code class="docutils literal notranslate"><span class="pre">BlackData.fromQuanta()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.normalise"><code class="docutils literal notranslate"><span class="pre">BlackData.normalise()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.percent_clip"><code class="docutils literal notranslate"><span class="pre">BlackData.percent_clip()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="BlackTelperion.blackfeature.html">BlackTelperion.blackfeature module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature"><code class="docutils literal notranslate"><span class="pre">BlackFeature</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.get_start"><code class="docutils literal notranslate"><span class="pre">BlackFeature.get_start()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.get_end"><code class="docutils literal notranslate"><span class="pre">BlackFeature.get_end()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.gaussian"><code class="docutils literal notranslate"><span class="pre">BlackFeature.gaussian()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.multi_gauss"><code class="docutils literal notranslate"><span class="pre">BlackFeature.multi_gauss()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.quick_plot"><code class="docutils literal notranslate"><span class="pre">BlackFeature.quick_plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Features"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Features</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Features.AlOH"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Features.AlOH</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Features.CaCO3"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Features.CaCO3</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Features.Dy"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Features.Dy</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Features.Er"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Features.Er</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Features.Eu"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Features.Eu</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Features.FeCO3"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Features.FeCO3</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Features.FeOH"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Features.FeOH</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Features.Ferric"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Features.Ferric</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Features.Ferrous"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Features.Ferrous</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Features.H2O"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Features.H2O</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Features.Ho"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Features.Ho</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Features.MgCO3"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Features.MgCO3</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Features.MgOH"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Features.MgOH</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Features.Nd"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Features.Nd</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Features.OH"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Features.OH</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Features.Pr"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Features.Pr</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Features.Sm"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Features.Sm</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Features.Tm"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Features.Tm</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Features.Yb"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Features.Yb</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.AMPHIBOLE"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.AMPHIBOLE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.Amphibole_Fe"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.Amphibole_Fe</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.Amphibole_Mg"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.Amphibole_Mg</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.Ankerite"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.Ankerite</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.BIOTITE"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.BIOTITE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.Biotite_Fe"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.Biotite_Fe</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.Biotite_Mg"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.Biotite_Mg</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.CARBONATE"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.CARBONATE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.CHLORITE"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.CHLORITE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.Calcite"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.Calcite</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.Chlorite_Fe"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.Chlorite_Fe</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.Chlorite_Mg"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.Chlorite_Mg</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.Dickite"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.Dickite</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.Dolomite"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.Dolomite</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.Epidote"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.Epidote</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.Gypsum"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.Gypsum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.Halloysite"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.Halloysite</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.Jarosite"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.Jarosite</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.KAOLIN"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.KAOLIN</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.Kaolinite"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.Kaolinite</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.MICA"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.MICA</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.Mica_K"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.Mica_K</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.Mica_MgFe"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.Mica_MgFe</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.Mica_Na"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.Mica_Na</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.Montmorillonite"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.Montmorillonite</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.Nacrite"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.Nacrite</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.Nontronite"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.Nontronite</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.Pyrophyllite"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.Pyrophyllite</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.SMECTITE"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.SMECTITE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.SULPHATE"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.SULPHATE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Minerals.Saponite"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Minerals.Saponite</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Themes"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Themes</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Themes.ATMOSPHERE"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Themes.ATMOSPHERE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Themes.CARBONATE"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Themes.CARBONATE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Themes.CLAY"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Themes.CLAY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Themes.DIAGNOSTIC"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Themes.DIAGNOSTIC</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.BlackFeature.Themes.OH"><code class="docutils literal notranslate"><span class="pre">BlackFeature.Themes.OH</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.MultiFeature"><code class="docutils literal notranslate"><span class="pre">MultiFeature</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.MultiFeature.count"><code class="docutils literal notranslate"><span class="pre">MultiFeature.count()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.MultiFeature.quick_plot"><code class="docutils literal notranslate"><span class="pre">MultiFeature.quick_plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.MixedFeature"><code class="docutils literal notranslate"><span class="pre">MixedFeature</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackfeature.html#BlackTelperion.blackfeature.MixedFeature.count"><code class="docutils literal notranslate"><span class="pre">MixedFeature.count()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="BlackTelperion.blackheader.html">BlackTelperion.blackheader module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader"><code class="docutils literal notranslate"><span class="pre">BlackHeader</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.has_band_names"><code class="docutils literal notranslate"><span class="pre">BlackHeader.has_band_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.has_wavelengths"><code class="docutils literal notranslate"><span class="pre">BlackHeader.has_wavelengths()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.has_fwhm"><code class="docutils literal notranslate"><span class="pre">BlackHeader.has_fwhm()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.has_bbl"><code class="docutils literal notranslate"><span class="pre">BlackHeader.has_bbl()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.band_count"><code class="docutils literal notranslate"><span class="pre">BlackHeader.band_count()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.get_band_names"><code class="docutils literal notranslate"><span class="pre">BlackHeader.get_band_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.get_wavelengths"><code class="docutils literal notranslate"><span class="pre">BlackHeader.get_wavelengths()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.get_bbl"><code class="docutils literal notranslate"><span class="pre">BlackHeader.get_bbl()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.get_fwhm"><code class="docutils literal notranslate"><span class="pre">BlackHeader.get_fwhm()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.set_band_names"><code class="docutils literal notranslate"><span class="pre">BlackHeader.set_band_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.set_wavelengths"><code class="docutils literal notranslate"><span class="pre">BlackHeader.set_wavelengths()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.set_fwhm"><code class="docutils literal notranslate"><span class="pre">BlackHeader.set_fwhm()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.set_bbl"><code class="docutils literal notranslate"><span class="pre">BlackHeader.set_bbl()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.drop_bands"><code class="docutils literal notranslate"><span class="pre">BlackHeader.drop_bands()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.drop_all_bands"><code class="docutils literal notranslate"><span class="pre">BlackHeader.drop_all_bands()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.copy"><code class="docutils literal notranslate"><span class="pre">BlackHeader.copy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.print"><code class="docutils literal notranslate"><span class="pre">BlackHeader.print()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.get_list"><code class="docutils literal notranslate"><span class="pre">BlackHeader.get_list()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.set_camera"><code class="docutils literal notranslate"><span class="pre">BlackHeader.set_camera()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.get_camera"><code class="docutils literal notranslate"><span class="pre">BlackHeader.get_camera()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.has_camera"><code class="docutils literal notranslate"><span class="pre">BlackHeader.has_camera()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.get_panel_names"><code class="docutils literal notranslate"><span class="pre">BlackHeader.get_panel_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.add_panel"><code class="docutils literal notranslate"><span class="pre">BlackHeader.add_panel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.get_panel"><code class="docutils literal notranslate"><span class="pre">BlackHeader.get_panel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.remove_panel"><code class="docutils literal notranslate"><span class="pre">BlackHeader.remove_panel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.get_data_ignore_value"><code class="docutils literal notranslate"><span class="pre">BlackHeader.get_data_ignore_value()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.set_data_ignore_value"><code class="docutils literal notranslate"><span class="pre">BlackHeader.set_data_ignore_value()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.get_class_names"><code class="docutils literal notranslate"><span class="pre">BlackHeader.get_class_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.get_sample_points"><code class="docutils literal notranslate"><span class="pre">BlackHeader.get_sample_points()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackheader.html#BlackTelperion.blackheader.BlackHeader.set_sample_points"><code class="docutils literal notranslate"><span class="pre">BlackHeader.set_sample_points()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="BlackTelperion.blackimage.html">BlackTelperion.blackimage module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage"><code class="docutils literal notranslate"><span class="pre">BlackImage</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.copy"><code class="docutils literal notranslate"><span class="pre">BlackImage.copy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.T"><code class="docutils literal notranslate"><span class="pre">BlackImage.T()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.xdim"><code class="docutils literal notranslate"><span class="pre">BlackImage.xdim()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.ydim"><code class="docutils literal notranslate"><span class="pre">BlackImage.ydim()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.aspx"><code class="docutils literal notranslate"><span class="pre">BlackImage.aspx()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.get_extent"><code class="docutils literal notranslate"><span class="pre">BlackImage.get_extent()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.set_projection"><code class="docutils literal notranslate"><span class="pre">BlackImage.set_projection()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.set_projection_EPSG"><code class="docutils literal notranslate"><span class="pre">BlackImage.set_projection_EPSG()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.get_projection_EPSG"><code class="docutils literal notranslate"><span class="pre">BlackImage.get_projection_EPSG()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.pix_to_world"><code class="docutils literal notranslate"><span class="pre">BlackImage.pix_to_world()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.world_to_pix"><code class="docutils literal notranslate"><span class="pre">BlackImage.world_to_pix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.flip"><code class="docutils literal notranslate"><span class="pre">BlackImage.flip()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.rot90"><code class="docutils literal notranslate"><span class="pre">BlackImage.rot90()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.fill_holes"><code class="docutils literal notranslate"><span class="pre">BlackImage.fill_holes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.blur"><code class="docutils literal notranslate"><span class="pre">BlackImage.blur()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.erode"><code class="docutils literal notranslate"><span class="pre">BlackImage.erode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.resize"><code class="docutils literal notranslate"><span class="pre">BlackImage.resize()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.despeckle"><code class="docutils literal notranslate"><span class="pre">BlackImage.despeckle()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.get_keypoints"><code class="docutils literal notranslate"><span class="pre">BlackImage.get_keypoints()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.match_keypoints"><code class="docutils literal notranslate"><span class="pre">BlackImage.match_keypoints()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.quick_plot"><code class="docutils literal notranslate"><span class="pre">BlackImage.quick_plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.createGIF"><code class="docutils literal notranslate"><span class="pre">BlackImage.createGIF()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.mask"><code class="docutils literal notranslate"><span class="pre">BlackImage.mask()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.crop_to_data"><code class="docutils literal notranslate"><span class="pre">BlackImage.crop_to_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.pickPolygons"><code class="docutils literal notranslate"><span class="pre">BlackImage.pickPolygons()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.pickPoints"><code class="docutils literal notranslate"><span class="pre">BlackImage.pickPoints()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage.pickSamples"><code class="docutils literal notranslate"><span class="pre">BlackImage.pickSamples()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="BlackTelperion.blacklibrary.html">BlackTelperion.blacklibrary module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.from_indices"><code class="docutils literal notranslate"><span class="pre">from_indices()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.from_classification"><code class="docutils literal notranslate"><span class="pre">from_classification()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary"><code class="docutils literal notranslate"><span class="pre">BlackLibrary</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.copy"><code class="docutils literal notranslate"><span class="pre">BlackLibrary.copy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.as_image"><code class="docutils literal notranslate"><span class="pre">BlackLibrary.as_image()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.merge"><code class="docutils literal notranslate"><span class="pre">BlackLibrary.merge()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.sample_count"><code class="docutils literal notranslate"><span class="pre">BlackLibrary.sample_count()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.has_sample_names"><code class="docutils literal notranslate"><span class="pre">BlackLibrary.has_sample_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.get_sample_names"><code class="docutils literal notranslate"><span class="pre">BlackLibrary.get_sample_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.set_sample_names"><code class="docutils literal notranslate"><span class="pre">BlackLibrary.set_sample_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.has_groups"><code class="docutils literal notranslate"><span class="pre">BlackLibrary.has_groups()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.get_groups"><code class="docutils literal notranslate"><span class="pre">BlackLibrary.get_groups()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.get_group_ids"><code class="docutils literal notranslate"><span class="pre">BlackLibrary.get_group_ids()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.get_group"><code class="docutils literal notranslate"><span class="pre">BlackLibrary.get_group()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.add_group"><code class="docutils literal notranslate"><span class="pre">BlackLibrary.add_group()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.get_sample_index"><code class="docutils literal notranslate"><span class="pre">BlackLibrary.get_sample_index()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.get_sample_spectra"><code class="docutils literal notranslate"><span class="pre">BlackLibrary.get_sample_spectra()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.collapse"><code class="docutils literal notranslate"><span class="pre">BlackLibrary.collapse()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.squash"><code class="docutils literal notranslate"><span class="pre">BlackLibrary.squash()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.quick_plot"><code class="docutils literal notranslate"><span class="pre">BlackLibrary.quick_plot()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="BlackTelperion.multiprocessing.html">BlackTelperion.multiprocessing module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.multiprocessing.html#BlackTelperion.multiprocessing.parallel_chunks"><code class="docutils literal notranslate"><span class="pre">parallel_chunks()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.multiprocessing.html#BlackTelperion.multiprocessing.parallel_datasets"><code class="docutils literal notranslate"><span class="pre">parallel_datasets()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="BlackTelperion Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="BlackTelperion.analyse.html" class="btn btn-neutral float-right" title="BlackTelperion.analyse package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

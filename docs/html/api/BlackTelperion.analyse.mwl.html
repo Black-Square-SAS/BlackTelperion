@@ -1,0 +1,577 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.analyse.mwl module &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="BlackTelperion.analyse.sam module" href="BlackTelperion.analyse.sam.html" />
+    <link rel="prev" title="BlackTelperion.analyse.indices module" href="BlackTelperion.analyse.indices.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="BlackTelperion.html">BlackTelperion package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.RGB"><code class="docutils literal notranslate"><span class="pre">RGB</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.VNIR"><code class="docutils literal notranslate"><span class="pre">VNIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.SWIR"><code class="docutils literal notranslate"><span class="pre">SWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.BROAD"><code class="docutils literal notranslate"><span class="pre">BROAD</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.MWIR"><code class="docutils literal notranslate"><span class="pre">MWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.LWIR"><code class="docutils literal notranslate"><span class="pre">LWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.band_select_threshold"><code class="docutils literal notranslate"><span class="pre">band_select_threshold</span></code></a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="BlackTelperion.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="BlackTelperion.analyse.html">BlackTelperion.analyse package</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.analyse.html#BlackTelperion.analyse.saveLegend"><code class="docutils literal notranslate"><span class="pre">saveLegend()</span></code></a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="BlackTelperion.analyse.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.html">BlackTelperion.correct package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.filter.html">BlackTelperion.filter package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.io.html">BlackTelperion.io package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.reference.html">BlackTelperion.reference package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.utils.html">BlackTelperion.utils namespace</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="BlackTelperion.html">BlackTelperion package</a></li>
+          <li class="breadcrumb-item"><a href="BlackTelperion.analyse.html">BlackTelperion.analyse package</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.analyse.mwl module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/BlackTelperion.analyse.mwl.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-BlackTelperion.analyse.mwl">
+<span id="blacktelperion-analyse-mwl-module"></span><h1>BlackTelperion.analyse.mwl module<a class="headerlink" href="#module-BlackTelperion.analyse.mwl" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="BlackTelperion.analyse.mwl.MWL">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">BlackTelperion.analyse.mwl.</span></span><span class="sig-name descname"><span class="pre">MWL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/analyse/mwl.html#MWL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.analyse.mwl.MWL" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="BlackTelperion.blackcollection.html#BlackTelperion.blackcollection.BlackCollection" title="BlackTelperion.blackcollection.BlackCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">BlackCollection</span></code></a></p>
+<p>A convenient class for manipulating and storing minimum wavelength mapping results.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.analyse.mwl.MWL.bind">
+<span class="sig-name descname"><span class="pre">bind</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nfeatures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sym</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/analyse/mwl.html#MWL.bind"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.analyse.mwl.MWL.bind" title="Link to this definition"></a></dt>
+<dd><p>Band a new MWL mapping results. Essentially treat this as the constructor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – the underlying BlackData instance containing feature parameters.</p></li>
+<li><p><strong>nfeatures</strong> – the number of features stored in the underlying model.</p></li>
+<li><p><strong>x</strong> – Wavelengths that the model should be evaluated at.</p></li>
+<li><p><strong>X</strong> – the underlying data that the model was fitted to. Useful for plotting / debugging. Default is None.</p></li>
+<li><p><strong>sym</strong> – True if symmetric features are stored (3-parameters). Default is False (4-parameters).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.analyse.mwl.MWL.getAttributes">
+<span class="sig-name descname"><span class="pre">getAttributes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/analyse/mwl.html#MWL.getAttributes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.analyse.mwl.MWL.getAttributes" title="Link to this definition"></a></dt>
+<dd><p>Return a list of available attributes in this HyScene. We must override the BlackCollection implementation to remove
+functions associated with HyScene.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.analyse.mwl.MWL.getFeature">
+<span class="sig-name descname"><span class="pre">getFeature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/analyse/mwl.html#MWL.getFeature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.analyse.mwl.MWL.getFeature" title="Link to this definition"></a></dt>
+<dd><p>Return a BlackData instance containing bands associated with th nth minimum wavelength feature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.analyse.mwl.MWL.sortByDepth">
+<span class="sig-name descname"><span class="pre">sortByDepth</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/analyse/mwl.html#MWL.sortByDepth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.analyse.mwl.MWL.sortByDepth" title="Link to this definition"></a></dt>
+<dd><p>Sort features such that they are stored/returned from deepest to shallowest.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.analyse.mwl.MWL.sortByPos">
+<span class="sig-name descname"><span class="pre">sortByPos</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/analyse/mwl.html#MWL.sortByPos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.analyse.mwl.MWL.sortByPos" title="Link to this definition"></a></dt>
+<dd><p>Sort features such that they are stored/returned from lowest to highest wavelength.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.analyse.mwl.MWL.deepest">
+<span class="sig-name descname"><span class="pre">deepest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/analyse/mwl.html#MWL.deepest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.analyse.mwl.MWL.deepest" title="Link to this definition"></a></dt>
+<dd><p>Returns a BlackData instance containing the deepest feature within the specified range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wmin</strong> – the lower bound of the wavelength range. Default is 0 (accept all positions)</p></li>
+<li><p><strong>wmax</strong> – the upper bound of the wavelength range. Default is -1 (accept all positions)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a MWL instance containing the deepest features within the range, or nans if no feature exists.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.analyse.mwl.MWL.closest">
+<span class="sig-name descname"><span class="pre">closest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">position</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth_cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/analyse/mwl.html#MWL.closest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.analyse.mwl.MWL.closest" title="Link to this definition"></a></dt>
+<dd><p>Returns a BlackData instance containing the closest feature within the specified range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>position</strong> – the ‘ideal’ feature position to compare with (e.g. 2200.0 for AlOH)</p></li>
+<li><p><strong>valid_range</strong> – A tuple defining the minimum and maximum acceptible wavelengths, or None (default). Values outside
+of the valid range will be set to nan.</p></li>
+<li><p><strong>depth_cutoff</strong> – Features with depths below this value will be discared (and set to nan).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a single BlackData instance containing the closest minima.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.analyse.mwl.MWL.feature_between">
+<span class="sig-name descname"><span class="pre">feature_between</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth_cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/analyse/mwl.html#MWL.feature_between"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.analyse.mwl.MWL.feature_between" title="Link to this definition"></a></dt>
+<dd><p>Return True if the entries in each pixel/point include a feature within the specified wavelength range,
+and False otherwise. Useful for e.g. decision tree classifications.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wmin</strong> – the lower bound of the wavelength range.</p></li>
+<li><p><strong>wmax</strong> – the upper bound of the wavelength range.</p></li>
+<li><p><strong>depth_cutoff</strong> – the minimum depth required for a feature to count as existing.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a numpy array  populated with False (no feature) or True (feature).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.analyse.mwl.MWL.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/analyse/mwl.html#MWL.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.analyse.mwl.MWL.evaluate" title="Link to this definition"></a></dt>
+<dd><p>Evaluate this model and return the result as a BlackData instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A BlackData instance containing the estimated spectra based on the fitted features.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.analyse.mwl.MWL.residual">
+<span class="sig-name descname"><span class="pre">residual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/analyse/mwl.html#MWL.residual"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.analyse.mwl.MWL.residual" title="Link to this definition"></a></dt>
+<dd><p>Evaluate and return the residuals to the fitted minimum wavelength model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A BlackData instance containing the residuals in band 0.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.analyse.mwl.MWL.classify">
+<span class="sig-name descname"><span class="pre">classify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/analyse/mwl.html#MWL.classify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.analyse.mwl.MWL.classify" title="Link to this definition"></a></dt>
+<dd><p>Identify clusters in feature position space to classify this MWL map.
+This uses the hierarchichal method scipy.cluster.hierarchy.fclusterdata.</p>
+<p>See this publication for more details: <a class="reference external" href="https://doi.org/10.3390/min11020136">https://doi.org/10.3390/min11020136</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> – the number of classes to use.</p></li>
+<li><p><strong>nf</strong> – the number of feature positions to use. Default is 2. Must not exceed the number of features fitted.</p></li>
+<li><p><strong>step</strong> – the step to subsample points (used to avoid really slow plotting). Computes on all points by default.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A tuple containing:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>labels =  a BlackData instance (or numpy array if step &gt; 1) containing integer class labels in band 0.</p></li>
+<li><p>centroids = a list containing the index of each class centroid (in the dataset).</p></li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.analyse.mwl.MWL.plot_features">
+<span class="sig-name descname"><span class="pre">plot_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/analyse/mwl.html#MWL.plot_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.analyse.mwl.MWL.plot_features" title="Link to this definition"></a></dt>
+<dd><p>Plot all features in this minimum wavelength model on a scatter plot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> – a different axes to plot this figure on. Default is None (creates a new axis).</p></li>
+<li><p><strong>**kwds</strong> – <p>Keywords can include:</p>
+<ul>
+<li><p>step = the step to subsample points (to avoid really slow plotting). Defaults to a step that gives 1000 points.</p></li>
+<li><dl class="simple">
+<dt>n = the number of classes to use for classification (see self.classify()),</dt><dd><p>or a list of class ids as returned by classify.</p>
+</dd>
+</dl>
+</li>
+<li><p>cmap = the colour map to use (string). Default is ‘tab10’.</p></li>
+<li><p>point_size = the size of the points to plot.</p></li>
+<li><p>point_alpha = the transparency of the points to plot.</p></li>
+<li><p>legend = True if a legend should be plotted. Default is True.</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>fig,ax = the figure that was plotted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.analyse.mwl.MWL.biplot">
+<span class="sig-name descname"><span class="pre">biplot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/analyse/mwl.html#MWL.biplot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.analyse.mwl.MWL.biplot" title="Link to this definition"></a></dt>
+<dd><p>Plot all features in this minimum wavelength model on a scatter plot. Note that calling
+this function will sort the features in this MWL instance by depth.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>f1</strong> – the index of the first feature to plot (sorted by depth). Default is 0 (deepest feature).</p></li>
+<li><p><strong>f2</strong> – the index of the first feature to plot (sorted by depth). Default is 1.</p></li>
+<li><p><strong>ax</strong> – a different axes to plot this figure on. Default is None (creates a new axis).</p></li>
+<li><p><strong>**kwds</strong> – <p>Keywords can include:</p>
+<ul>
+<li><p>step = the step to subsample points (to avoid really slow plotting). Defaults to a step that gives 1000 points.</p></li>
+<li><p>n = the number of classes to use for classification (see self.classify()), or a list of class ids as returned by classify.</p></li>
+<li><p>cmap = the colour map to use (string). Default is ‘tab10’.</p></li>
+<li><p>point_size = the size of the points to plot.</p></li>
+<li><p>point_alpha = the transparency of the points to plot.</p></li>
+<li><p>legend = True if a legend should be plotted. Default is True.</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>fig,ax = the figure that was plotted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.analyse.mwl.MWL.quick_plot">
+<span class="sig-name descname"><span class="pre">quick_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/analyse/mwl.html#MWL.quick_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.analyse.mwl.MWL.quick_plot" title="Link to this definition"></a></dt>
+<dd><p>Plot an overview visualisation that is useful for QAQC of MWL mapping results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwds</strong> – <p>Keywords can include:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>image = the image preview to plot. Can be a BlackData instance, or ‘resid’ (default) to plots the average residuals,</dt><dd><p>or ‘class’ to a classification [slow!].</p>
+</dd>
+</dl>
+</li>
+<li><p>bands = the bands of image to plot (if image is provided).</p></li>
+<li><p>vmin = the vmin value for plotting ‘image’ (if image is provided).</p></li>
+<li><p>vmax = the vmax value for plotting ‘image’ (if image is provided).</p></li>
+<li><p>residual_clip = the (mn,mx) percentile colour stretch to apply to the residuals.</p></li>
+<li><dl class="simple">
+<dt>n = the number of clusters do create during absorbtion-feature clustering, or a list with precalculated</dt><dd><p>cluster labels.</p>
+</dd>
+</dl>
+</li>
+<li><p>nf = the number of features to use for this clustering. Default is 2.</p></li>
+<li><p>offset = the vertical offset between spectra in the spectral summaries. Default is 0.25</p></li>
+<li><p>cmap = the colour map to use (string). Default is ‘tab10’.</p></li>
+<li><p>point_size = the size of the points to plot.</p></li>
+<li><p>point_alpha = the transparency of the points to plot.</p></li>
+<li><p>legend = True if a legend should be plotted. Default is True.</p></li>
+<li><p>cam = a camera instance if the underlying dataset is a pointcloud. Default is ‘ortho’.</p></li>
+<li><p>s = specify point size if the underlying dataset is a pointcloud. Default is 1.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>fig,ax = the plot that was created.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.analyse.mwl.MWL.plot_spectra">
+<span class="sig-name descname"><span class="pre">plot_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/analyse/mwl.html#MWL.plot_spectra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.analyse.mwl.MWL.plot_spectra" title="Link to this definition"></a></dt>
+<dd><p>Plot the fitted features (and underlying data) for the specified indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>indices</strong> – a list containing the indices to plot.</p></li>
+<li><p><strong>ax</strong> – a matplotlib axes to plot to, or None (default) to create a new one.</p></li>
+<li><p><strong>**kwds</strong> – <p>Keywords can include:</p>
+<ul>
+<li><p>offset = the vertical offset between successive spectra. Default is 0.25.</p></li>
+<li><p>leg = True if a legend should be plotted. Default is True.</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.analyse.mwl.minimum_wavelength">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.analyse.mwl.</span></span><span class="sig-name descname"><span class="pre">minimum_wavelength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gaussian'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hull'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sym</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minima</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hthresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.025</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nthreads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/analyse/mwl.html#minimum_wavelength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.analyse.mwl.minimum_wavelength" title="Link to this definition"></a></dt>
+<dd><p>Perform minimum wavelength mapping to map the position of absorbtion features.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – the hyperspectral data (e.g. image or point cloud) to perform minimum wavelength mapping on.</p></li>
+<li><p><strong>minw</strong> – the lower limit of the range of wavelengths to search (in nanometers).</p></li>
+<li><p><strong>maxw</strong> – the upper limit of the range of wavelengths to search (in nanometers).</p></li>
+<li><p><strong>method</strong> – <p>the method/model used to quantify the feature. Options are:</p>
+<ul>
+<li><p>”minmax” - Identifies the n most prominent local minima to approximately resolve absorbtion feature positions. Fast but inaccurate.</p></li>
+<li><p>”quad” - Applies the quadratic method to interpolate absorption depth using 3-bands adjacent to the local minima. See <a class="reference external" href="https://doi.org/10.1016/j.rse.2011.11.025">https://doi.org/10.1016/j.rse.2011.11.025</a> .</p></li>
+<li><p>”poly” - Fits a quadratic to k bands on either side of the local minima. Similar to “quad” but with more than 3 points constraining the fitting. Hence, slower than quad but faster than gauss.</p></li>
+<li><p>”gaussian” - fits n gaussian absorbtion features to the detrended spectra. Slow but most accurate.</p></li>
+</ul>
+</p></li>
+<li><p><strong>trend</strong> – the method used to detrend the spectra. Can be ‘hull’ or None. Default is ‘hull’.</p></li>
+<li><p><strong>log</strong> – If True, absorptions are modelled to log-spectra rather than inverted spectra.</p></li>
+<li><p><strong>n</strong> – the number of features to fit. Note that this is not compatible with method = ‘tpt’.</p></li>
+<li><p><strong>minima</strong> – True if features should fit minima. If False then ‘maximum wavelength mapping’ is performed.</p></li>
+<li><p><strong>sym</strong> – True if symmetric gaussian fitting should be used. Default is False.</p></li>
+<li><p><strong>k</strong> – the number of adjacent measurements to look at during detection of local minima. Default is 4. Larger numbers ignore smaller features as noise.</p></li>
+<li><p><strong>nthreads</strong> – the number of threads to use for the computation. Default is 1 (no multithreading).</p></li>
+<li><p><strong>hthresh</strong> – the minimum feature depth before we bother fitting gaussians. Avoids wasting time / effort on flat spectra.</p></li>
+<li><p><strong>vb</strong> – True if graphical progress updates should be created.</p></li>
+<li><p><strong>**kwds</strong> – Keywords are passed to gfit.gfit( … ).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A MWL (n&gt;1) or BlackData instance containing the minimum wavelength mapping results.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="BlackTelperion.analyse.mwl.mwl_legend">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">BlackTelperion.analyse.mwl.</span></span><span class="sig-name descname"><span class="pre">mwl_legend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">minh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'val'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rainbow'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/analyse/mwl.html#mwl_legend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.analyse.mwl.mwl_legend" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A utility class storing data needed to create a legend for mwl plots.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.analyse.mwl.mwl_legend.quick_plot">
+<span class="sig-name descname"><span class="pre">quick_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">300</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/analyse/mwl.html#mwl_legend.quick_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.analyse.mwl.mwl_legend.quick_plot" title="Link to this definition"></a></dt>
+<dd><p>Quickly plot this MWL legend.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – a path to save the legend to (as a .png). If None (default) then the file will not be written.</p></li>
+<li><p><strong>dpi</strong> – the DPI to save the legend with</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The matplotlib figure and axes that the plot was drawn to.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.analyse.mwl.mwl_legend.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'top</span> <span class="pre">left'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.3,</span> <span class="pre">0.2)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/analyse/mwl.html#mwl_legend.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.analyse.mwl.mwl_legend.plot" title="Link to this definition"></a></dt>
+<dd><p>Add this legend to the specified figure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> – the axes to overlay the legend on.</p></li>
+<li><p><strong>pos</strong> – <p>the position of the legend. Can be:</p>
+<ul>
+<li><p>a string: ‘top left’ (default), ‘bottom left’, ‘top right’ or ‘bottom right’, or;</p></li>
+<li><p>a tuple (x,y) coordinates of the top left of the legend in figure coordinates.</p></li>
+</ul>
+</p></li>
+<li><p><strong>s</strong> – the (width, height) of the legend in figure coordinates. Default is (0.2, 0.1).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the axis that was added to the plot.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.analyse.mwl.colourise_mwl">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.analyse.mwl.</span></span><span class="sig-name descname"><span class="pre">colourise_mwl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mwl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'p-d'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rainbow'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/analyse/mwl.html#colourise_mwl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.analyse.mwl.colourise_mwl" title="Link to this definition"></a></dt>
+<dd><p>Takes a BlackData instance containing minimum wavelength bands (pos, depth, width and strength) and creates
+a RGB composite such that hue ~ pos, sat ~ width and val ~ strength or depth.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mwl</strong> – the BlackData instance containing minimum wavelength data.</p></li>
+<li><p><strong>mode</strong> – the mapping from position (p), width (w) and depth and (d) to hsv. Default is ‘pwd’, though other options
+are ‘p-d’ (constant saturation of 80%), ‘pdw’ and ‘pd-’ (constant brightness of 85%).</p></li>
+<li><p><strong>cmap</strong> – the colour mapping to use. Default is to map position to hue (‘rainbow’), but any matplotlib
+colormap string can be provided here. Note that colours output by this colormap will be scaled in brightness
+and saturation according to the mode argument. Alternatively use ‘swir’ for customised
+rainbow-like colour stretch optimised for clay, mica and chlorite absorbtion features in the SWIR.</p></li>
+<li><p><strong>**kwds</strong> – <p>Keywords can include:</p>
+<ul>
+<li><dl class="simple">
+<dt>hue_map = Wavelengths (xxx.x, yyy.y) or percentiles (x,y) to use when converting wavelength to hue.</dt><dd><p>Default is (0,100).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>sat_map = Widths (xxx.x, yyy.y) or percentiles (x,y) to use when converting width to saturation.</dt><dd><p>Default is (0,100).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>val_map = Strengths/depths (xxx.x, yyy.y) or percentiles (x,y) to use when converting strength to brightness.</dt><dd><p>Default is (0,75), as these tend to be dominated by low/zero values.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A tuple containing:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>either an RGB BlackImage object (if mwl is an image) or the original HyCloud with defined rgb bands.</p></li>
+<li><p>cmap = a mwl_legend instance for plotting colour maps.</p></li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.analyse.mwl.plot_ternary">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.analyse.mwl.</span></span><span class="sig-name descname"><span class="pre">plot_ternary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">F1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">F2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">F3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1.0,</span> <span class="pre">1.0,</span> <span class="pre">1.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/analyse/mwl.html#plot_ternary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.analyse.mwl.plot_ternary" title="Link to this definition"></a></dt>
+<dd><p>Plot a ternary diagram comparing the depths and positions of three minimum wavelength features.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>F1</strong> (<a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData" title="BlackTelperion.blackdata.BlackData"><em>BlackData</em></a>) – A BlackData instance containing feature depth and position as band 0 and 1 respectively.</p></li>
+<li><p><strong>F2</strong> (<a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData" title="BlackTelperion.blackdata.BlackData"><em>BlackData</em></a>) – A BlackData instance containing feature depth and position as band 0 and 1 respectively.</p></li>
+<li><p><strong>F3</strong> (<a class="reference internal" href="BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData" title="BlackTelperion.blackdata.BlackData"><em>BlackData</em></a>) – A BlackData instance containing feature depth and position as band 0 and 1 respectively.</p></li>
+<li><p><strong>bounds</strong> – List containing min and max position values for each feature [ (min,max), (min,max), (min,max)].</p></li>
+<li><p><strong>weights</strong> – weights applied to each depth. Default is [1,1,1].</p></li>
+<li><p><strong>subsample</strong> – skip entries in the data features for large datasets. Default is 1 (don’t skip any).</p></li>
+<li><p><strong>depth_thresh</strong> – the minimum depth to be considered a valid feature. Default is 0.01.</p></li>
+<li><p><strong>ax</strong> – an axes to plot to. If None (default) then a new axes is created.</p></li>
+<li><p><strong>**kwds</strong> – <p>Keywords can include:</p>
+<ul>
+<li><p>r = the diameter of the ternary diagram (default is 0.8)</p></li>
+<li><p>figsize = the figure size as a (width,height) tuple. Default is (10,10)</p></li>
+<li><p>w = the width of edge plots. Default is 0.2.</p></li>
+<li><p>gs = the number of grid lines. Default is 5.</p></li>
+<li><p>invalid = invalid region (don’t plot position if abundance &lt; this value). Default is 0.2.</p></li>
+<li><p>title = the title of the plot.</p></li>
+<li><p>labels = the names of each of the features (F1, F2 and F3) used for labelling.</p></li>
+<li><p>label_offset = the space between each label and the relevant vertex.</p></li>
+<li><p>s = the point size. Default is 4.</p></li>
+<li><p>a = point alpha. Default is 0.1.</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="BlackTelperion.analyse.indices.html" class="btn btn-neutral float-left" title="BlackTelperion.analyse.indices module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="BlackTelperion.analyse.sam.html" class="btn btn-neutral float-right" title="BlackTelperion.analyse.sam module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

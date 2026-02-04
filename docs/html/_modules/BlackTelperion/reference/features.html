@@ -1,0 +1,220 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.reference.features &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/BlackTelperion.html">BlackTelperion package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.reference.features</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for BlackTelperion.reference.features</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This package contains reference features such as typical mineral absorbtions or absorbtion positions of QAQC targets.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">BlackTelperion.blackfeature</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1">##############################</span>
+<span class="c1">##Create basic/common features</span>
+<span class="c1">##############################</span>
+<span class="c1">#N.B. All values here are approximate and largely for (1) plotting and (2) as initial values for feature fitting</span>
+<span class="c1">#     routines. Believe nothing!</span>
+<div class="viewcode-block" id="Features">
+<a class="viewcode-back" href="../../../api/BlackTelperion.reference.features.html#BlackTelperion.reference.features.Features">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Features</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Specific absorption types. Useful for plotting etc. Not really used for anything and will probably be depreciated soon.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">H2O</span> <span class="o">=</span> <span class="p">[</span> <span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;H2O&quot;</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;skyblue&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span><span class="p">,</span><span class="n">w</span> <span class="ow">in</span> <span class="p">[(</span><span class="mi">825</span><span class="p">,</span><span class="mi">50</span><span class="p">),</span> <span class="p">(</span><span class="mi">940</span><span class="p">,</span><span class="mi">75</span><span class="p">),</span> <span class="p">(</span><span class="mi">1130</span><span class="p">,</span><span class="mi">100</span><span class="p">),</span> <span class="p">(</span><span class="mi">1400</span><span class="p">,</span><span class="mi">150</span><span class="p">),</span> <span class="p">(</span><span class="mi">1900</span><span class="p">,</span><span class="mi">200</span><span class="p">),</span> <span class="p">(</span><span class="mi">2700</span><span class="p">,</span><span class="mi">150</span><span class="p">)]</span> <span class="p">]</span>
+    <span class="n">OH</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;OH&quot;</span><span class="p">,</span> <span class="mi">1400</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;aquamarine&#39;</span><span class="p">),</span> <span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;OH&quot;</span><span class="p">,</span> <span class="mi">1550</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;aquamarine&#39;</span><span class="p">),</span> <span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;OH&quot;</span><span class="p">,</span> <span class="mi">1800</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;aquamarine&#39;</span><span class="p">)]</span>
+    <span class="n">AlOH</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;AlOH&quot;</span><span class="p">,</span> <span class="mi">2190</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;salmon&#39;</span><span class="p">)]</span>
+    <span class="n">FeOH</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;FeOH&quot;</span><span class="p">,</span> <span class="mi">2265</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">)]</span>
+    <span class="n">MgOH</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;MgOH&quot;</span><span class="p">,</span> <span class="mi">2330</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">),</span> <span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;MgOH&quot;</span><span class="p">,</span> <span class="mi">2385</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)]</span>
+    <span class="n">MgCO3</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;MgCO3&quot;</span><span class="p">,</span> <span class="mi">2320</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)]</span>
+    <span class="n">CaCO3</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;CaCO3&quot;</span><span class="p">,</span> <span class="mi">2340</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)]</span>
+    <span class="n">FeCO3</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;FeCO3&quot;</span><span class="p">,</span> <span class="mi">2350</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;steelblue&#39;</span><span class="p">)]</span>
+    <span class="n">Ferrous</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Fe2+&quot;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)]</span>
+    <span class="n">Ferric</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Fe3+&quot;</span><span class="p">,</span> <span class="mi">650</span><span class="p">,</span> <span class="mi">170</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)]</span>
+
+    <span class="c1"># REE features</span>
+    <span class="n">Pr</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Pr&quot;</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">74</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">155</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">122</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">457</span><span class="p">,</span> <span class="mi">485</span><span class="p">,</span> <span class="mi">473</span><span class="p">,</span> <span class="mi">595</span><span class="p">,</span> <span class="mi">1017</span><span class="p">]</span> <span class="p">]</span>
+    <span class="n">Nd</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Nd&quot;</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">116</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">114</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">174</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">430</span><span class="p">,</span> <span class="mi">463</span><span class="p">,</span> <span class="mi">475</span><span class="p">,</span> <span class="mi">514</span><span class="p">,</span> <span class="mi">525</span><span class="p">,</span> <span class="mi">580</span><span class="p">,</span> <span class="mi">627</span><span class="p">,</span> <span class="mi">680</span><span class="p">,</span> <span class="mi">750</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="mi">880</span><span class="p">,</span> <span class="mi">1430</span><span class="p">,</span> <span class="mi">1720</span><span class="p">,</span> <span class="mi">2335</span><span class="p">,</span> <span class="mi">2470</span><span class="p">]]</span>
+    <span class="n">Sm</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Sm&quot;</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">116</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">114</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">174</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">945</span><span class="p">,</span> <span class="mi">959</span><span class="p">,</span> <span class="mi">1085</span><span class="p">,</span> <span class="mi">1235</span><span class="p">,</span> <span class="mi">1257</span><span class="p">,</span> <span class="mi">1400</span><span class="p">,</span> <span class="mi">1550</span><span class="p">]]</span>
+    <span class="n">Eu</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Eu&quot;</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">213</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">64</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">136</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">385</span><span class="p">,</span> <span class="mi">405</span><span class="p">,</span> <span class="mi">470</span><span class="p">,</span> <span class="mi">530</span><span class="p">,</span> <span class="mi">1900</span><span class="p">,</span> <span class="mi">2025</span><span class="p">,</span> <span class="mi">2170</span><span class="p">,</span> <span class="mi">2400</span><span class="p">,</span> <span class="mi">2610</span><span class="p">]]</span>
+    <span class="n">Dy</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Dy&quot;</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">117</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">163</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">58</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">368</span><span class="p">,</span> <span class="mi">390</span><span class="p">,</span> <span class="mi">403</span><span class="p">,</span> <span class="mi">430</span><span class="p">,</span> <span class="mi">452</span><span class="p">,</span> <span class="mi">461</span><span class="p">,</span> <span class="mi">475</span><span class="p">,</span> <span class="mi">760</span><span class="p">,</span> <span class="mi">810</span><span class="p">,</span> <span class="mi">830</span><span class="p">,</span> <span class="mi">915</span><span class="p">,</span> <span class="mi">1117</span><span class="p">,</span> <span class="mi">1276</span><span class="p">,</span> <span class="mi">1725</span><span class="p">]]</span>
+    <span class="n">Ho</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Ho&quot;</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">222</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">172</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">59</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">363</span><span class="p">,</span> <span class="mi">420</span><span class="p">,</span> <span class="mi">458</span><span class="p">,</span> <span class="mi">545</span><span class="p">,</span> <span class="mi">650</span><span class="p">,</span> <span class="mi">900</span><span class="p">,</span> <span class="mi">1130</span><span class="p">,</span> <span class="mi">1180</span><span class="p">,</span> <span class="mi">1870</span><span class="p">,</span> <span class="mi">1930</span><span class="p">,</span> <span class="mi">2005</span><span class="p">]]</span>
+    <span class="n">Er</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Er&quot;</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">159</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">119</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">49</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">390</span><span class="p">,</span> <span class="mi">405</span><span class="p">,</span> <span class="mi">455</span><span class="p">,</span> <span class="mi">490</span><span class="p">,</span> <span class="mi">522</span><span class="p">,</span> <span class="mi">540</span><span class="p">,</span> <span class="mi">652</span><span class="p">,</span> <span class="mi">805</span><span class="p">,</span> <span class="mi">985</span><span class="p">,</span> <span class="mi">1485</span><span class="p">,</span> <span class="mi">1545</span><span class="p">]]</span>
+    <span class="n">Tm</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Tm&quot;</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">102</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">102</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">102</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">390</span><span class="p">,</span> <span class="mi">470</span><span class="p">,</span> <span class="mi">660</span><span class="p">,</span> <span class="mi">685</span><span class="p">,</span> <span class="mi">780</span><span class="p">,</span> <span class="mi">1190</span><span class="p">,</span> <span class="mi">1640</span><span class="p">,</span> <span class="mi">1750</span><span class="p">]]</span>
+    <span class="n">Yb</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Yb&quot;</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">209</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">53</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">43</span> <span class="o">/</span> <span class="mf">256.</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">955</span><span class="p">,</span> <span class="mi">975</span><span class="p">,</span> <span class="mi">1004</span> <span class="p">]]</span></div>
+
+
+<span class="c1"># common minerals</span>
+<div class="viewcode-block" id="Minerals">
+<a class="viewcode-back" href="../../../api/BlackTelperion.reference.features.html#BlackTelperion.reference.features.Minerals">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Minerals</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Common mineral absorption features. Useful for plotting etc. Not really used for anything and will probably be depreciated soon.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Kaolin clays (dominant SWIR feature)</span>
+    <span class="n">Kaolinite</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Kaolinite/Halloysite&quot;</span><span class="p">,</span> <span class="mi">2200</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;aquamarine&#39;</span><span class="p">)]</span>
+    <span class="n">Halloysite</span> <span class="o">=</span> <span class="p">[</span><span class="n">Kaolinite</span><span class="p">]</span>
+    <span class="n">Dickite</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Dickite/Nacrite&quot;</span><span class="p">,</span> <span class="mi">2180</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;aquamarine&#39;</span><span class="p">)]</span>
+    <span class="n">Nacrite</span> <span class="o">=</span> <span class="p">[</span><span class="n">Dickite</span><span class="p">]</span>
+    <span class="n">KAOLIN</span> <span class="o">=</span> <span class="n">MultiFeature</span><span class="p">(</span><span class="s2">&quot;Kaolin&quot;</span><span class="p">,</span> <span class="n">Kaolinite</span> <span class="o">+</span> <span class="n">Dickite</span><span class="p">)</span>
+
+    <span class="n">Pyrophyllite</span> <span class="o">=</span> <span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Pyrophyllite&quot;</span><span class="p">,</span> <span class="mf">2160.0</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;aquamarine&#39;</span><span class="p">)</span>
+
+    <span class="c1">#Smectite clays (dominant SWIR feature)</span>
+    <span class="n">Montmorillonite</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Montmorillonite&quot;</span><span class="p">,</span> <span class="mf">2210.0</span><span class="p">,</span> <span class="mi">125</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">)]</span>
+    <span class="n">Nontronite</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Nontronite&quot;</span><span class="p">,</span> <span class="mi">2280</span><span class="p">,</span> <span class="mi">125</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">)]</span>
+    <span class="n">Saponite</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Saponite&quot;</span><span class="p">,</span> <span class="mi">2309</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">)]</span>
+    <span class="n">SMECTITE</span> <span class="o">=</span> <span class="n">MultiFeature</span><span class="p">(</span><span class="s2">&quot;Smectite&quot;</span><span class="p">,</span> <span class="n">Montmorillonite</span> <span class="o">+</span> <span class="n">Nontronite</span> <span class="o">+</span> <span class="n">Saponite</span><span class="p">)</span>
+
+    <span class="c1"># white micas (dominant SWIR feature)</span>
+    <span class="n">Mica_Na</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Mica (Na)&quot;</span><span class="p">,</span> <span class="mi">2150</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;coral&#39;</span> <span class="p">)]</span>
+    <span class="n">Mica_K</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Mica (K)&quot;</span><span class="p">,</span> <span class="mi">2190</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;lightcoral&#39;</span> <span class="p">)]</span>
+    <span class="n">Mica_MgFe</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Mica (Mg, Fe)&quot;</span><span class="p">,</span> <span class="mi">2225</span><span class="p">,</span> <span class="mi">150</span> <span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;sandybrown&#39;</span><span class="p">)]</span>
+    <span class="n">MICA</span> <span class="o">=</span> <span class="n">MultiFeature</span><span class="p">(</span><span class="s2">&quot;White mica&quot;</span><span class="p">,</span> <span class="n">Mica_Na</span> <span class="o">+</span> <span class="n">Mica_K</span> <span class="o">+</span><span class="n">Mica_MgFe</span><span class="p">)</span>
+
+    <span class="c1"># chlorite</span>
+    <span class="n">Chlorite_Mg</span> <span class="o">=</span> <span class="p">[</span> <span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Chlorite (Mg)&quot;</span><span class="p">,</span> <span class="mf">2245.0</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;seagreen&#39;</span><span class="p">),</span> <span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Chlorite (Mg)&quot;</span><span class="p">,</span> <span class="mf">2325.0</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;seagreen&#39;</span><span class="p">)</span> <span class="p">]</span>
+    <span class="n">Chlorite_Fe</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Chlorite (Fe)&quot;</span><span class="p">,</span> <span class="mf">2261.0</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;seagreen&#39;</span><span class="p">),</span> <span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Chlorite (Fe)&quot;</span><span class="p">,</span> <span class="mf">2355.0</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;seagreen&#39;</span><span class="p">)</span> <span class="p">]</span>
+    <span class="n">CHLORITE</span> <span class="o">=</span> <span class="p">[</span><span class="n">MultiFeature</span><span class="p">(</span><span class="s2">&quot;Chlorite (FeOH)&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">Chlorite_Mg</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Chlorite_Fe</span><span class="p">[</span><span class="mi">0</span><span class="p">]]),</span>
+                <span class="n">MultiFeature</span><span class="p">(</span><span class="s2">&quot;Chlorite (MgOH)&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">Chlorite_Mg</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">Chlorite_Fe</span><span class="p">[</span><span class="mi">1</span><span class="p">]])]</span>
+
+    <span class="c1"># biotite</span>
+    <span class="n">Biotite_Mg</span> <span class="o">=</span> <span class="p">[</span> <span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Biotite (Mg)&quot;</span><span class="p">,</span> <span class="mi">2326</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;firebrick&#39;</span><span class="p">),</span> <span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Biotite (Mg)&quot;</span><span class="p">,</span> <span class="mi">2377</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;firebrick&#39;</span><span class="p">)</span> <span class="p">]</span>
+    <span class="n">Biotite_Fe</span> <span class="o">=</span> <span class="p">[</span> <span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Biotite (Fe)&quot;</span><span class="p">,</span> <span class="mi">2250</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;firebrick&#39;</span><span class="p">),</span> <span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Biotite (Fe)&quot;</span><span class="p">,</span> <span class="mi">2350</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;firebrick&#39;</span><span class="p">)</span> <span class="p">]</span>
+    <span class="n">BIOTITE</span> <span class="o">=</span> <span class="p">[</span><span class="n">MultiFeature</span><span class="p">(</span><span class="s2">&quot;Biotite (FeOH)&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">Biotite_Mg</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Biotite_Fe</span><span class="p">[</span><span class="mi">0</span><span class="p">]]),</span>
+               <span class="n">MultiFeature</span><span class="p">(</span><span class="s2">&quot;Biotite (MgOH)&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">Biotite_Mg</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">Biotite_Fe</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span> <span class="p">]</span>
+
+    <span class="c1"># amphiboles Tremolite, hornblende, actinolite</span>
+    <span class="n">Amphibole_Mg</span> <span class="o">=</span>  <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Amphibole (Mg)&quot;</span><span class="p">,</span> <span class="mf">2320.0</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;royalblue&#39;</span><span class="p">)]</span>
+    <span class="n">Amphibole_Fe</span> <span class="o">=</span>  <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Amphibole (Fe)&quot;</span><span class="p">,</span> <span class="mf">2345.0</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;royalblue&#39;</span><span class="p">)]</span>
+    <span class="n">AMPHIBOLE</span> <span class="o">=</span> <span class="n">MultiFeature</span><span class="p">(</span><span class="s2">&quot;Amphibole&quot;</span><span class="p">,</span> <span class="n">Amphibole_Mg</span> <span class="o">+</span> <span class="n">Amphibole_Fe</span><span class="p">)</span>
+
+    <span class="c1"># carbonate minerals</span>
+    <span class="n">Dolomite</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Dolomite&quot;</span><span class="p">,</span> <span class="mi">2320</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)]</span>
+    <span class="n">Calcite</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Calcite&quot;</span><span class="p">,</span> <span class="mi">2345</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)]</span>
+    <span class="n">Ankerite</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Ankerite&quot;</span><span class="p">,</span> <span class="mi">2330</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;steelblue&#39;</span><span class="p">)]</span>
+    <span class="n">CARBONATE</span> <span class="o">=</span> <span class="n">MultiFeature</span><span class="p">(</span><span class="s2">&quot;Carbonate&quot;</span><span class="p">,</span> <span class="n">Dolomite</span><span class="o">+</span> <span class="n">Ankerite</span><span class="o">+</span> <span class="n">Calcite</span><span class="p">)</span>
+
+    <span class="c1">#Sulphates Jarosite</span>
+    <span class="n">Gypsum</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Gypsum&quot;</span><span class="p">,</span> <span class="mf">1449.0</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gold&#39;</span><span class="p">),</span> <span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Gypsum&quot;</span><span class="p">,</span> <span class="mi">1750</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gold&#39;</span><span class="p">),</span> <span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Gypsum&quot;</span><span class="p">,</span> <span class="mf">1948.0</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gold&#39;</span><span class="p">)]</span>
+    <span class="n">Jarosite</span> <span class="o">=</span> <span class="p">[</span><span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Jarosite&quot;</span><span class="p">,</span> <span class="mf">1470.0</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">),</span> <span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Jarosite&quot;</span><span class="p">,</span> <span class="mi">1850</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">),</span> <span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Jarosite&quot;</span><span class="p">,</span> <span class="mf">2270.0</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">)]</span>
+    <span class="n">SULPHATE</span> <span class="o">=</span> <span class="n">MultiFeature</span><span class="p">(</span> <span class="s2">&quot;Sulphate&quot;</span><span class="p">,</span> <span class="n">Gypsum</span> <span class="o">+</span> <span class="n">Jarosite</span> <span class="p">)</span>
+
+    <span class="c1"># misc</span>
+    <span class="n">Epidote</span> <span class="o">=</span> <span class="p">[</span> <span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Epidote&quot;</span><span class="p">,</span> <span class="mf">2256.0</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">),</span> <span class="n">BlackFeature</span><span class="p">(</span><span class="s2">&quot;Epidote&quot;</span><span class="p">,</span> <span class="mf">2340.0</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)]</span></div>
+
+
+<span class="c1"># and some useful &#39;themes&#39; (for plotting etc)</span>
+<div class="viewcode-block" id="Themes">
+<a class="viewcode-back" href="../../../api/BlackTelperion.reference.features.html#BlackTelperion.reference.features.Themes">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Themes</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Some useful &#39;themes&#39; (for plotting etc)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ATMOSPHERE</span> <span class="o">=</span> <span class="n">Features</span><span class="o">.</span><span class="n">H2O</span>  <span class="c1">#[BlackFeature(&quot;H2O&quot;, 975, 30), BlackFeature(&quot;H2O&quot;, 1395, 120), BlackFeature(&quot;H2O&quot;, 1885, 180), BlackFeature(&quot;H2O&quot;, 2450, 100)]</span>
+    <span class="n">CARBONATE</span> <span class="o">=</span> <span class="p">[</span><span class="n">Minerals</span><span class="o">.</span><span class="n">CARBONATE</span><span class="p">]</span>
+    <span class="n">OH</span> <span class="o">=</span> <span class="n">Features</span><span class="o">.</span><span class="n">AlOH</span> <span class="o">+</span> <span class="n">Features</span><span class="o">.</span><span class="n">FeOH</span> <span class="o">+</span> <span class="n">Features</span><span class="o">.</span><span class="n">MgOH</span>
+    <span class="n">CLAY</span> <span class="o">=</span> <span class="p">[</span> <span class="n">Minerals</span><span class="o">.</span><span class="n">KAOLIN</span><span class="p">,</span> <span class="n">Minerals</span><span class="o">.</span><span class="n">SMECTITE</span> <span class="p">]</span>
+    <span class="n">DIAGNOSTIC</span> <span class="o">=</span> <span class="n">Features</span><span class="o">.</span><span class="n">Ferrous</span> <span class="o">+</span> <span class="n">Features</span><span class="o">.</span><span class="n">AlOH</span><span class="o">+</span><span class="n">Features</span><span class="o">.</span><span class="n">FeOH</span><span class="o">+</span><span class="n">Features</span><span class="o">.</span><span class="n">MgOH</span></div>
+
+
+<span class="c1">#expose through BlackFeature class for convenience</span>
+<span class="n">BlackFeature</span><span class="o">.</span><span class="n">Features</span> <span class="o">=</span> <span class="n">Features</span>
+<span class="n">BlackFeature</span><span class="o">.</span><span class="n">Minerals</span> <span class="o">=</span> <span class="n">Minerals</span>
+<span class="n">BlackFeature</span><span class="o">.</span><span class="n">Themes</span> <span class="o">=</span> <span class="n">Themes</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

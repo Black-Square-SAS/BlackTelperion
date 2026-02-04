@@ -1,0 +1,270 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.filter.sample &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/BlackTelperion.html">BlackTelperion package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../filter.html">BlackTelperion.filter</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.filter.sample</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for BlackTelperion.filter.sample</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Utility functions for sampling from hyperspectral datasets, including extracting averaged spectra (spectra libraries)</span>
+<span class="sd">and resampling images to match band widths of other sensors (e.g. ASTER bands). CAUTION: this code is poorly tested.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">BlackTelperion</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlackData</span><span class="p">,</span> <span class="n">BlackLibrary</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<div class="viewcode-block" id="getClassLibrary">
+<a class="viewcode-back" href="../../../api/BlackTelperion.filter.sample.html#BlackTelperion.filter.sample.getClassLibrary">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">getClassLibrary</span><span class="p">(</span> <span class="n">data</span><span class="p">,</span> <span class="n">classification</span><span class="p">,</span> <span class="n">skip0</span><span class="o">=</span><span class="kc">True</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a spectral library from a classified image by extracting all spectra associated with each class.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: a HyImage or HyCloud instance containing spectral data.</span>
+<span class="sd">        classification: a HyImage or HyCloud instance containing classifications per point/pixel.</span>
+<span class="sd">        skip0: True if class 0 (typically background) should be ignored. Default is True.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">BlackData</span><span class="p">),</span> <span class="s2">&quot;Error - data must be a BlackData instance not </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">classification</span><span class="p">,</span> <span class="n">BlackData</span><span class="p">),</span> <span class="s2">&quot;Error - classification must be a BlackData instance not </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">classification</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">classification</span><span class="o">.</span><span class="n">is_classification</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span> <span class="s2">&quot;Warning - classification is not a classification dataset (at least according to its header)?&quot;</span><span class="p">)</span>
+
+    <span class="n">spectra</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get_raveled</span><span class="p">()</span>
+    <span class="bp">cls</span> <span class="o">=</span> <span class="n">classification</span><span class="o">.</span><span class="n">get_raveled</span><span class="p">()[:,</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="n">classification</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get_class_names</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">cls</span><span class="p">))]</span>
+
+    <span class="n">refl</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">upper</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">lower</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">mn</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">skip0</span><span class="p">:</span>
+        <span class="n">mn</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">mn</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)):</span>
+        <span class="n">msk</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">==</span><span class="n">i</span>
+        <span class="k">if</span> <span class="n">msk</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">l</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">spectra</span><span class="p">[</span><span class="n">msk</span><span class="p">,:],</span> <span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">75</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">lower</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+            <span class="n">refl</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+            <span class="n">upper</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+            <span class="n">n</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">BlackLibrary</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">refl</span><span class="p">),</span>
+                     <span class="n">lower</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">lower</span><span class="p">),</span>
+                     <span class="n">upper</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">upper</span><span class="p">),</span>
+                     <span class="n">wav</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="Resample">
+<a class="viewcode-back" href="../../../api/BlackTelperion.filter.sample.html#BlackTelperion.filter.sample.Resample">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Resample</span><span class="p">(</span> <span class="nb">object</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A wrapper class for spectral resampling of hyperspectral images.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">bands</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            bands (list): a list of wavelength tuples specifying the minimum and maximum spectra of each band in this resampling scheme.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># check valid</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">bands</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Error - no valid bands specified&quot;</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bands</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Error - bands must be specified as a tuple of length 2.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bands</span> <span class="o">=</span> <span class="n">bands</span>
+
+<div class="viewcode-block" id="Resample.get_band">
+<a class="viewcode-back" href="../../../api/BlackTelperion.filter.sample.html#BlackTelperion.filter.sample.Resample.get_band">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_band</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">n</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the n&#39;th band under this resampling scheme by averaging hyperspectral bands between the</span>
+<span class="sd">        specified range.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: the dataset to extract information from.</span>
+<span class="sd">            n: the resampled band index to extract. NOTE THAT BAND INDICES START AT 1 FOR COMPATIBILITY WITH</span>
+<span class="sd">               STANDARD SATELLITE NOTATION!</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bands</span><span class="p">),</span> <span class="s2">&quot;Error - Band </span><span class="si">%d</span><span class="s2"> is not defined in this resampling scheme.&quot;</span> <span class="o">%</span> <span class="n">n</span>
+        <span class="n">idx0</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get_band_index</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">bands</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">thresh</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span> <span class="p">)</span>
+        <span class="n">idx1</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get_band_index</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">bands</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">thresh</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span> <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">idx1</span> <span class="o">!=</span> <span class="n">idx0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">idx0</span><span class="p">:</span><span class="n">idx1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span> <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># is data within sampling range at all?</span>
+            <span class="n">minw</span><span class="p">,</span><span class="n">maxw</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">()[[</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">minw</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">bands</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> <span class="p">(</span><span class="n">maxw</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">bands</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> \
+                <span class="ow">or</span> <span class="p">(</span><span class="n">minw</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">bands</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> <span class="p">(</span><span class="n">maxw</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">bands</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="p">)</span> <span class="c1"># no data</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">idx0</span><span class="p">]</span> <span class="c1"># return this band</span></div>
+
+
+<div class="viewcode-block" id="Resample.print_bands">
+<a class="viewcode-back" href="../../../api/BlackTelperion.filter.sample.html#BlackTelperion.filter.sample.Resample.print_bands">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_bands</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Quickly print the wavelengths associated with each band of this resampler.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bands</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Band </span><span class="si">%d</span><span class="s2">: </span><span class="si">%.1f</span><span class="s2"> - </span><span class="si">%.1f</span><span class="s2"> nm&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span></div>
+
+
+<div class="viewcode-block" id="Resample.apply">
+<a class="viewcode-back" href="../../../api/BlackTelperion.filter.sample.html#BlackTelperion.filter.sample.Resample.apply">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply this resampling to a BlackData instance and return a new instance with appropriately averaged bands.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: the BlackData instance to apply this sampling scheme to.</span>
+<span class="sd">        Returns: A copy of the original BlackData instance with the bands averaged as defined. Corresponding wavelengths will be set to the middle of each averaged region.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">bands</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_band</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bands</span><span class="p">))]</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">is_image</span><span class="p">():</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">(</span><span class="n">bands</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">bands</span><span class="p">)</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">set_wavelengths</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bands</span><span class="p">[</span><span class="n">n</span><span class="p">])</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bands</span><span class="p">))])</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+</div>
+
+
+<span class="c1"># create instances for common satellites</span>
+<span class="c1"># based on https://www.indexdatabase.de/db/bs.php</span>
+
+<span class="n">ASTER</span> <span class="o">=</span> <span class="n">Resample</span><span class="p">(</span> <span class="p">[</span>
+    <span class="p">(</span><span class="mf">520.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">630.0</span><span class="p">,</span> <span class="mf">690.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">760.0</span><span class="p">,</span> <span class="mf">860.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">1600.0</span><span class="p">,</span> <span class="mf">1700.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">2145.0</span><span class="p">,</span> <span class="mf">2185.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">2185.0</span><span class="p">,</span> <span class="mf">2225.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">2235.0</span><span class="p">,</span> <span class="mf">2365.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">2295.0</span><span class="p">,</span> <span class="mf">2365.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">2360.0</span><span class="p">,</span> <span class="mf">2430.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">8125.0</span><span class="p">,</span> <span class="mf">8475.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">8475.0</span><span class="p">,</span> <span class="mf">8825.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">8925.0</span><span class="p">,</span> <span class="mf">9275.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">10250.0</span><span class="p">,</span> <span class="mf">10950.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">10950.0</span><span class="p">,</span> <span class="mf">11650.0</span><span class="p">)</span> <span class="p">]</span> <span class="p">)</span>
+<span class="sd">&quot;&quot;&quot; Static resampling class for sampling hyperspectral data onto ASTER bands&quot;&quot;&quot;</span>
+
+<span class="n">SENTINEL</span> <span class="o">=</span> <span class="n">Resample</span><span class="p">(</span> <span class="p">[</span>
+    <span class="p">(</span><span class="mf">433.0</span><span class="p">,</span> <span class="mf">453.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">458.0</span><span class="p">,</span> <span class="mf">522.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">543.0</span><span class="p">,</span> <span class="mf">577.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">650.0</span><span class="p">,</span> <span class="mf">680.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">698.0</span><span class="p">,</span> <span class="mf">712.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">733.0</span><span class="p">,</span> <span class="mf">747.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">773.0</span><span class="p">,</span> <span class="mf">793.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">785.0</span><span class="p">,</span> <span class="mf">899.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">855.0</span><span class="p">,</span> <span class="mf">875.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">935.0</span><span class="p">,</span> <span class="mf">955.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">1360.0</span><span class="p">,</span> <span class="mf">1390.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">1565.0</span><span class="p">,</span> <span class="mf">1655.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">2100.0</span><span class="p">,</span> <span class="mf">2280.0</span><span class="p">)</span> <span class="p">]</span> <span class="p">)</span>
+<span class="sd">&quot;&quot;&quot; Static resampling class for sampling hyperspectral data onto Sentinel bands&quot;&quot;&quot;</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

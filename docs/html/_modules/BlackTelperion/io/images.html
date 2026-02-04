@@ -1,0 +1,539 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.io.images &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/BlackTelperion.html">BlackTelperion package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../io.html">BlackTelperion.io</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.io.images</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for BlackTelperion.io.images</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Read common image formats, including ENVI format hyperspectral data.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span><span class="o">,</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">BlackTelperion.blackimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlackImage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">BlackTelperion.blackdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlackData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.headers</span><span class="w"> </span><span class="kn">import</span> <span class="n">matchHeader</span><span class="p">,</span> <span class="n">makeDirs</span><span class="p">,</span> <span class="n">loadHeader</span><span class="p">,</span> <span class="n">saveHeader</span>
+
+<span class="c1"># spectral python throws depreciation warnings - ignore these!</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">DeprecationWarning</span><span class="p">)</span>
+
+<div class="viewcode-block" id="loadWithGDAL">
+<a class="viewcode-back" href="../../../api/BlackTelperion.io.images.html#BlackTelperion.io.images.loadWithGDAL">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">loadWithGDAL</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">mask_zero</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load an image using gdal.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path: file path to the image to load</span>
+<span class="sd">        mask_zero: True if zero values should be masked (replaced with nan). Default is true.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        a BlackImage object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># find GDAL</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">osgeo.gdal</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gdal</span>
+        <span class="n">gdal</span><span class="o">.</span><span class="n">PushErrorHandler</span><span class="p">(</span><span class="s1">&#39;CPLQuietErrorHandler&#39;</span><span class="p">)</span> <span class="c1"># ignore GDAL warnings</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Error - please install GDAL before using loadWithGDAL(...)&quot;</span>
+
+    <span class="c1">#parse file format</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="c1"># load envi file or its variants</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="s1">&#39;hdr&#39;</span> <span class="ow">in</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> \
+            <span class="s1">&#39;dat&#39;</span> <span class="ow">in</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> \
+            <span class="s1">&#39;img&#39;</span> <span class="ow">in</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> \
+            <span class="s1">&#39;lib&#39;</span> <span class="ow">in</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="n">header</span><span class="p">,</span> <span class="n">image</span> <span class="o">=</span> <span class="n">matchHeader</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="s1">&#39;tif&#39;</span> <span class="ow">in</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> <span class="s1">&#39;png&#39;</span> <span class="ow">in</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> <span class="s1">&#39;jpg&#39;</span> <span class="ow">in</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="c1">#standard image formats</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;Warning - </span><span class="si">%s</span><span class="s1"> is an unknown/unsupported file format. Trying to load anyway....&#39;</span> <span class="o">%</span> <span class="n">ext</span><span class="p">)</span>
+        <span class="n">header</span><span class="p">,</span> <span class="n">image</span> <span class="o">=</span> <span class="n">matchHeader</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="c1"># load header</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">loadHeader</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+
+    <span class="c1">#load image</span>
+    <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">image</span><span class="p">),</span> <span class="s2">&quot;Error - </span><span class="si">%s</span><span class="s2"> does not exist.&quot;</span> <span class="o">%</span> <span class="n">image</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">raster</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>  <span class="c1"># open image</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">raster</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Error - </span><span class="si">%s</span><span class="s2"> could not be read by GDAL.&quot;</span> <span class="o">%</span> <span class="n">image</span>
+
+    <span class="c1">#create image object</span>
+    <span class="k">assert</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Error - GDAL could not retrieve valid image data from </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">path</span>
+    <span class="n">pj</span> <span class="o">=</span> <span class="n">raster</span><span class="o">.</span><span class="n">GetProjection</span><span class="p">()</span>
+    <span class="n">gt</span> <span class="o">=</span> <span class="n">raster</span><span class="o">.</span><span class="n">GetGeoTransform</span><span class="p">()</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">BlackImage</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="n">pj</span><span class="p">,</span> <span class="n">affine</span><span class="o">=</span><span class="n">gt</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">mask_zero</span> <span class="ow">and</span> <span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span> <span class="ow">or</span> <span class="n">img</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
+            <span class="n">img</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">img</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="c1">#note to self: np.nan is float...</span>
+
+    <span class="k">return</span> <span class="n">img</span></div>
+
+
+<div class="viewcode-block" id="loadWithSPy">
+<a class="viewcode-back" href="../../../api/BlackTelperion.io.images.html#BlackTelperion.io.images.loadWithSPy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">loadWithSPy</span><span class="p">(</span> <span class="n">path</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">mask_zero</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load an image using spectral python. This works for most envi images, but doesn not load</span>
+<span class="sd">    georeferencing information (in which case loadWithGDAL(...) should be used).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path: file path to the image to load</span>
+<span class="sd">        mask_zero: True if zero values should be masked (replaced with nan). Default is true.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        a BlackImage object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="s2">&quot;Error - </span><span class="si">%s</span><span class="s2"> does not exist.&quot;</span> <span class="o">%</span> <span class="n">path</span>
+    <span class="k">try</span><span class="p">:</span> 
+        <span class="kn">import</span><span class="w"> </span><span class="nn">spectral</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Error - please install spectral python using `pip install spectral` before using loadWithSPy(...)&quot;</span>
+        
+    <span class="c1"># parse file format</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="s1">&#39;hdr&#39;</span> <span class="ow">in</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> \
+            <span class="s1">&#39;dat&#39;</span> <span class="ow">in</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> \
+            <span class="s1">&#39;img&#39;</span> <span class="ow">in</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> \
+            <span class="s1">&#39;lib&#39;</span> <span class="ow">in</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="n">header</span><span class="p">,</span> <span class="n">image</span> <span class="o">=</span> <span class="n">matchHeader</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="c1"># load image with SPy</span>
+        <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">image</span><span class="p">),</span> <span class="s2">&quot;Error - </span><span class="si">%s</span><span class="s2"> does not exist.&quot;</span> <span class="o">%</span> <span class="n">image</span>
+        <span class="k">try</span><span class="p">:</span> <span class="c1"># try loading envi file first</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">spectral</span><span class="o">.</span><span class="n">envi</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">image</span><span class="p">)</span> <span class="c1"># this must be an envi file</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">spectral</span><span class="o">.</span><span class="n">open_image</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="c1"># load unknown image type</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">load</span><span class="p">()),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
+            <span class="c1"># Spy still divides float values by scale factor. We don&#39;t want it to, so undo this.</span>
+            <span class="n">data</span> <span class="o">*=</span> <span class="n">img</span><span class="o">.</span><span class="n">scale_factor</span>
+
+        <span class="c1"># load header</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="n">loadHeader</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="s1">&#39;tif&#39;</span> <span class="ow">in</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> <span class="s1">&#39;png&#39;</span> <span class="ow">in</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> <span class="s1">&#39;jpg&#39;</span> <span class="ow">in</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>  <span class="c1"># standard image formats</span>
+        <span class="c1"># load with matplotlib</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.image</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpimg</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">mpimg</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Warning - </span><span class="si">%s</span><span class="s1"> is an unknown/unsupported file format. Trying to load anyway...&#39;</span><span class="o">%</span><span class="n">ext</span><span class="p">)</span>
+        <span class="c1">#assert False, &quot;Error - %s is an unknown/unsupported file format.&quot; % ext</span>
+
+    <span class="c1"># create image object</span>
+    <span class="k">assert</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Error - GDAL could not retrieve valid image data from </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">path</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">BlackImage</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">affine</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+
+    <span class="c1"># spectral python automatically applies reflectance scale factor, so we must set this to 1.0 to avoid future nightmares...</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="n">img</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;reflectance scale factor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+    <span class="k">if</span> <span class="n">mask_zero</span> <span class="ow">and</span> <span class="n">img</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">img</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">img</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>  <span class="c1"># note to self: np.nan is float...</span>
+
+    <span class="k">return</span> <span class="n">img</span></div>
+
+
+<div class="viewcode-block" id="loadSubset">
+<a class="viewcode-back" href="../../../api/BlackTelperion.io.images.html#BlackTelperion.io.images.loadSubset">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">loadSubset</span><span class="p">(</span> <span class="n">path</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">bands</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pixels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load either specific bands (bands!=None) or pixels (pixels != None) from an ENVI file using spy to facilitate e.g. out-of-core</span>
+<span class="sd">    processing routines.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path: a path to the hyperspectral image to read.</span>
+<span class="sd">        bands: a list of hyperspectral band indices or wavelengths to extract, or None.</span>
+<span class="sd">        pixels: a list of [(x1,y1),(x2,y2)] pixels to extract spectra for, or None. Either bands or pixels must be defined (but not both).</span>
+<span class="sd">        dtype: the output data type. Default is float32.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="s2">&quot;Error - </span><span class="si">%s</span><span class="s2"> does not exist.&quot;</span> <span class="o">%</span> <span class="n">path</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="n">pixels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">bands</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">),</span> <span class="s2">&quot;Error - either pixels OR bands must be specified&quot;</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="p">((</span><span class="n">pixels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">bands</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)),</span> <span class="s2">&quot;Error - pixels AND bands cannot both be specified&quot;</span>
+
+    <span class="c1"># parse file format</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="s1">&#39;hdr&#39;</span> <span class="ow">in</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> \
+            <span class="s1">&#39;dat&#39;</span> <span class="ow">in</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> \
+            <span class="s1">&#39;img&#39;</span> <span class="ow">in</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> \
+            <span class="s1">&#39;lib&#39;</span> <span class="ow">in</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="n">header</span><span class="p">,</span> <span class="n">image</span> <span class="o">=</span> <span class="n">matchHeader</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="c1"># load header and convert bands to band indices</span>
+        <span class="n">imageheader</span> <span class="o">=</span> <span class="n">loadHeader</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">bands</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">bands</span> <span class="o">=</span> <span class="p">[</span> <span class="n">BlackImage</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">imageheader</span><span class="o">.</span><span class="n">band_count</span><span class="p">())),</span>
+                        <span class="n">header</span><span class="o">=</span><span class="n">imageheader</span><span class="p">,</span> <span class="n">wav</span><span class="o">=</span><span class="n">imageheader</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">()</span> <span class="p">)</span><span class="o">.</span><span class="n">get_band_index</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bands</span> <span class="p">]</span>
+
+        <span class="c1"># load image with SPy  TODO - replace this with numpy loading if possible?</span>
+        <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">image</span><span class="p">),</span> <span class="s2">&quot;Error - </span><span class="si">%s</span><span class="s2"> does not exist.&quot;</span> <span class="o">%</span> <span class="n">image</span>
+        <span class="k">try</span><span class="p">:</span> 
+            <span class="kn">import</span><span class="w"> </span><span class="nn">spectral</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Error - please install spectral python using `pip install spectral` before using saveWithSPy(...)&quot;</span>
+        <span class="k">try</span><span class="p">:</span>  <span class="c1"># try loading envi file first</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">spectral</span><span class="o">.</span><span class="n">envi</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">image</span><span class="p">)</span>  <span class="c1"># this must be an envi file</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">spectral</span><span class="o">.</span><span class="n">open_image</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>  <span class="c1"># load unknown image type</span>
+
+        <span class="k">if</span> <span class="n">bands</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># get bands and put in BlackImage</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">(</span> <span class="p">[</span> <span class="n">img</span><span class="o">.</span><span class="n">read_band</span><span class="p">(</span> <span class="n">b</span> <span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bands</span> <span class="p">]</span> <span class="p">)</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">BlackImage</span><span class="p">(</span> <span class="n">data</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">affine</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">imageheader</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">set_wavelengths</span><span class="p">(</span> <span class="n">imageheader</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">()[</span><span class="n">bands</span><span class="p">]</span> <span class="p">)</span>
+            <span class="k">if</span> <span class="n">out</span><span class="o">.</span><span class="n">has_band_names</span><span class="p">():</span>
+                <span class="n">out</span><span class="o">.</span><span class="n">set_band_names</span><span class="p">(</span> <span class="n">imageheader</span><span class="o">.</span><span class="n">get_band_names</span><span class="p">()[</span><span class="n">bands</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">pixels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># get pixels and put in HyCloud</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span> <span class="p">[</span> <span class="n">img</span><span class="o">.</span><span class="n">read_pixel</span><span class="p">(</span> <span class="o">*</span><span class="n">p</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pixels</span> <span class="p">]</span> <span class="p">)</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">BlackData</span><span class="p">(</span> <span class="n">data</span> <span class="p">)</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">header</span><span class="o">=</span><span class="n">imageheader</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="loadWithNumpy">
+<a class="viewcode-back" href="../../../api/BlackTelperion.io.images.html#BlackTelperion.io.images.loadWithNumpy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">loadWithNumpy</span><span class="p">(</span> <span class="n">path</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">mask_zero</span><span class="o">=</span><span class="kc">True</span> <span class="p">):</span>
+    <span class="c1"># parse file format</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="s1">&#39;hdr&#39;</span> <span class="ow">in</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> \
+            <span class="s1">&#39;dat&#39;</span> <span class="ow">in</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> \
+            <span class="s1">&#39;img&#39;</span> <span class="ow">in</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> \
+            <span class="s1">&#39;lib&#39;</span> <span class="ow">in</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="n">header</span><span class="p">,</span> <span class="n">image</span> <span class="o">=</span> <span class="n">matchHeader</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="c1"># load header</span>
+        <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">image</span><span class="p">),</span> <span class="s2">&quot;Error - </span><span class="si">%s</span><span class="s2"> does not exist.&quot;</span> <span class="o">%</span> <span class="n">image</span>
+        <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">header</span><span class="p">),</span> <span class="s2">&quot;Error - </span><span class="si">%s</span><span class="s2"> does not exist.&quot;</span> <span class="o">%</span> <span class="n">header</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">loadHeader</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;samples&#39;</span><span class="p">])</span> <span class="c1"># read relevant bits of header file</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;lines&#39;</span><span class="p">])</span>
+        <span class="n">bands</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;bands&#39;</span><span class="p">])</span>
+        <span class="n">data_type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;data type&#39;</span><span class="p">])</span>
+        <span class="n">interleave</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;interleave&#39;</span><span class="p">,</span> <span class="s1">&#39;bil&#39;</span><span class="p">)</span>
+    
+        <span class="c1"># ENVI data type mapping to NumPy</span>
+        <span class="n">dtype_map</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="mi">1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span>
+            <span class="mi">2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">,</span>
+            <span class="mi">3</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span>
+            <span class="mi">4</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+            <span class="mi">5</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+            <span class="mi">12</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">,</span>
+            <span class="mi">13</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">,</span>
+            <span class="mi">14</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span>
+            <span class="mi">15</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">uint64</span>
+        <span class="p">}</span>
+    
+        <span class="k">if</span> <span class="n">data_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dtype_map</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported data type: </span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype_map</span><span class="p">[</span><span class="n">data_type</span><span class="p">]</span>
+    
+        <span class="c1"># Load binary data</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+
+        <span class="n">expected_size</span> <span class="o">=</span> <span class="n">lines</span> <span class="o">*</span> <span class="n">bands</span> <span class="o">*</span> <span class="n">samples</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="n">expected_size</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="n">expected_size</span><span class="si">}</span><span class="s2"> elements, got </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2">. Check lines, bands and samples entries in header file.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">interleave</span> <span class="o">==</span> <span class="s1">&#39;bil&#39;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">lines</span><span class="p">,</span> <span class="n">bands</span><span class="p">,</span> <span class="n">samples</span><span class="p">))</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># (lines, samples, bands)</span>
+        <span class="k">elif</span> <span class="n">interleave</span> <span class="o">==</span> <span class="s1">&#39;bsq&#39;</span> <span class="ow">or</span> <span class="n">interleave</span> <span class="o">==</span> <span class="s1">&#39;BSQ&#39;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">bands</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">samples</span><span class="p">))</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>  <span class="c1"># (lines, samples, bands)</span>
+        <span class="k">elif</span> <span class="n">interleave</span> <span class="o">==</span> <span class="s1">&#39;bip&#39;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">lines</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">bands</span><span class="p">))</span>  <span class="c1"># already in correct order</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported interleave format: </span><span class="si">{</span><span class="n">interleave</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># flip from row-column to x-y layout</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span> <span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="p">)</span>
+        <span class="k">return</span> <span class="n">BlackImage</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="s1">&#39;tif&#39;</span> <span class="ow">in</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> <span class="s1">&#39;png&#39;</span> <span class="ow">in</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> <span class="s1">&#39;jpg&#39;</span> <span class="ow">in</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>  <span class="c1"># standard image formats</span>
+        <span class="c1"># load with matplotlib</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.image</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpimg</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">mpimg</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">BlackImage</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Error - </span><span class="si">%s</span><span class="s2"> is an unknown/unsupported file format.&quot;</span> <span class="o">%</span> <span class="n">ext</span></div>
+
+
+<div class="viewcode-block" id="saveWithNumpy">
+<a class="viewcode-back" href="../../../api/BlackTelperion.io.images.html#BlackTelperion.io.images.saveWithNumpy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">saveWithNumpy</span><span class="p">(</span> <span class="n">path</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">writeHeader</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">interleave</span><span class="o">=</span><span class="s1">&#39;BSQ&#39;</span><span class="p">):</span>
+    <span class="c1"># make sure extension is proper</span>
+    <span class="n">path</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">&quot;hdr&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="o">.</span><span class="n">lower</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.dat&quot;</span>
+
+    <span class="n">interleave</span> <span class="o">=</span> <span class="n">interleave</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">interleave</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;bil&#39;</span><span class="p">,</span> <span class="s1">&#39;bip&#39;</span><span class="p">,</span> <span class="s1">&#39;bsq&#39;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Interleave must be one of: &#39;bil&#39;, &#39;bip&#39;, or &#39;bsq&#39;&quot;</span><span class="p">)</span>
+
+    <span class="n">image</span><span class="o">.</span><span class="n">push_to_header</span><span class="p">()</span> <span class="c1"># update header flags</span>
+    
+    <span class="c1"># Map NumPy dtype to ENVI data type code</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="n">numpy_to_envi</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;uint8&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s1">&#39;int16&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s1">&#39;int32&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s1">&#39;float32&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="s1">&#39;float64&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="s1">&#39;uint16&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+        <span class="s1">&#39;uint32&#39;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span>
+        <span class="s1">&#39;int64&#39;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
+        <span class="s1">&#39;uint64&#39;</span><span class="p">:</span> <span class="mi">15</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">dtype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">numpy_to_envi</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported dtype for ENVI: </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">envi_data_type</span> <span class="o">=</span> <span class="n">numpy_to_envi</span><span class="p">[</span><span class="n">dtype</span><span class="p">]</span>
+
+    <span class="c1"># Reorder data based on interleave</span>
+    <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span> <span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="p">)</span> <span class="c1"># from x-y to i-j ordering</span>
+    <span class="k">if</span> <span class="n">interleave</span> <span class="o">==</span> <span class="s1">&#39;bil&#39;</span><span class="p">:</span>
+        <span class="n">out_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># (lines, bands, samples)</span>
+    <span class="k">elif</span> <span class="n">interleave</span> <span class="o">==</span> <span class="s1">&#39;bsq&#39;</span><span class="p">:</span>
+        <span class="n">out_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># (bands, lines, samples)</span>
+    <span class="k">elif</span> <span class="n">interleave</span> <span class="o">==</span> <span class="s1">&#39;bip&#39;</span><span class="p">:</span>
+        <span class="n">out_data</span> <span class="o">=</span> <span class="n">array</span>  <span class="c1"># (lines, samples, bands)</span>
+    <span class="n">out_data</span><span class="o">.</span><span class="n">tofile</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="n">ext</span><span class="p">)</span>
+
+    <span class="c1"># save header file</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">header</span><span class="p">[</span><span class="s1">&#39;data type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">envi_data_type</span>
+    <span class="n">header</span><span class="p">[</span><span class="s1">&#39;interleave&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">interleave</span>
+    <span class="n">header</span><span class="p">[</span><span class="s1">&#39;byte order&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span>
+    <span class="n">header_path</span> <span class="o">=</span> <span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;.hdr&#39;</span>
+    <span class="n">saveHeader</span><span class="p">(</span> <span class="n">header_path</span><span class="p">,</span> <span class="n">header</span><span class="p">)</span></div>
+
+
+<span class="c1"># noinspection PyUnusedLocal</span>
+<div class="viewcode-block" id="saveWithGDAL">
+<a class="viewcode-back" href="../../../api/BlackTelperion.io.images.html#BlackTelperion.io.images.saveWithGDAL">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">saveWithGDAL</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">writeHeader</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">interleave</span><span class="o">=</span><span class="s1">&#39;BSQ&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Write this image to a file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path: the path to save to.</span>
+<span class="sd">        image: the image to write.</span>
+<span class="sd">        writeHeader: true if a .hdr file will be written. Default is true.</span>
+<span class="sd">        interleave: data interleaving for ENVI files. Default is &#39;BSQ&#39;, other options are &#39;BIL&#39; and &#39;BIP&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># find GDAL</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">osgeo.gdal</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gdal</span>
+        <span class="n">gdal</span><span class="o">.</span><span class="n">PushErrorHandler</span><span class="p">(</span><span class="s1">&#39;CPLQuietErrorHandler&#39;</span><span class="p">)</span> <span class="c1"># ignore GDAL warnings</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Error - please install GDAL before using saveWithGDAL(...)&quot;</span>
+
+    <span class="c1"># make directories if need be</span>
+    <span class="n">makeDirs</span><span class="p">(</span> <span class="n">path</span> <span class="p">)</span>
+
+    <span class="n">path</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">&quot;hdr&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="o">.</span><span class="n">lower</span><span class="p">(</span><span class="n">ext</span><span class="p">):</span>
+        <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.dat&quot;</span>
+
+    <span class="c1">#get image driver</span>
+    <span class="n">driver</span> <span class="o">=</span> <span class="s1">&#39;ENVI&#39;</span>
+    <span class="k">if</span> <span class="s1">&#39;.tif&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="o">.</span><span class="n">lower</span><span class="p">(</span><span class="n">ext</span><span class="p">):</span>
+        <span class="n">driver</span> <span class="o">=</span> <span class="s1">&#39;GTiff&#39;</span>
+
+    <span class="c1">#todo - add support for png and jpg??</span>
+
+    <span class="c1">#set byte order</span>
+    <span class="k">if</span> <span class="s1">&#39;little&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">byteorder</span><span class="p">:</span>
+        <span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;byte order&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;byte order&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="c1">#parse data type from image array</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">data</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GDT_Float32</span>
+    <span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;data type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;interleave&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">lower</span><span class="p">(</span><span class="n">interleave</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">intc</span> <span class="ow">or</span> <span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">:</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GDT_Int32</span>
+        <span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;data type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">:</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GDT_Int16</span>
+        <span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;data type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">))</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GDT_Byte</span>
+        <span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;data type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">uint</span> <span class="ow">or</span> <span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">:</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GDT_UInt32</span>
+        <span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;data type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">13</span>
+    <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">:</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GDT_UInt16</span>
+        <span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;data type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">12</span>
+
+    <span class="c1">#write</span>
+    <span class="k">if</span> <span class="n">driver</span> <span class="o">==</span> <span class="s1">&#39;GTiff&#39;</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GetDriverByName</span><span class="p">(</span><span class="n">driver</span><span class="p">)</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span> <span class="n">path</span> <span class="o">+</span> <span class="n">ext</span><span class="p">,</span> <span class="n">image</span><span class="o">.</span><span class="n">xdim</span><span class="p">(),</span> <span class="n">image</span><span class="o">.</span><span class="n">ydim</span><span class="p">(),</span> <span class="n">image</span><span class="o">.</span><span class="n">band_count</span><span class="p">(),</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GetDriverByName</span><span class="p">(</span><span class="n">driver</span><span class="p">)</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span> <span class="n">path</span> <span class="o">+</span> <span class="n">ext</span><span class="p">,</span> <span class="n">image</span><span class="o">.</span><span class="n">xdim</span><span class="p">(),</span> <span class="n">image</span><span class="o">.</span><span class="n">ydim</span><span class="p">(),</span> <span class="n">image</span><span class="o">.</span><span class="n">band_count</span><span class="p">(),</span> <span class="n">dtype</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;INTERLEAVE=</span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">interleave</span><span class="p">]</span> <span class="p">)</span>
+    
+    <span class="c1"># check we got a valid file</span>
+    <span class="k">if</span> <span class="n">output</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Could not create output file at </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="n">ext</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">image</span><span class="o">.</span><span class="n">band_count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Image has incorrect data shape (</span><span class="si">%s</span><span class="s2">) and could not be saved.&quot;</span><span class="o">%</span><span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="c1">#write bands</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">band_count</span><span class="p">()):</span>
+         <span class="n">rb</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+         <span class="n">rb</span><span class="o">.</span><span class="n">WriteArray</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+         <span class="n">rb</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1">#close band</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1">#close file</span>
+
+    <span class="k">if</span> <span class="n">writeHeader</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">image</span><span class="o">.</span><span class="n">header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1">#write .hdr file</span>
+        <span class="n">image</span><span class="o">.</span><span class="n">push_to_header</span><span class="p">()</span>
+        <span class="n">saveHeader</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;.hdr&quot;</span><span class="p">,</span> <span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
+
+    <span class="c1"># save geotransform/project information</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">affine</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">projection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="n">ext</span><span class="p">,</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GA_Update</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">output</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning - could not save geotransform information for </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="n">ext</span><span class="p">))</span> <span class="c1"># this happens sometimes -- not sure why.</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">SetGeoTransform</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">affine</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">image</span><span class="o">.</span><span class="n">projection</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">output</span><span class="o">.</span><span class="n">SetProjection</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">projection</span><span class="o">.</span><span class="n">ExportToPrettyWkt</span><span class="p">())</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># close file</span></div>
+
+
+<div class="viewcode-block" id="saveWithSPy">
+<a class="viewcode-back" href="../../../api/BlackTelperion.io.images.html#BlackTelperion.io.images.saveWithSPy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">saveWithSPy</span><span class="p">(</span> <span class="n">path</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">writeHeader</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">interleave</span><span class="o">=</span><span class="s1">&#39;BSQ&#39;</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span> 
+        <span class="kn">import</span><span class="w"> </span><span class="nn">spectral</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Error - please install spectral python using `pip install spectral` before using saveWithSPy(...)&quot;</span>
+        
+    <span class="c1"># make directories if need be</span>
+    <span class="n">makeDirs</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="c1"># make sure extension is proper</span>
+    <span class="n">path</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">&quot;hdr&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="o">.</span><span class="n">lower</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.dat&quot;</span>
+
+    <span class="c1"># set byte order</span>
+    <span class="k">if</span> <span class="s1">&#39;little&#39;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">byteorder</span><span class="p">:</span>
+        <span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;byte order&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">byteorder</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;byte order&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">byteorder</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">image</span><span class="o">.</span><span class="n">push_to_header</span><span class="p">()</span>
+    <span class="n">spectral</span><span class="o">.</span><span class="n">envi</span><span class="o">.</span><span class="n">save_image</span><span class="p">(</span> <span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;.hdr&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="p">,(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">)),</span>
+                                    <span class="n">dtype</span><span class="o">=</span><span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                    <span class="n">ext</span><span class="o">=</span><span class="n">ext</span><span class="p">,</span> <span class="n">byteorder</span><span class="o">=</span><span class="n">byteorder</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

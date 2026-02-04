@@ -1,0 +1,455 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.correct.illumination package &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="BlackTelperion.correct.illumination.occlusion module" href="BlackTelperion.correct.illumination.occlusion.html" />
+    <link rel="prev" title="BlackTelperion.correct package" href="BlackTelperion.correct.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="BlackTelperion.html">BlackTelperion package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.RGB"><code class="docutils literal notranslate"><span class="pre">RGB</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.VNIR"><code class="docutils literal notranslate"><span class="pre">VNIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.SWIR"><code class="docutils literal notranslate"><span class="pre">SWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.BROAD"><code class="docutils literal notranslate"><span class="pre">BROAD</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.MWIR"><code class="docutils literal notranslate"><span class="pre">MWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.LWIR"><code class="docutils literal notranslate"><span class="pre">LWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.band_select_threshold"><code class="docutils literal notranslate"><span class="pre">band_select_threshold</span></code></a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="BlackTelperion.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.analyse.html">BlackTelperion.analyse package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="BlackTelperion.correct.html">BlackTelperion.correct package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="BlackTelperion.correct.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.correct.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.filter.html">BlackTelperion.filter package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.io.html">BlackTelperion.io package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.reference.html">BlackTelperion.reference package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.utils.html">BlackTelperion.utils namespace</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="BlackTelperion.html">BlackTelperion package</a></li>
+          <li class="breadcrumb-item"><a href="BlackTelperion.correct.html">BlackTelperion.correct package</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.correct.illumination package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/BlackTelperion.correct.illumination.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-BlackTelperion.correct.illumination">
+<span id="blacktelperion-correct-illumination-package"></span><h1>BlackTelperion.correct.illumination package<a class="headerlink" href="#module-BlackTelperion.correct.illumination" title="Link to this heading"></a></h1>
+<p>A collection of functions for performing illumination corrections to derive reflectance estimates
+from radiance data.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.correct.illumination.sph2cart">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.correct.illumination.</span></span><span class="sig-name descname"><span class="pre">sph2cart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">az</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">el</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/correct/illumination.html#sph2cart"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.correct.illumination.sph2cart" title="Link to this definition"></a></dt>
+<dd><p>Convert spherical coordiantes to cartesian ones.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.correct.illumination.cart2sph">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.correct.illumination.</span></span><span class="sig-name descname"><span class="pre">cart2sph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/correct/illumination.html#cart2sph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.correct.illumination.cart2sph" title="Link to this definition"></a></dt>
+<dd><p>Convert cartesian coordinates to spherical trend, plunge and radius.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.correct.illumination.estimate_sun_vec">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.correct.illumination.</span></span><span class="sig-name descname"><span class="pre">estimate_sun_vec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/correct/illumination.html#estimate_sun_vec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.correct.illumination.estimate_sun_vec" title="Link to this definition"></a></dt>
+<dd><p>Calculate the sun illumination vector at the specified position and time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lat</strong> – the latitude of the position to calculate the sun vector at (in decimal degrees).</p></li>
+<li><p><strong>lon</strong> – the longitude of the position to calculate the sun vector at (in decimal degrees).</p></li>
+<li><p><strong>time</strong> – the time the dataset was acquired. This, and the position defined by the “pos”
+argument will be used to calculate the sun direction. Should be an instance of datetime.datetime,
+or a tuple containing (timestring, formatstring, pytz timezone).
+E.g. time = (“19/04/2019 12:28”,”%d/%m/%Y %H:%M”, ‘Europe/Madrid’)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A tuple containing:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>sunvec = the sun illumination direction (i.e. from the sun to the observer) in cartesian coords</p></li>
+<li><p>azimuth = the azimuth of the sun (bearing towards sun)</p></li>
+<li><p>elevation = the elevation of the sun (angle above horizon)</p></li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.correct.illumination.estimate_skyview">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.correct.illumination.</span></span><span class="sig-name descname"><span class="pre">estimate_skyview</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normal</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/correct/illumination.html#estimate_skyview"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.correct.illumination.estimate_skyview" title="Link to this definition"></a></dt>
+<dd><p>Return a crude estimate of sky-view factor by assuming geometry is an inclined plane (and that the sky is invisible
+below the horizon level. Useful for e.g. estimating the skyview factor for calibration panels based on their orientation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>normal</strong> – the surface or panel normal vector as a (3,) numpy array or (…,3) image or cloud.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the skyview factor (0 - 1).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.correct.illumination.UAC">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.correct.illumination.</span></span><span class="sig-name descname"><span class="pre">UAC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">-1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">98</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/correct/illumination.html#UAC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.correct.illumination.UAC" title="Link to this definition"></a></dt>
+<dd><p>Apply a universal absorption correction. This is a generalised version of the algorithm presented by
+Lorenz et al., 2018 to identify and remove absorption features that are present in all of the spectra
+in a dataset, as these generally relate to residual atmospheric or sensor effects.</p>
+<p>Reference:
+<a class="reference external" href="https://doi.org/10.3390/rs10020176">https://doi.org/10.3390/rs10020176</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> – a hyperspectral image to correct</p></li>
+<li><p><strong>band_range</strong> – a range of bands to do this over. Default is (0,-1), which applies the correction to all bands.</p></li>
+<li><p><strong>thresh</strong> – the percentile to apply when identifying the smallest absorbtion in any range based on hull corrected
+spectra. Lower values will remove more absorption (potentially including features of interest).</p></li>
+<li><p><strong>vb</strong> – True if a progress bar should be created during hull correction steps.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a BlackData instance containing the corrected spectra.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.correct.illumination.estimate_illu">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.correct.illumination.</span></span><span class="sig-name descname"><span class="pre">estimate_illu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">panel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pilf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pskv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ilf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/correct/illumination.html#estimate_illu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.correct.illumination.estimate_illu" title="Link to this definition"></a></dt>
+<dd><p>Estimate the sky and sunlight spectra by comparing shaded vs non-shaded regions in a dataset and assuming
+they have the same median reflectance spectra. See Thiele et al., 2021 for more details:
+<a class="reference external" href="https://doi.org/10.1109/TGRS.2021.3098725">https://doi.org/10.1109/TGRS.2021.3098725</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> – the hyperspectral image to extract spectra from.</p></li>
+<li><p><strong>panel</strong> – a Panel instance containing calibration spectra from a fully illuminated calibration panel.</p></li>
+<li><p><strong>pilf</strong> – a measured or estimated lambert illumination factor for the panel (from 0 to 1). If a value of
+0 is used then it is assumed that the panel is completely shaded.</p></li>
+<li><p><strong>pskv</strong> – a measured or estimated skyview factor for the panel (from 0.1 to 1).</p></li>
+<li><p><strong>ilf</strong> – direct illumination factors representing the fraction of downwelling light reflected towards the
+sensor, as estimated using e.g., BlackTelperion.correct.illumination.reflection.calcLambert(…) or
+BlackTelperion.correct.illumination.reflection.calcOrenNayar(..).</p></li>
+<li><p><strong>skv</strong> – a(width,height) array of skyview factors or a float containg the average sky view factor (0 to 1)
+for the scene. Default is 0.6.</p></li>
+<li><p><strong>oc</strong> – a (width, height) array of occlusion factors computed using
+e.g., BlackTelperion.correct.illumination.occlusion.calcBandRatioOcc, or None (default; for no cast shadows).</p></li>
+<li><p><strong>thresh</strong> – the threshold for direct illumination factor (skv * (1-oc)) at which a pixel is considered entirely
+lit by ambient (sky) light. Default is 0.01.</p></li>
+<li><p><strong>clip</strong> – a subset of the image to use for estimation (to ensure our assumption of equal median reflectance between
+sun and shade pixels is met). Default is None, but a clipping rectangle can be passed as (xmin,xmax,ymin,ymax).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="BlackTelperion.correct.illumination.IlluModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">BlackTelperion.correct.illumination.</span></span><span class="sig-name descname"><span class="pre">IlluModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">I</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">P</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/correct/illumination.html#IlluModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.correct.illumination.IlluModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Combine source, reflection, occlusion and transmittance information to simulate
+the illumination within a scene.</p>
+<p>Fundamentally, an illumination model represents one or all parts of the following
+equation:</p>
+<p>r = (aS + oI)R + P</p>
+<p>Where,</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>r = the measured pixel radiance.</p></li>
+<li><p>a = the skyview factor associated with this pixel.</p></li>
+<li><p>S = the downwelling skylight spectra (assumed to be constant across the scene).</p></li>
+<li><p>o = the illumination factor for this pixel; will combine occlusion and e.g. lambert or oren-nayar reflection.</p></li>
+<li><p>I = the incident sunlight spectra in the scene.</p></li>
+<li><p>R = the material reflectance (0 - 1) of the pixel. Typically this is what we are trying to solve for.</p></li>
+<li><dl class="simple">
+<dt>P = path radiance effects that add or remove light due to interactions with air or particles between the</dt><dd><p>sensor and the target.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.correct.illumination.IlluModel.getRadiance">
+<span class="sig-name descname"><span class="pre">getRadiance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/correct/illumination.html#IlluModel.getRadiance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.correct.illumination.IlluModel.getRadiance" title="Link to this definition"></a></dt>
+<dd><p>Evaluate the measured radiance for a known reflectance, based on the equation:</p>
+<p>r = (aS + oI)R + P</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>R</strong> – the reflectance(s) to evaluate. If a scalar value is passed (must be between 0 and 1) then
+a single combined illumination spectra will be returned. If a (…,1) array of values are
+provided then a (…,n) array containing the illumination spectra at each point or pixel will
+be returned.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>an array containing the illumination spectra in its last axis.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.correct.illumination.IlluModel.getReflectance">
+<span class="sig-name descname"><span class="pre">getReflectance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/correct/illumination.html#IlluModel.getReflectance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.correct.illumination.IlluModel.getReflectance" title="Link to this definition"></a></dt>
+<dd><p>Evaluate the reflectance from measured radiance, based on the equation:</p>
+<p>R = (r - P) / (aS + oI)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>r</strong> – a (…, n) array containing the measured radiance values.</p></li>
+<li><p><strong>strict</strong> – True if reflectance values should be clipped to the physically plausible range (0 - 1). Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>an array containing the reflectance spectra in its last axis.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.correct.illumination.IlluModel.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radiance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'x'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/correct/illumination.html#IlluModel.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.correct.illumination.IlluModel.fit" title="Link to this definition"></a></dt>
+<dd><p>Compute c-factor offsets. This assumes a linear relationship between illumination and measured radiance, and
+increases/decreases either (1) the illumination component [y-shift] or (2) the measured radiance [x-shift] to
+force the regression line to pass through (0,0). Reflectance outliers are then detected and can be masked or
+corrected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>radiance</strong> – radiance data to fit to. Must have the same shape as self.data.</p></li>
+<li><p><strong>shift</strong> – apply the correction in the y-direction (adjust measured radiance to simulate the influence of path
+radiance) or in the x-direction (adjust modelled illumination to account for unknown light source). Default
+is ‘x’ (this is the typical c-factor correction).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.correct.illumination.IlluModel.plot_fit">
+<span class="sig-name descname"><span class="pre">plot_fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radiance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/correct/illumination.html#IlluModel.plot_fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.correct.illumination.IlluModel.plot_fit" title="Link to this definition"></a></dt>
+<dd><p>Plot the relationship between illumination and measured radiance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>radiance</strong> – the radiance data (BlackImage or BlackCloud) to compare too. Shape must match internal self.data array.</p></li>
+<li><p><strong>bands</strong> – the band (integer or float), band range (tuple) or bands (list) to include on the regression plot. Default
+is None (use all bands).</p></li>
+<li><p><strong>n</strong> – plot every nth point (only) to speed up plotting. Default is 100. This value does not affect the regressions.</p></li>
+<li><p><strong>nb</strong> – only calculate / plot every nb’th band if bands is a (min,max) tuple. Default is 5.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt><em>Keywords</em>:</dt><dd><p>keywords are passed to plt.scatter(…).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="BlackTelperion.correct.illumination.ELC">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">BlackTelperion.correct.illumination.</span></span><span class="sig-name descname"><span class="pre">ELC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">panels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/correct/illumination.html#ELC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.correct.illumination.ELC" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class that gathers one or more Panels and computes calculates an empirical line correction. This does not
+adequately describe or correct for scene illumination, but can be useful as a quick correction step.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.correct.illumination.ELC.get_wavelengths">
+<span class="sig-name descname"><span class="pre">get_wavelengths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/correct/illumination.html#ELC.get_wavelengths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.correct.illumination.ELC.get_wavelengths" title="Link to this definition"></a></dt>
+<dd><p>Get the wavelengths for which this ELC has been calculated.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.correct.illumination.ELC.get_bad_bands">
+<span class="sig-name descname"><span class="pre">get_bad_bands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/correct/illumination.html#ELC.get_bad_bands"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.correct.illumination.ELC.get_bad_bands" title="Link to this definition"></a></dt>
+<dd><p>Find bands in which signal-noise ratios are amplified above a threshold (due to large correction slope).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwds</strong> – <p>Keywords can include:</p>
+<ul class="simple">
+<li><p>thresh = the threshold slope. Defaults to the 85th percentile.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a boolean numpy array containing True for bad bands and False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.correct.illumination.ELC.apply">
+<span class="sig-name descname"><span class="pre">apply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/correct/illumination.html#ELC.apply"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.correct.illumination.ELC.apply" title="Link to this definition"></a></dt>
+<dd><p>Apply this empirical line calibration to the specified image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – a BlackData instance to correct</p></li>
+<li><p><strong>**kwds</strong> – <p>Keywords can include:</p>
+<ul>
+<li><p>thresh = the threshold slope. Defaults to the 90th percentile.</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a mask containing true where the corrected values are considered reasonable - see get_bad_bands(…) for more
+details. Note that this returns the np.logical_not( self.get_bad_bands(…) ).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.correct.illumination.ELC.quick_plot">
+<span class="sig-name descname"><span class="pre">quick_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/correct/illumination.html#ELC.quick_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.correct.illumination.ELC.quick_plot" title="Link to this definition"></a></dt>
+<dd><p>Plots the correction factors (slope and intercept) computed for this ELC.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> – the axes to plot on. If None (default) then a new axes is created.</p></li>
+<li><p><strong>**kwds</strong> – <p>Keywords can include:</p>
+<ul>
+<li><p>figsize = a figsize for the figure to create (if ax is None).</p></li>
+<li><dl class="simple">
+<dt>thresh = the threshold to separate good vs bad correction values (see get_bad_bands(…)). Default is the</dt><dd><p>85th percentile of slope values.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>fig, ax = the figure and axes objects containing the plot.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="BlackTelperion.correct.illumination.occlusion.html">BlackTelperion.correct.illumination.occlusion module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.correct.illumination.occlusion.html#BlackTelperion.correct.illumination.occlusion.calcBandRatioOcc"><code class="docutils literal notranslate"><span class="pre">calcBandRatioOcc()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.correct.illumination.occlusion.html#BlackTelperion.correct.illumination.occlusion.calcProjectedOcc"><code class="docutils literal notranslate"><span class="pre">calcProjectedOcc()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="BlackTelperion.correct.illumination.path.html">BlackTelperion.correct.illumination.path module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.correct.illumination.path.html#BlackTelperion.correct.illumination.path.estimate_path_radiance"><code class="docutils literal notranslate"><span class="pre">estimate_path_radiance()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.correct.illumination.path.html#BlackTelperion.correct.illumination.path.correct_path_absorption"><code class="docutils literal notranslate"><span class="pre">correct_path_absorption()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="BlackTelperion.correct.illumination.reflection.html">BlackTelperion.correct.illumination.reflection module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.correct.illumination.reflection.html#BlackTelperion.correct.illumination.reflection.estimate_incidence"><code class="docutils literal notranslate"><span class="pre">estimate_incidence()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.correct.illumination.reflection.html#BlackTelperion.correct.illumination.reflection.calcOrenNayar"><code class="docutils literal notranslate"><span class="pre">calcOrenNayar()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.correct.illumination.reflection.html#BlackTelperion.correct.illumination.reflection.calcLambert"><code class="docutils literal notranslate"><span class="pre">calcLambert()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="BlackTelperion.correct.html" class="btn btn-neutral float-left" title="BlackTelperion.correct package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="BlackTelperion.correct.illumination.occlusion.html" class="btn btn-neutral float-right" title="BlackTelperion.correct.illumination.occlusion module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

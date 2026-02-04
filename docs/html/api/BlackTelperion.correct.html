@@ -1,0 +1,216 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.correct package &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="BlackTelperion.correct.illumination package" href="BlackTelperion.correct.illumination.html" />
+    <link rel="prev" title="BlackTelperion.analyse.unsupervised module" href="BlackTelperion.analyse.unsupervised.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="BlackTelperion.html">BlackTelperion package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.RGB"><code class="docutils literal notranslate"><span class="pre">RGB</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.VNIR"><code class="docutils literal notranslate"><span class="pre">VNIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.SWIR"><code class="docutils literal notranslate"><span class="pre">SWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.BROAD"><code class="docutils literal notranslate"><span class="pre">BROAD</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.MWIR"><code class="docutils literal notranslate"><span class="pre">MWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.LWIR"><code class="docutils literal notranslate"><span class="pre">LWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.band_select_threshold"><code class="docutils literal notranslate"><span class="pre">band_select_threshold</span></code></a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="BlackTelperion.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.analyse.html">BlackTelperion.analyse package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">BlackTelperion.correct package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.filter.html">BlackTelperion.filter package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.io.html">BlackTelperion.io package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.reference.html">BlackTelperion.reference package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.utils.html">BlackTelperion.utils namespace</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="BlackTelperion.html">BlackTelperion package</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.correct package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/BlackTelperion.correct.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-BlackTelperion.correct">
+<span id="blacktelperion-correct-package"></span><h1>BlackTelperion.correct package<a class="headerlink" href="#module-BlackTelperion.correct" title="Link to this heading"></a></h1>
+<p>A package for applying radiometric and topographic corrections to hyperspectral datasets to convert measured at-sensor
+radiance to reflectance. Data detrending methods (e.g. hull corrections) are also included here.</p>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="BlackTelperion.correct.illumination.html">BlackTelperion.correct.illumination package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.correct.illumination.html#BlackTelperion.correct.illumination.sph2cart"><code class="docutils literal notranslate"><span class="pre">sph2cart()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.correct.illumination.html#BlackTelperion.correct.illumination.cart2sph"><code class="docutils literal notranslate"><span class="pre">cart2sph()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.correct.illumination.html#BlackTelperion.correct.illumination.estimate_sun_vec"><code class="docutils literal notranslate"><span class="pre">estimate_sun_vec()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.correct.illumination.html#BlackTelperion.correct.illumination.estimate_skyview"><code class="docutils literal notranslate"><span class="pre">estimate_skyview()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.correct.illumination.html#BlackTelperion.correct.illumination.UAC"><code class="docutils literal notranslate"><span class="pre">UAC()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.correct.illumination.html#BlackTelperion.correct.illumination.estimate_illu"><code class="docutils literal notranslate"><span class="pre">estimate_illu()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.correct.illumination.html#BlackTelperion.correct.illumination.IlluModel"><code class="docutils literal notranslate"><span class="pre">IlluModel</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.illumination.html#BlackTelperion.correct.illumination.IlluModel.getRadiance"><code class="docutils literal notranslate"><span class="pre">IlluModel.getRadiance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.illumination.html#BlackTelperion.correct.illumination.IlluModel.getReflectance"><code class="docutils literal notranslate"><span class="pre">IlluModel.getReflectance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.illumination.html#BlackTelperion.correct.illumination.IlluModel.fit"><code class="docutils literal notranslate"><span class="pre">IlluModel.fit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.illumination.html#BlackTelperion.correct.illumination.IlluModel.plot_fit"><code class="docutils literal notranslate"><span class="pre">IlluModel.plot_fit()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.correct.illumination.html#BlackTelperion.correct.illumination.ELC"><code class="docutils literal notranslate"><span class="pre">ELC</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.illumination.html#BlackTelperion.correct.illumination.ELC.get_wavelengths"><code class="docutils literal notranslate"><span class="pre">ELC.get_wavelengths()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.illumination.html#BlackTelperion.correct.illumination.ELC.get_bad_bands"><code class="docutils literal notranslate"><span class="pre">ELC.get_bad_bands()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.illumination.html#BlackTelperion.correct.illumination.ELC.apply"><code class="docutils literal notranslate"><span class="pre">ELC.apply()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.illumination.html#BlackTelperion.correct.illumination.ELC.quick_plot"><code class="docutils literal notranslate"><span class="pre">ELC.quick_plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.correct.illumination.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.illumination.occlusion.html">BlackTelperion.correct.illumination.occlusion module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.correct.illumination.occlusion.html#BlackTelperion.correct.illumination.occlusion.calcBandRatioOcc"><code class="docutils literal notranslate"><span class="pre">calcBandRatioOcc()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.correct.illumination.occlusion.html#BlackTelperion.correct.illumination.occlusion.calcProjectedOcc"><code class="docutils literal notranslate"><span class="pre">calcProjectedOcc()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.illumination.path.html">BlackTelperion.correct.illumination.path module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.correct.illumination.path.html#BlackTelperion.correct.illumination.path.estimate_path_radiance"><code class="docutils literal notranslate"><span class="pre">estimate_path_radiance()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.correct.illumination.path.html#BlackTelperion.correct.illumination.path.correct_path_absorption"><code class="docutils literal notranslate"><span class="pre">correct_path_absorption()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.illumination.reflection.html">BlackTelperion.correct.illumination.reflection module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.correct.illumination.reflection.html#BlackTelperion.correct.illumination.reflection.estimate_incidence"><code class="docutils literal notranslate"><span class="pre">estimate_incidence()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.correct.illumination.reflection.html#BlackTelperion.correct.illumination.reflection.calcOrenNayar"><code class="docutils literal notranslate"><span class="pre">calcOrenNayar()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.correct.illumination.reflection.html#BlackTelperion.correct.illumination.reflection.calcLambert"><code class="docutils literal notranslate"><span class="pre">calcLambert()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="BlackTelperion.correct.detrend.html">BlackTelperion.correct.detrend module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.correct.detrend.html#BlackTelperion.correct.detrend.polynomial"><code class="docutils literal notranslate"><span class="pre">polynomial()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.correct.detrend.html#BlackTelperion.correct.detrend.get_hull_corrected"><code class="docutils literal notranslate"><span class="pre">get_hull_corrected()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="BlackTelperion.correct.equalize.html">BlackTelperion.correct.equalize module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.correct.equalize.html#BlackTelperion.correct.equalize.hist_eq"><code class="docutils literal notranslate"><span class="pre">hist_eq()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.correct.equalize.html#BlackTelperion.correct.equalize.norm_eq"><code class="docutils literal notranslate"><span class="pre">norm_eq()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="BlackTelperion.correct.panel.html">BlackTelperion.correct.panel module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.correct.panel.html#BlackTelperion.correct.panel.Panel"><code class="docutils literal notranslate"><span class="pre">Panel</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.panel.html#BlackTelperion.correct.panel.Panel.set_outline"><code class="docutils literal notranslate"><span class="pre">Panel.set_outline()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.panel.html#BlackTelperion.correct.panel.Panel.copy"><code class="docutils literal notranslate"><span class="pre">Panel.copy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.panel.html#BlackTelperion.correct.panel.Panel.get_mean_radiance"><code class="docutils literal notranslate"><span class="pre">Panel.get_mean_radiance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.panel.html#BlackTelperion.correct.panel.Panel.get_reflectance"><code class="docutils literal notranslate"><span class="pre">Panel.get_reflectance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.panel.html#BlackTelperion.correct.panel.Panel.set_normal"><code class="docutils literal notranslate"><span class="pre">Panel.set_normal()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.panel.html#BlackTelperion.correct.panel.Panel.get_skyview"><code class="docutils literal notranslate"><span class="pre">Panel.get_skyview()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.panel.html#BlackTelperion.correct.panel.Panel.get_alpha"><code class="docutils literal notranslate"><span class="pre">Panel.get_alpha()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.panel.html#BlackTelperion.correct.panel.Panel.quick_plot"><code class="docutils literal notranslate"><span class="pre">Panel.quick_plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.panel.html#BlackTelperion.correct.panel.Panel.plot_ratio"><code class="docutils literal notranslate"><span class="pre">Panel.plot_ratio()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="BlackTelperion.analyse.unsupervised.html" class="btn btn-neutral float-left" title="BlackTelperion.analyse.unsupervised module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="BlackTelperion.correct.illumination.html" class="btn btn-neutral float-right" title="BlackTelperion.correct.illumination package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

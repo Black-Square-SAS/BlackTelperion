@@ -1,0 +1,337 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.filter.segment module &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="BlackTelperion.filter.tpt module" href="BlackTelperion.filter.tpt.html" />
+    <link rel="prev" title="BlackTelperion.filter.sample module" href="BlackTelperion.filter.sample.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="BlackTelperion.html">BlackTelperion package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.RGB"><code class="docutils literal notranslate"><span class="pre">RGB</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.VNIR"><code class="docutils literal notranslate"><span class="pre">VNIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.SWIR"><code class="docutils literal notranslate"><span class="pre">SWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.BROAD"><code class="docutils literal notranslate"><span class="pre">BROAD</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.MWIR"><code class="docutils literal notranslate"><span class="pre">MWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.LWIR"><code class="docutils literal notranslate"><span class="pre">LWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.band_select_threshold"><code class="docutils literal notranslate"><span class="pre">band_select_threshold</span></code></a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="BlackTelperion.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.analyse.html">BlackTelperion.analyse package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.html">BlackTelperion.correct package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="BlackTelperion.filter.html">BlackTelperion.filter package</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.filter.html#BlackTelperion.filter.boost_saturation"><code class="docutils literal notranslate"><span class="pre">boost_saturation()</span></code></a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="BlackTelperion.filter.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.io.html">BlackTelperion.io package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.reference.html">BlackTelperion.reference package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.utils.html">BlackTelperion.utils namespace</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="BlackTelperion.html">BlackTelperion package</a></li>
+          <li class="breadcrumb-item"><a href="BlackTelperion.filter.html">BlackTelperion.filter package</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.filter.segment module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/BlackTelperion.filter.segment.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-BlackTelperion.filter.segment">
+<span id="blacktelperion-filter-segment-module"></span><h1>BlackTelperion.filter.segment module<a class="headerlink" href="#module-BlackTelperion.filter.segment" title="Link to this heading"></a></h1>
+<p>Functions for segmenting regions of images for individual analyses. E.g., segmenting core trays or hand samples
+from images taken with a core scannner.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.filter.segment.readAnnotations">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.filter.segment.</span></span><span class="sig-name descname"><span class="pre">readAnnotations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hsi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_patches</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_panels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'average'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/filter/segment.html#readAnnotations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.filter.segment.readAnnotations" title="Link to this definition"></a></dt>
+<dd><p>Extract pixel positions and region spectra (e.g. calibration panels) based on an annotation image.
+This image should have three RGB bands (0 - 255) and will be parsed as follows:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>[0,0,0] = black = retain data.</p></li>
+<li><p>[255,255,255] = white = mask data (replace with nan).</p></li>
+<li><p>[aaa,aaa,aaa] = grays = extract regions and add averaged spectra to header file indexed by grey value.</p></li>
+<li><p>[0,255,255],[255,0,255],[255,255,0]  = cyan, magenta, yellow = extract calibration panels A, B and C (respectively).</p></li>
+<li><p>[n,0,0] (reds), [0,n,0] (blues), [0,0,n] (greens) = extract pixel locations and add to header file as points A, B and C (respectively). These will be ordered based on the corresponding channel value.</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>annot</strong> – the annotations image (three channels, 0-255, uint8) matching the format described above.</p></li>
+<li><p><strong>hsi</strong> – a hyperspectral image with matching x- and y- dimensions to the annotation image.</p></li>
+<li><p><strong>mask_patches</strong> – True if patches should be removed from output. Default is False. [ i.e. these will be retained in the image ].</p></li>
+<li><p><strong>mask_panels</strong> – True if panels should be removed from output. Default is False. [ i.e. these will be retained in the image ].</p></li>
+<li><p><strong>mask_points</strong> – True if points should be removed from output. Default is False. [ i.e. these will be retained in the image ].</p></li>
+<li><p><strong>mode</strong> – function used to aggregate pixel values. Options are ‘average’ (default) or ‘median’.</p></li>
+<li><p><strong>inplace</strong> – True if the hsi image should be modified in-place or copied (default).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a copy of the input file (if inplace is False) with the extracted points and spectra added to the header file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.filter.segment.label_blocks">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.filter.segment.</span></span><span class="sig-name descname"><span class="pre">label_blocks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boost</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">erode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(680.0,</span> <span class="pre">550.0,</span> <span class="pre">505.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/filter/segment.html#label_blocks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.filter.segment.label_blocks" title="Link to this definition"></a></dt>
+<dd><p>Segments an image into background and different hand samples based on point labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> – the image to segment.</p></li>
+<li><p><strong>fg</strong> – the foreground definition (labelled with sample IDs). If None (default) then samples are pulled from the header file.</p></li>
+<li><p><strong>s</strong> – the number of pixels to label at each label point (if fg is not specified).</p></li>
+<li><p><strong>epad</strong> – padding around the edge of the image to be specified as background. Default is 20 pixels.</p></li>
+<li><p><strong>boost</strong> – multiplication factor to exaggurate foreground background contrast.</p></li>
+<li><p><strong>erode</strong> – Amount of erosion to apply to remove small regions labelled as sample. Default is 3. Set to 0 to disable.</p></li>
+<li><p><strong>bands</strong> – the bands to use for segmentation. Default is BlackTelperion.RGB.</p></li>
+<li><p><strong>vb</strong> – True if figures should be generated for QAQC. Default is True.</p></li>
+<li><p><strong>**kwds</strong> – keywords are passed to BlackImage.quick_plot( … ) if vb is true.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.filter.segment.extract_tiles">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.filter.segment.</span></span><span class="sig-name descname"><span class="pre">extract_tiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connected</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">erode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/filter/segment.html#extract_tiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.filter.segment.extract_tiles" title="Link to this definition"></a></dt>
+<dd><p>Extract tiles that each contain a single contiguous block based on the specified classification. Useful for
+extracting individual samples from core-scanner imagery.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> – the hyperspectral image to extract blocks from</p></li>
+<li><p><strong>labels</strong> – a BlackImage instance or numpy array with different samples labelled as non-0 values.</p></li>
+<li><p><strong>connected</strong> – True if separate groups of pixels with the same label should be split
+into different tiles using cv2.connectedComponents. Default is True.</p></li>
+<li><p><strong>ids</strong> – a list of label ids to extract. If None (default), all non-zero classes will
+be extracted.</p></li>
+<li><p><strong>erode</strong> – number of pixels to erode from mask before extracting tiles. Default is 0.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.filter.segment.group_tiles">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.filter.segment.</span></span><span class="sig-name descname"><span class="pre">group_tiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/filter/segment.html#group_tiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.filter.segment.group_tiles" title="Link to this definition"></a></dt>
+<dd><p>Group a list of image tiles based on corresponding group IDs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tiles</strong> – a list of BlackImage tiles.</p></li>
+<li><p><strong>groups</strong> – a list of integers corresponding to the grouping to arrange tiles by.</p></li>
+<li><p><strong>ids</strong> – a list of sample IDs to create an id classification (or None).</p></li>
+<li><p><strong>rotate</strong> – True if tiles should be rotated such that they’re longer dimension aligns with the x-axis.</p></li>
+<li><p><strong>ignore</strong> – a list of group id’s that should be ignored/excluded from this grouping.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A tuple containing:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>tiled_image = a BlackImage instance containing the arranged tiles.</p></li>
+<li><p>tiled_label = a BlackImage classification containing the class indices used to arrange the tiles.</p></li>
+<li><p>[tiled_id] = a BlackImage classification containing individual sample IDs (if ids is not None).</p></li>
+<li><p>bounds = the bounds (x,y,width,height) of each group of tiles. Useful for labelling or separation.</p></li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.filter.segment.build_core_template">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.filter.segment.</span></span><span class="sig-name descname"><span class="pre">build_core_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">images</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/filter/segment.html#build_core_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.filter.segment.build_core_template" title="Link to this definition"></a></dt>
+<dd><p>Overlay images of core trays from e.g. a drillhole to calculate a template that is used for extracting
+individual core segments and is robust to data quirks (e.g. empty trays). All images must be identical
+dimensions and properly co-aligned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>images</strong> – a list of co-aligned images of different core trays build template with.</p></li>
+<li><p><strong>N</strong> – the number of cores per tray. Default is 5.</p></li>
+<li><p><strong>thresh</strong> – percentile used to separate foreground from background. Default is 40. Higher values ensure
+proper separation of cores, but will crop data more closely.</p></li>
+<li><p><strong>vb</strong> – True if a tqdm progress bar should be printed.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.filter.segment.unwrap_core">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.filter.segment.</span></span><span class="sig-name descname"><span class="pre">unwrap_core</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/filter/segment.html#unwrap_core"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.filter.segment.unwrap_core" title="Link to this definition"></a></dt>
+<dd><p>Unwrap drillholes in a core tray and stack them end to end along the x-axis, with the top at the left. Note that
+the top-left of the core tray is considered to be the “top”, so the image may need to be flipped/mirrored prior
+to calling this function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> – the image to unwrap. Background (non-core pixels) must have already been masked and set as np.nan.</p></li>
+<li><p><strong>template</strong> – A labelled template</p></li>
+<li><p><strong>stack</strong> – ‘line’ or ‘separate’; either align cores in a single stick (‘line’),
+or return individual tiles (‘separate’).</p></li>
+<li><p><strong>**kwds</strong> – <p>Keywords can include:</p>
+<ul>
+<li><p>start = the meterage of the top of the core. Will be added to the image header.</p></li>
+<li><p>end = the meterage of the bottom of the core. Will be added to the image header.</p></li>
+<li><p>id = the id of this core tray.</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.filter.segment.tray_to_stick">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.filter.segment.</span></span><span class="sig-name descname"><span class="pre">tray_to_stick</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/filter/segment.html#tray_to_stick"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.filter.segment.tray_to_stick" title="Link to this definition"></a></dt>
+<dd><p>Break a unwrapped tray into individual sticks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tray</strong> – a BlackImage instance containing a linearly unwrapped tray.</p></li>
+<li><p><strong>N</strong> – the number of chunks of core to break it into.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.filter.segment.composite_cores">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.filter.segment.</span></span><span class="sig-name descname"><span class="pre">composite_cores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trays</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/filter/segment.html#composite_cores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.filter.segment.composite_cores" title="Link to this definition"></a></dt>
+<dd><p>Composites a list of uwrapped core trays (cf. unwrap_core(…)) into a single image such that each column
+represents a single tray (arranged vertically).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trays</strong> – a list of BlackImage instances containing unwrapped core trays. The header of these
+images must contain localisation information; specifically the “core start” and “core end”
+keywords.</p></li>
+<li><p><strong>pad</strong> – the padding (in pixels) between core segments.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.filter.segment.plot_drillhole">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.filter.segment.</span></span><span class="sig-name descname"><span class="pre">plot_drillhole</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">composite</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxN</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/filter/segment.html#plot_drillhole"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.filter.segment.plot_drillhole" title="Link to this definition"></a></dt>
+<dd><p>Plot a composite drillhole as created by composite_core. This plots the image data, but includes annotations
+the specify the distances along/down hole.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>N</strong> – the number of sticks per tray. Used to ensure start/end labels are in the correct place.</p></li>
+<li><p><strong>max_trays</strong> – the maximum number of trays per row. Default is 25.</p></li>
+</ul>
+</dd>
+</dl>
+<p><em>Keywords</em>: are passed to BlackImage.quick_plot( … )</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.filter.segment.map_depth">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.filter.segment.</span></span><span class="sig-name descname"><span class="pre">map_depth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/filter/segment.html#map_depth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.filter.segment.map_depth" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="BlackTelperion.filter.sample.html" class="btn btn-neutral float-left" title="BlackTelperion.filter.sample module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="BlackTelperion.filter.tpt.html" class="btn btn-neutral float-right" title="BlackTelperion.filter.tpt module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,251 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.analyse.unmixing &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/BlackTelperion.html">BlackTelperion package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../analyse.html">BlackTelperion.analyse</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.analyse.unmixing</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for BlackTelperion.analyse.unmixing</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functions for linear unmixing using endmember spectra.</span>
+
+<span class="sd">Note that some of these rely on functions implemented in `pysptools`, which thus</span>
+<span class="sd">may need to be installed for them to work.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">BlackTelperion</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlackLibrary</span><span class="p">,</span> <span class="n">BlackData</span>
+
+<div class="viewcode-block" id="mix">
+<a class="viewcode-back" href="../../../api/BlackTelperion.analyse.unmixing.html#BlackTelperion.analyse.unmixing.mix">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mix</span><span class="p">(</span> <span class="n">abundances</span> <span class="p">:</span> <span class="n">BlackData</span><span class="p">,</span> <span class="n">endmembers</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate synthetic spectra by linearly mixing an abundance and endmember</span>
+<span class="sd">    matrix. </span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        abundances: a BlackData instance (e.g. image or cloud) with bands representing abundances (typically from 0 to 1).</span>
+<span class="sd">        endmembers: A numpy array of shape (nendmembers, bands), or BlackLibrary instance</span>
+<span class="sd">                    containing these same endmembers.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A BlackData instance with the same type as abundances, but containing the forward modelled (linearly mixed) spectra.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># create output object and get data vector to unmix (without nans)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">abundances</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">abundances</span><span class="o">.</span><span class="n">X</span><span class="p">(</span><span class="n">onlyFinite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># get endmembers as numpy array</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span> <span class="n">endmembers</span><span class="p">,</span> <span class="n">BlackLibrary</span><span class="p">):</span>
+        <span class="n">E</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span> <span class="n">endmembers</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span> <span class="p">)</span>
+
+    <span class="c1"># do forward mixing</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">A</span> <span class="o">@</span> <span class="n">E</span>
+
+    <span class="c1"># put into output object and return</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">set_raveled</span><span class="p">(</span> <span class="n">X</span><span class="p">,</span> <span class="n">onlyFinite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span> <span class="n">endmembers</span><span class="p">,</span> <span class="n">BlackLibrary</span><span class="p">):</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">set_wavelengths</span><span class="p">(</span> <span class="n">endmembers</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">()</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="unmix">
+<a class="viewcode-back" href="../../../api/BlackTelperion.analyse.unmixing.html#BlackTelperion.analyse.unmixing.unmix">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">unmix</span><span class="p">(</span> <span class="n">data</span> <span class="p">:</span> <span class="n">BlackData</span><span class="p">,</span> <span class="n">endmembers</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">method</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;nnls&#39;</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform least squares unmixing to estimate linear combinations</span>
+<span class="sd">    of the specified endmembers that best reproduce the observed data.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: a BlackData instance (e.g. image or cloud) to unmix.</span>
+<span class="sd">        endmembers: A numpy array of shape (nendmembers, bands), or BlackLibrary instance</span>
+<span class="sd">                    containing these same endmembers.</span>
+<span class="sd">        method: the unmixing constraints. Options are non-negative (&#39;nnls&#39;, default) or fully</span>
+<span class="sd">                constrained (&#39;fcls&#39;). </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A BlackData instance with the same type as data, but containing the estimated endmember abundances.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># create output object and get data vector to unmix (without nans)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">X</span><span class="p">(</span><span class="n">onlyFinite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
+    <span class="c1"># get endmembers as numpy array</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span> <span class="n">endmembers</span><span class="p">,</span> <span class="n">BlackLibrary</span><span class="p">):</span>
+        <span class="n">E</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span> <span class="n">endmembers</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span> <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">E</span> <span class="o">=</span> <span class="n">endmembers</span> <span class="c1"># data is a numpy array?</span>
+    <span class="k">assert</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">E</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;Endmembers have </span><span class="si">%d</span><span class="s2"> bands, data has </span><span class="si">%d</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">E</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1"># do unmixing (using pysptools)</span>
+    <span class="c1"># todo - probably we could do this ourselves using scipy.optimize? </span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pysptools.abundance_maps.amaps</span><span class="w"> </span><span class="kn">import</span> <span class="n">NNLS</span><span class="p">,</span> <span class="n">FCLS</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;pysptools is not install. Try `pip install pysptools`.&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;nnls&#39;</span> <span class="ow">in</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">NNLS</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">E</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="s1">&#39;fcls&#39;</span> <span class="ow">in</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">FCLS</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">E</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> is an unknown unmixing method. Should be &#39;nnls&#39; or &#39;fcls&#39;.&quot;</span><span class="o">%</span><span class="n">method</span>
+    
+    <span class="c1"># put into output object and return</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">set_raveled</span><span class="p">(</span> <span class="n">A</span><span class="p">,</span> <span class="n">onlyFinite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span> <span class="n">endmembers</span><span class="p">,</span> <span class="n">BlackLibrary</span><span class="p">)</span> <span class="ow">and</span> <span class="n">endmembers</span><span class="o">.</span><span class="n">has_band_names</span><span class="p">():</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">set_band_names</span><span class="p">(</span> <span class="n">endmembers</span><span class="o">.</span><span class="n">get_band_names</span><span class="p">()</span> <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">set_band_names</span><span class="p">([</span><span class="s2">&quot;EM</span><span class="si">%d</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">E</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])])</span>
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="endmembers">
+<a class="viewcode-back" href="../../../api/BlackTelperion.analyse.unmixing.html#BlackTelperion.analyse.unmixing.endmembers">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">endmembers</span><span class="p">(</span> <span class="n">data</span> <span class="p">:</span> <span class="n">BlackData</span><span class="p">,</span> <span class="n">n</span> <span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">method</span> <span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;nfindr&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Use endmember identification methods implemented in pysptools to find candidate </span>
+<span class="sd">    &quot;pure&quot; pixels to use as endmembers. Note that these should always be manually vetted</span>
+<span class="sd">    as they represent, in essence, outliers.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: a BlackData instance (e.g. image or cloud) to unmix.</span>
+<span class="sd">        n: The number of endmembers to find.</span>
+<span class="sd">        method: The endmember identification method. These are fully documented in the </span>
+<span class="sd">                pysptools documentation, and can be one of: &#39;nfindr&#39;, &#39;&#39; ...</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        library: A BlackLibrary containing the identified endmembers. </span>
+<span class="sd">        indices: A numpy array containing the coordinates of the selected endmembers in the input data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># create data and corresponding index array (and drop nans)</span>
+    <span class="n">ix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">)</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span> <span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="p">:</span> <span class="p">]</span> <span class="c1"># get data vector</span>
+    <span class="n">ix</span> <span class="o">=</span> <span class="n">ix</span><span class="p">[:,</span> <span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">T</span> <span class="c1"># get original indices</span>
+    
+    <span class="c1"># find endmembers</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">pysptools</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;pysptools is not install. Try `pip install pysptools`.&quot;</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">int</span> <span class="o">=</span> <span class="nb">int</span> <span class="c1"># hack needed to deal with some numpy versions... (and avoid a pysptools bug)</span>
+    <span class="k">if</span> <span class="s1">&#39;atgp&#39;</span> <span class="ow">in</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pysptools.eea.eea</span><span class="w"> </span><span class="kn">import</span> <span class="n">ATGP</span>
+        <span class="n">em</span><span class="p">,</span> <span class="n">im</span> <span class="o">=</span> <span class="n">ATGP</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="s1">&#39;fippi&#39;</span> <span class="ow">in</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pysptools.eea.eea</span><span class="w"> </span><span class="kn">import</span> <span class="n">FIPPI</span>
+        <span class="n">em</span><span class="p">,</span> <span class="n">im</span> <span class="o">=</span> <span class="n">FIPPI</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="s1">&#39;nfindr&#39;</span> <span class="ow">in</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pysptools.eea</span><span class="w"> </span><span class="kn">import</span> <span class="n">NFINDR</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="n">NFINDR</span><span class="p">()</span>
+        <span class="n">em</span> <span class="o">=</span> <span class="n">N</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span><span class="kc">None</span><span class="p">,:],</span> <span class="n">q</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="n">im</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">N</span><span class="o">.</span><span class="n">get_idx</span><span class="p">())[:,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="s1">&#39;ppi&#39;</span> <span class="ow">in</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pysptools.eea</span><span class="w"> </span><span class="kn">import</span> <span class="n">PPI</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">PPI</span><span class="p">()</span>
+        <span class="n">em</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span><span class="kc">None</span><span class="p">,:],</span> <span class="n">q</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="n">im</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">P</span><span class="o">.</span><span class="n">get_idx</span><span class="p">())[:,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> is an unknown endmember selection method. Options are &#39;atgp&#39;, &#39;fippi&#39;, &#39;nfindr&#39; and &#39;ppi&#39;.&quot;</span><span class="o">%</span><span class="n">method</span>
+    
+    <span class="c1"># sort out indices</span>
+    <span class="n">im</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">ix</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">im</span><span class="p">])</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+    
+    <span class="c1"># build output library</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">BlackLibrary</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">em</span><span class="p">),</span> <span class="n">lab</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;EM</span><span class="si">%d</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">em</span><span class="p">))],</span> <span class="n">wav</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="n">im</span></div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

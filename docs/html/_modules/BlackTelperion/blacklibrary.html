@@ -1,0 +1,742 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.blacklibrary &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/BlackTelperion.html">BlackTelperion package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.blacklibrary</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for BlackTelperion.blacklibrary</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Create, store and manipulate spectral libraries.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">BlackTelperion.blackdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlackData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">BlackTelperion.blackfeature</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlackFeature</span><span class="p">,</span> <span class="n">MultiFeature</span><span class="p">,</span> <span class="n">MixedFeature</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">BlackTelperion.reference.features</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ref</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<div class="viewcode-block" id="from_indices">
+<a class="viewcode-back" href="../../api/BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.from_indices">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">from_indices</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract a spectral library by sampling and averaging pixels within the specified distance of sample points.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        data (BlackData): a BlackData instance containing the spectral data.</span>
+<span class="sd">        indices (list): a list of sample indices to extract spectra from</span>
+<span class="sd">        s (int): the number of adjacent points to include in each sample. For BlackImage data this will be a square patch of sxs</span>
+<span class="sd">           pixels.</span>
+<span class="sd">        names (list): a list containing names for each sample, or None to generate (numeric) sample ids.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        a BlackLibrary instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Sample_</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+
+    <span class="c1"># extract spectra</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">names</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span> <span class="o">-</span> <span class="n">s</span><span class="p">:</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># image</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">s</span><span class="p">:</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">s</span><span class="p">,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">s</span><span class="p">:</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">s</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">band_count</span><span class="p">())</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">s</span><span class="p">:</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">s</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">S</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">BlackLibrary</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">lab</span><span class="o">=</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">wav</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">()))</span>
+
+    <span class="c1"># merge</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">S</span><span class="p">)):</span>
+        <span class="n">out</span> <span class="o">+=</span> <span class="n">S</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="c1"># return</span>
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="from_classification">
+<a class="viewcode-back" href="../../api/BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.from_classification">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">from_classification</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">subsample</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract a spectral library from a labelled dataset.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (BlackData): a BlackData instance containing the hyperspectral data.</span>
+<span class="sd">        labels (BlackData): a BlackData instance or numpy array containing class labels.</span>
+<span class="sd">        names (dict): a dictionary with numerical labels (integers) in labels.data as keys and corresponding string names</span>
+<span class="sd">               as values. If None, class names will be pulled from the header, and if these don&#39;t exist then integer</span>
+<span class="sd">               names will be used.</span>
+<span class="sd">        ignore (list): a list of class IDs (integer values) to ignore. By default all nans and 0&#39;s will be ignored.</span>
+<span class="sd">        method (str): method used for reducing the number of spectra in this library. Options are &#39;all&#39; (retain all</span>
+<span class="sd">                measurements), an integer of the number of points to (randomly) sample, or a list containing</span>
+<span class="sd">                percentiles to sample. Using the percentile method, samples will be ranked by median brightness</span>
+<span class="sd">                (albedo) and the spectra corresponding to the desired percentiles kept in the library. Default is &#39;all&#39;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        a BlackLibrary instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">X</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">BlackData</span><span class="p">):</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">X</span><span class="p">()</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">),</span> <span class="s2">&quot;Error - labels must be array or BlackData, not </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">labels</span><span class="p">))</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">L</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;Error - number of spectra (</span><span class="si">%d</span><span class="s2">) does not match number of labels (</span><span class="si">%d</span><span class="s2">)?&quot;</span> <span class="o">%</span> <span class="p">(</span>
+    <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">L</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>  <span class="c1"># get unique classes</span>
+
+    <span class="c1"># build name dictionary if not provided</span>
+    <span class="n">cls_names</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">classes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">ids</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">BlackData</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;class names&#39;</span> <span class="ow">in</span> <span class="n">labels</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
+            <span class="n">classes</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;class names&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">classes</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">classes</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">classes</span><span class="p">):</span>
+            <span class="n">cls_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span>
+
+    <span class="n">Y</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># store columns of spectral library here</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># sample names</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ids</span><span class="p">):</span>  <span class="c1"># loop through classes</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">ignore</span><span class="p">:</span>
+            <span class="k">continue</span>  <span class="c1"># skip ignored classes</span>
+
+        <span class="n">_S</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">L</span> <span class="o">==</span> <span class="n">n</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># get samples</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subsample</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;all&#39;</span> <span class="ow">in</span> <span class="n">subsample</span><span class="p">:</span>
+            <span class="n">S</span> <span class="o">=</span> <span class="n">_S</span>  <span class="c1"># keep all samples</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subsample</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>  <span class="c1"># random selection</span>
+            <span class="k">if</span> <span class="n">_S</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">subsample</span><span class="p">:</span>
+                <span class="n">S</span> <span class="o">=</span> <span class="n">_S</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">S</span> <span class="o">=</span> <span class="n">_S</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">subsample</span><span class="p">,</span> <span class="n">subsample</span><span class="p">),</span> <span class="p">:]</span>  <span class="c1"># select random spectra</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subsample</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subsample</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subsample</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="c1"># get percentiles</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">_S</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+            <span class="n">S</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">subsample</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="s2">&quot;Error - percentiles must be integers between 0 and 100, not </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="n">p</span>
+                <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">p</span> <span class="ow">and</span> <span class="mi">100</span> <span class="o">&gt;=</span> <span class="n">p</span><span class="p">,</span> <span class="s2">&quot;Error - percentiles must be integers between 0 and 100, not </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="n">p</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">p</span> <span class="o">/</span> <span class="mf">100.</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span>  <span class="c1"># convert percentile to index</span>
+                <span class="n">S</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_S</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="n">p</span><span class="p">],</span> <span class="p">:])</span>
+            <span class="n">S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>
+        <span class="c1"># store</span>
+        <span class="n">Y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>
+
+        <span class="n">samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cls_names</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="s1">&#39;S_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)))</span>
+
+    <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">Y</span><span class="p">]),</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>  <span class="c1"># build output array</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">Y</span><span class="p">):</span>
+        <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:</span><span class="n">s</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">s</span>
+
+    <span class="k">return</span> <span class="n">BlackLibrary</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">wav</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="BlackLibrary">
+<a class="viewcode-back" href="../../api/BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BlackLibrary</span><span class="p">(</span><span class="n">BlackData</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class for loading and managing spectral libraries and associated metadata.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">lab</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wav</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            data (ndarray): a numpy array containing spectral measurements and indexed as [sample, measurement, band]. If different</span>
+<span class="sd">                  numbers of measurements are available per sample then some of the measurement axes can be set as nan. If</span>
+<span class="sd">                  a 2D array is passed (sample, band) then it will be expanded to (sample, 1, band).</span>
+<span class="sd">            lab (list): list of sample labels (one label per sample). Default is None (labels will be integers from 0 - n).</span>
+<span class="sd">            wav (list, ndarray): list of wavelengths in the spectra for each sample. If None this must be defined in the header file passed.</span>
+<span class="sd">            header (BlackTelperion.BlackHeader): a BlackHeader instance containing additional metadata to associate with this library.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># checks</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">),</span> <span class="s2">&quot;Error - reflectance data must be a numpy array.&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span><span class="kc">None</span><span class="p">,:]</span> <span class="c1"># expand to correct shape</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Error - reflectance data must by a 2D array indexed as [sample,measurement,bands].&quot;</span>
+
+        <span class="c1"># init BlackData object with reflectance data</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;file type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;BlackTelperion Library&#39;</span>  <span class="c1"># set file type</span>
+
+        <span class="c1"># store wavelength data</span>
+        <span class="k">if</span> <span class="n">wav</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">has_wavelengths</span><span class="p">(),</span> <span class="s2">&quot;Error - no wavelength data specified&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wav</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wav</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">),</span> <span class="s2">&quot;Error - wavelengths must be a list.&quot;</span>
+            <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">wav</span><span class="p">),</span> <span class="s2">&quot;Error - wavelengths must be specified for each reflectance band.&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;wavelength&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wav</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># store wavelength data</span>
+
+        <span class="c1"># store sample labels</span>
+        <span class="k">if</span> <span class="n">lab</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_sample_names</span><span class="p">(</span> <span class="n">lab</span> <span class="p">)</span>
+
+<div class="viewcode-block" id="BlackLibrary.copy">
+<a class="viewcode-back" href="../../api/BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.copy">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make a deep copy of this BlackLibrary instance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (bool): True if a copy of the data should be made, otherwise only copy header.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            a new BlackLibrary instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">wav</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_sample_names</span><span class="p">():</span>
+            <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sample_names</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">==</span><span class="kc">True</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_wavelengths</span><span class="p">():</span>
+            <span class="n">wav</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">()</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">BlackLibrary</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">lab</span><span class="o">=</span><span class="n">names</span><span class="p">,</span> <span class="n">wav</span><span class="o">=</span><span class="n">wav</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># drop data array to protect it (we don&#39;t want shallow copies)</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="BlackLibrary.as_image">
+<a class="viewcode-back" href="../../api/BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.as_image">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">as_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shallow</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert this library to a BlackImage dataset for e.g. visualisation using BlackImage.quick_plot(...).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            shallow (bool): True if the underlying data array should be shared. Default is False as copies are dangerous.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            a BlackImage instance of this dataset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">BlackTelperion.blackimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlackImage</span> <span class="c1"># N.B. this import must be here to avoid circular import</span>
+        <span class="k">if</span> <span class="n">shallow</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">BlackImage</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">BlackImage</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">header</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BlackLibrary.merge">
+<a class="viewcode-back" href="../../api/BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.merge">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">library2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a copy of this library merged with another.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">()</span> <span class="o">==</span> <span class="n">library2</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">())</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="s2">&quot;Error - libraries must have same wavelength info...&quot;</span>
+
+        <span class="c1"># copy/merge data</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">library2</span><span class="o">.</span><span class="n">data</span><span class="p">]</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lower</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">upper</span><span class="p">,</span> <span class="n">library2</span><span class="o">.</span><span class="n">upper</span><span class="p">]</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lower</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lower</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span> <span class="n">library2</span><span class="o">.</span><span class="n">lower</span><span class="p">])</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_sample_names</span><span class="p">()</span> <span class="ow">and</span> <span class="n">library2</span><span class="o">.</span><span class="n">has_sample_names</span><span class="p">():</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">set_sample_names</span> <span class="p">(</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_sample_names</span><span class="p">())</span><span class="o">+</span><span class="nb">list</span><span class="p">(</span><span class="n">library2</span><span class="o">.</span><span class="n">get_sample_names</span><span class="p">()))</span>
+
+        <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="BlackLibrary.sample_count">
+<a class="viewcode-back" href="../../api/BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.sample_count">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sample_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Number of samples/spectra in this library.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="BlackLibrary.has_sample_names">
+<a class="viewcode-back" href="../../api/BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.has_sample_names">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">has_sample_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Has this library got associated sample names?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;sample names&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span></div>
+
+
+<div class="viewcode-block" id="BlackLibrary.get_sample_names">
+<a class="viewcode-back" href="../../api/BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.get_sample_names">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_sample_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get list of sample names.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_sample_names</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get_list</span><span class="p">(</span><span class="s1">&#39;sample names&#39;</span><span class="p">)</span> <span class="c1"># names are defined</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># no names defined, so make some</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;sample names&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;S</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_count</span><span class="p">())</span> <span class="p">]</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sample_names</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="BlackLibrary.set_sample_names">
+<a class="viewcode-back" href="../../api/BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.set_sample_names">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_sample_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set sample names</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">),</span> <span class="s2">&quot;Error - sample labels must be a list.&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">),</span> <span class="s2">&quot;Error - sample names must be specified for each sample.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;sample names&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">names</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BlackLibrary.has_groups">
+<a class="viewcode-back" href="../../api/BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.has_groups">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">has_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns true if any groups are present in this dataset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_groups</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="BlackLibrary.get_groups">
+<a class="viewcode-back" href="../../api/BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.get_groups">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a list of groups that have been defined for the BlackLibrary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;group&#39;</span><span class="p">:</span>
+                <span class="n">groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="p">)</span>
+        <span class="k">return</span> <span class="n">groups</span></div>
+
+
+<div class="viewcode-block" id="BlackLibrary.get_group_ids">
+<a class="viewcode-back" href="../../api/BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.get_group_ids">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_group_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a list containing the indices of spectra associated with the specified group.  This can be useful for</span>
+<span class="sd">        slicing the self.data matrix.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): a string containing the name of the group.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            a list containing integer indices of the spectra in this group.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="s1">&#39;group </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">,</span> <span class="s2">&quot;Error - no group named </span><span class="si">%s</span><span class="s2"> exists.&quot;</span> <span class="o">%</span> <span class="n">name</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get_list</span><span class="p">(</span><span class="s1">&#39;group </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BlackLibrary.get_group">
+<a class="viewcode-back" href="../../api/BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.get_group">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">shallow</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a BlackLibrary instance containing only the spectra associated with the specified group.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): the name of the group.</span>
+<span class="sd">            shallow (bool): True if the returned BlackLibrary instance should be a shallow copy (share the same underlying data</span>
+<span class="sd">                      array and header file) as this instance so changes propagate. Default is False - shallow copies</span>
+<span class="sd">                      are powerful but dangerous!.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            a BlackLibrary instance containing the requested group of spectra.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_group_ids</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sample_index</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ids</span> <span class="p">]</span>
+        <span class="k">if</span> <span class="n">shallow</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">BlackLibrary</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">ids</span><span class="p">,</span> <span class="p">:],</span> <span class="n">lab</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_sample_names</span><span class="p">()[</span><span class="n">ids</span><span class="p">],</span> <span class="n">wav</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">BlackLibrary</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">ids</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">lab</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_sample_names</span><span class="p">()[</span><span class="n">ids</span><span class="p">],</span> <span class="n">wav</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="BlackLibrary.add_group">
+<a class="viewcode-back" href="../../api/BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.add_group">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">indices</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Associate the specified spectra with some arbitrary grouping key for easy subsequent access. Note that if</span>
+<span class="sd">        a group of this name already exists then it will be overwritten / updated.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): the name of this group.</span>
+<span class="sd">            indices (list, ndarray): the indices (integer) or sample names (string) associated with each of the</span>
+<span class="sd">                     spectra in this group.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sample_names</span><span class="p">(),</span> <span class="s2">&quot;Error - </span><span class="si">%s</span><span class="s2"> is already a sample name.&quot;</span> <span class="o">%</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;group </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">indices</span> <span class="c1"># add group to header file</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Slice this library to extract groups or label names. Keys can be either string defining sample or group names,</span>
+<span class="sd">        integers (treated as indices of the sample array) or lists/arrays of the above.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            n (str): the group or label name to extract.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;Error - </span><span class="si">%s</span><span class="s1"> is an invalid spectra key.&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="c1"># create ouput with first entry</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">n</span><span class="p">)):</span>
+                <span class="n">out</span> <span class="o">+=</span> <span class="bp">self</span><span class="p">[</span><span class="n">n</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="c1"># append each entry</span>
+            <span class="k">return</span> <span class="n">out</span> <span class="c1"># done, return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="nb">float</span><span class="p">):</span> <span class="c1"># subset using index</span>
+                <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sample_names</span><span class="p">()[</span><span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="c1"># get corresponding name</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sample_names</span><span class="p">():</span> <span class="c1"># this is a sample name</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sample_index</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+                <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span> <span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="p">:,</span> <span class="p">:</span> <span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span> <span class="n">n</span> <span class="p">)</span> <span class="c1"># return group (easy)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Error - </span><span class="si">%s</span><span class="s2"> is an invalid spectra key.&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">BlackLibrary</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">lab</span><span class="o">=</span> <span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="n">wav</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">())</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">band_count</span><span class="p">()</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">band_count</span><span class="p">()):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning - wavelength arrays do not match. Resampling.&quot;</span><span class="p">)</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">(),</span> <span class="n">vb</span><span class="o">=</span><span class="kc">False</span> <span class="p">)</span>
+
+        <span class="c1"># merge samples</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">maxs</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sample_names</span><span class="p">():</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">S</span><span class="p">:</span>
+                <span class="n">S</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">S</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">arr</span><span class="p">]</span>
+            <span class="n">maxs</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">maxs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">S</span><span class="p">[</span><span class="n">n</span><span class="p">]]))</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">get_sample_names</span><span class="p">():</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">other</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">S</span><span class="p">:</span>
+                <span class="n">S</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">S</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">arr</span><span class="p">]</span>
+            <span class="n">maxs</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">maxs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">S</span><span class="p">[</span><span class="n">n</span><span class="p">]]))</span>
+
+        <span class="c1"># stack into output array</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">S</span><span class="p">),</span> <span class="n">maxs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">band_count</span><span class="p">()</span> <span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="p">)</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">S</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="n">sample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span> <span class="n">v</span> <span class="p">)</span>
+            <span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:</span><span class="n">sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">:</span> <span class="p">]</span> <span class="o">=</span> <span class="n">sample</span>
+
+        <span class="c1"># return</span>
+        <span class="k">return</span> <span class="n">BlackLibrary</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">lab</span><span class="o">=</span><span class="n">names</span><span class="p">,</span> <span class="n">wav</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">())</span>
+
+    <span class="c1"># noinspection PyChainedComparisons</span>
+<div class="viewcode-block" id="BlackLibrary.get_sample_index">
+<a class="viewcode-back" href="../../api/BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.get_sample_index">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_sample_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the index associated with a sample name.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str, int): the desired sample name. If an integer passed it is returned (assumed to be an index).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            the sample index (int).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span> <span class="nb">type</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>  <span class="c1"># already an int - easy!</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">name</span>
+            <span class="c1"># noinspection PyChainedComparisons</span>
+            <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_sample_names</span><span class="p">()),</span> <span class="s2">&quot;Error - </span><span class="si">%d</span><span class="s2"> is an invalid index.&quot;</span> <span class="o">%</span> <span class="n">idx</span>
+            <span class="k">return</span> <span class="n">idx</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sample_names</span><span class="p">(),</span> <span class="s2">&quot;Error - invalid sample name </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">name</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_sample_names</span><span class="p">())</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BlackLibrary.get_sample_spectra">
+<a class="viewcode-back" href="../../api/BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.get_sample_spectra">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_sample_spectra</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the reflectance spectra of the specified sample.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            sample (str, int): the sample name or index to extract.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            a numpy array containing the specified spectra.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sample_index</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span> <span class="n">idx</span><span class="p">,</span> <span class="p">:</span> <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="BlackLibrary.collapse">
+<a class="viewcode-back" href="../../api/BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.collapse">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">collapse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a copy of this BlackLibrary with any groups collapsed into individual samples.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_groups</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Error - library has no groups to collapse.&quot;</span>
+
+        <span class="c1"># get each group and collapse into samples</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
+            <span class="n">samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="n">g</span><span class="p">)</span><span class="o">.</span><span class="n">data</span> <span class="p">)</span> <span class="p">)</span> <span class="c1"># stack group</span>
+
+        <span class="c1"># build new data array</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">s</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">band_count</span><span class="p">()),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">samples</span><span class="p">):</span>
+            <span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">:</span> <span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+        <span class="c1"># return output</span>
+        <span class="k">return</span> <span class="n">BlackLibrary</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">lab</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">wav</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="BlackLibrary.squash">
+<a class="viewcode-back" href="../../api/BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.squash">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">squash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a copy of this BlackLibrary instance with multiple measurements averaged to give a single spectra per sample.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+
+
+<div class="viewcode-block" id="BlackLibrary.quick_plot">
+<a class="viewcode-back" href="../../api/BlackTelperion.blacklibrary.html#BlackTelperion.blacklibrary.BlackLibrary.quick_plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">quick_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">band_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">collapse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plots individual spectra in this library.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ax: an axis to plot to. If None (default), a new axis is created.</span>
+<span class="sd">            band_range (tuple): the (min,max) band index (int) or wavelength (float) to plot.</span>
+<span class="sd">            labels (list): list of BlackFeature instances to plot on spectra. Default is reference.features.DIAGNOSTIC</span>
+<span class="sd">            pad (float): the spacing to add between individual spectra. Default is 5% of the range of reflectance values.</span>
+<span class="sd">            collapse (bool): True if groups should be plotted rather than individual samples. Default is False.</span>
+<span class="sd">            hc (bool): True if the plotted spectra should be hull corrected first. Default is False.</span>
+<span class="sd">            **kwds: Keywords are passed to plt.plot( ... ), except the following:</span>
+
+<span class="sd">                 - clip = a tuple with the min, med and max percentiles to plot. Default is (5,50,95).</span>
+<span class="sd">                 - figsize = a figsize for the figure to create (if ax is None).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple containing</span>
+
+<span class="sd">            - fig: a matplotlib figure instance.</span>
+<span class="sd">            - ax: a matplotlib axes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">collapse</span><span class="p">:</span>
+            <span class="bp">self</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collapse</span><span class="p">()</span> <span class="c1"># this seems dodgy somehow?</span>
+
+        <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># allow None labels (= don&#39;t plot labels)</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># parse band range</span>
+        <span class="n">minb</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">maxb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">band_count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">band_range</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">minb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_band_index</span><span class="p">(</span><span class="n">band_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">maxb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_band_index</span><span class="p">(</span><span class="n">band_range</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="c1"># hull correct?</span>
+        <span class="k">if</span> <span class="n">hc</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">BlackTelperion.correct</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_hull_corrected</span>
+            <span class="bp">self</span> <span class="o">=</span> <span class="n">get_hull_corrected</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">band_range</span><span class="o">=</span><span class="p">(</span><span class="n">minb</span><span class="p">,</span> <span class="n">maxb</span><span class="p">),</span> <span class="n">vb</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">minb</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># spectra has already been subset</span>
+            <span class="n">maxb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">band_count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="c1"># create axes if need be</span>
+        <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">height</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">100</span><span class="p">),</span> <span class="mi">8</span><span class="p">)</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">kwds</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;figsize&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span> <span class="p">))</span>
+
+        <span class="c1"># calculate pad if need be</span>
+        <span class="k">if</span> <span class="n">pad</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pad</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">minb</span><span class="p">:</span><span class="n">maxb</span><span class="p">])</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">minb</span><span class="p">:</span><span class="n">maxb</span><span class="p">]))</span>
+
+        <span class="c1"># plot spectra</span>
+        <span class="n">wav</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">()[</span><span class="n">minb</span><span class="p">:</span><span class="n">maxb</span><span class="p">]</span>
+        <span class="n">baseline</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">wav</span><span class="p">))</span>
+        <span class="n">yticks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">color_map</span> <span class="o">=</span> <span class="n">kwds</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;color&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color_map</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color_map</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="n">color_map</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">color_map</span><span class="p">)</span>
+
+        <span class="n">clip</span> <span class="o">=</span> <span class="n">kwds</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;clip&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">95</span><span class="p">))</span>  <span class="c1"># get percentiles keyword for plotting</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+
+            <span class="c1"># extract spectra slice</span>
+            <span class="n">refl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="n">minb</span><span class="p">:</span><span class="n">maxb</span><span class="p">]</span>
+            <span class="n">y0</span> <span class="o">=</span> <span class="n">y1</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">refl</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># plot percentiles</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">clip</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">refl</span><span class="p">,</span> <span class="n">clip</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">clip</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">refl</span><span class="p">,</span> <span class="n">clip</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">clip</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="n">y0</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">refl</span><span class="p">,</span> <span class="n">clip</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> is an invalid clip. Must be either (min,med,max) or an integer.&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">clip</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="n">refl</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+
+
+            <span class="c1"># calculate offset</span>
+            <span class="k">if</span> <span class="n">y0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">baseline</span><span class="p">)))</span> <span class="o">+</span> <span class="n">pad</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y0</span> <span class="o">-</span> <span class="n">baseline</span><span class="p">)))</span> <span class="o">+</span> <span class="n">pad</span>
+
+            <span class="c1"># calculate color</span>
+            <span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">color_map</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">color_map</span><span class="p">)]</span>
+
+            <span class="c1"># plot spectra</span>
+            <span class="n">_y</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">y</span>  <span class="c1"># calculate y</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wav</span><span class="p">,</span> <span class="n">_y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+            <span class="n">baseline</span> <span class="o">=</span> <span class="n">_y</span>
+            <span class="n">yticks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_y</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+            <span class="c1"># plot range</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">y0</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">y1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="n">_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">offset</span> <span class="o">+</span> <span class="n">y0</span><span class="p">,</span> <span class="p">(</span><span class="n">offset</span> <span class="o">+</span> <span class="n">y1</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+                <span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">wav</span><span class="p">,</span> <span class="n">wav</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">_x</span><span class="p">,</span> <span class="n">_y</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+                <span class="n">baseline</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">y1</span>  <span class="c1"># move baseline up to upper error bound</span>
+
+        <span class="c1"># ax.autoscale(False)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span> <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">labels</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+
+            <span class="c1"># plot label</span>
+            <span class="k">if</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">l</span><span class="o">.</span><span class="n">pos</span> <span class="o">&lt;</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">MultiFeature</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">MixedFeature</span><span class="p">):</span>
+                    <span class="n">l</span><span class="o">.</span><span class="n">quick_plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;fill+line&#39;</span><span class="p">,</span> <span class="n">sublabel</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="n">l</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">l</span><span class="o">.</span><span class="n">quick_plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;fill+line&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># sort out y-ticks</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">yticks</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_sample_names</span><span class="p">())</span>
+
+        <span class="c1"># add major x-ticks</span>
+        <span class="n">mn</span><span class="p">,</span> <span class="n">mx</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()</span>
+        <span class="n">ticks</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">mn</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">mx</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">ticks</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">ticks</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
+
+        <span class="c1"># add minor x-ticks</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()[</span><span class="mi">0</span><span class="p">]))</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">mn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="n">order</span><span class="p">)</span>
+        <span class="n">mx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()[</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="n">order</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">mn</span><span class="p">,</span> <span class="n">mx</span><span class="p">,</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">order</span><span class="p">)[</span><span class="mi">1</span><span class="p">::],</span> <span class="n">minor</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([],</span> <span class="n">minor</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;minor&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">wav</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">wav</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_figure</span><span class="p">(),</span> <span class="n">ax</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

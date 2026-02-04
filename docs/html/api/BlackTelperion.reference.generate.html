@@ -1,0 +1,164 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.reference.generate module &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="BlackTelperion.utils namespace" href="BlackTelperion.utils.html" />
+    <link rel="prev" title="BlackTelperion.reference.spectra.spectralon package" href="BlackTelperion.reference.spectra.spectralon.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="BlackTelperion.html">BlackTelperion package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.RGB"><code class="docutils literal notranslate"><span class="pre">RGB</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.VNIR"><code class="docutils literal notranslate"><span class="pre">VNIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.SWIR"><code class="docutils literal notranslate"><span class="pre">SWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.BROAD"><code class="docutils literal notranslate"><span class="pre">BROAD</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.MWIR"><code class="docutils literal notranslate"><span class="pre">MWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.LWIR"><code class="docutils literal notranslate"><span class="pre">LWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.band_select_threshold"><code class="docutils literal notranslate"><span class="pre">band_select_threshold</span></code></a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="BlackTelperion.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.analyse.html">BlackTelperion.analyse package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.html">BlackTelperion.correct package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.filter.html">BlackTelperion.filter package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.io.html">BlackTelperion.io package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="BlackTelperion.reference.html">BlackTelperion.reference package</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.reference.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="BlackTelperion.reference.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.utils.html">BlackTelperion.utils namespace</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="BlackTelperion.html">BlackTelperion package</a></li>
+          <li class="breadcrumb-item"><a href="BlackTelperion.reference.html">BlackTelperion.reference package</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.reference.generate module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/BlackTelperion.reference.generate.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-BlackTelperion.reference.generate">
+<span id="blacktelperion-reference-generate-module"></span><h1>BlackTelperion.reference.generate module<a class="headerlink" href="#module-BlackTelperion.reference.generate" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.reference.generate.randomSpectra">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.reference.generate.</span></span><span class="sig-name descname"><span class="pre">randomSpectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wav</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[2245.0,</span> <span class="pre">2340.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[0.2,</span> <span class="pre">0.3]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[50,</span> <span class="pre">100]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nrand</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/reference/generate.html#randomSpectra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.reference.generate.randomSpectra" title="Link to this definition"></a></dt>
+<dd><p>Generate a random spectra.
+:param wav: The wavelengths to generate a spectra across.
+:param f: Fixed absorption feature positions.
+:param d: Fixed absorption feature depths.
+:param w: Fixed absorption feature widths.
+:param a: Overall material brightness (from 0 to 1). Default is 0.9.
+:param nrand: Number of random features to add.
+:param noise: Depth of random features and additional white noise.
+:param slope: Slope of overall spectra.
+:return: A synthetic spectra</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.reference.generate.genImage">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.reference.generate.</span></span><span class="sig-name descname"><span class="pre">genImage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wav</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">array([2100.,</span> <span class="pre">2101.50753769,</span> <span class="pre">2103.01507538,</span> <span class="pre">2104.52261307,</span> <span class="pre">2106.03015075,</span> <span class="pre">2107.53768844,</span> <span class="pre">2109.04522613,</span> <span class="pre">2110.55276382,</span> <span class="pre">2112.06030151,</span> <span class="pre">2113.5678392,</span> <span class="pre">2115.07537688,</span> <span class="pre">2116.58291457,</span> <span class="pre">2118.09045226,</span> <span class="pre">2119.59798995,</span> <span class="pre">2121.10552764,</span> <span class="pre">2122.61306533,</span> <span class="pre">2124.12060302,</span> <span class="pre">2125.6281407,</span> <span class="pre">2127.13567839,</span> <span class="pre">2128.64321608,</span> <span class="pre">2130.15075377,</span> <span class="pre">2131.65829146,</span> <span class="pre">2133.16582915,</span> <span class="pre">2134.67336683,</span> <span class="pre">2136.18090452,</span> <span class="pre">2137.68844221,</span> <span class="pre">2139.1959799,</span> <span class="pre">2140.70351759,</span> <span class="pre">2142.21105528,</span> <span class="pre">2143.71859296,</span> <span class="pre">2145.22613065,</span> <span class="pre">2146.73366834,</span> <span class="pre">2148.24120603,</span> <span class="pre">2149.74874372,</span> <span class="pre">2151.25628141,</span> <span class="pre">2152.7638191,</span> <span class="pre">2154.27135678,</span> <span class="pre">2155.77889447,</span> <span class="pre">2157.28643216,</span> <span class="pre">2158.79396985,</span> <span class="pre">2160.30150754,</span> <span class="pre">2161.80904523,</span> <span class="pre">2163.31658291,</span> <span class="pre">2164.8241206,</span> <span class="pre">2166.33165829,</span> <span class="pre">2167.83919598,</span> <span class="pre">2169.34673367,</span> <span class="pre">2170.85427136,</span> <span class="pre">2172.36180905,</span> <span class="pre">2173.86934673,</span> <span class="pre">2175.37688442,</span> <span class="pre">2176.88442211,</span> <span class="pre">2178.3919598,</span> <span class="pre">2179.89949749,</span> <span class="pre">2181.40703518,</span> <span class="pre">2182.91457286,</span> <span class="pre">2184.42211055,</span> <span class="pre">2185.92964824,</span> <span class="pre">2187.43718593,</span> <span class="pre">2188.94472362,</span> <span class="pre">2190.45226131,</span> <span class="pre">2191.95979899,</span> <span class="pre">2193.46733668,</span> <span class="pre">2194.97487437,</span> <span class="pre">2196.48241206,</span> <span class="pre">2197.98994975,</span> <span class="pre">2199.49748744,</span> <span class="pre">2201.00502513,</span> <span class="pre">2202.51256281,</span> <span class="pre">2204.0201005,</span> <span class="pre">2205.52763819,</span> <span class="pre">2207.03517588,</span> <span class="pre">2208.54271357,</span> <span class="pre">2210.05025126,</span> <span class="pre">2211.55778894,</span> <span class="pre">2213.06532663,</span> <span class="pre">2214.57286432,</span> <span class="pre">2216.08040201,</span> <span class="pre">2217.5879397,</span> <span class="pre">2219.09547739,</span> <span class="pre">2220.60301508,</span> <span class="pre">2222.11055276,</span> <span class="pre">2223.61809045,</span> <span class="pre">2225.12562814,</span> <span class="pre">2226.63316583,</span> <span class="pre">2228.14070352,</span> <span class="pre">2229.64824121,</span> <span class="pre">2231.15577889,</span> <span class="pre">2232.66331658,</span> <span class="pre">2234.17085427,</span> <span class="pre">2235.67839196,</span> <span class="pre">2237.18592965,</span> <span class="pre">2238.69346734,</span> <span class="pre">2240.20100503,</span> <span class="pre">2241.70854271,</span> <span class="pre">2243.2160804,</span> <span class="pre">2244.72361809,</span> <span class="pre">2246.23115578,</span> <span class="pre">2247.73869347,</span> <span class="pre">2249.24623116,</span> <span class="pre">2250.75376884,</span> <span class="pre">2252.26130653,</span> <span class="pre">2253.76884422,</span> <span class="pre">2255.27638191,</span> <span class="pre">2256.7839196,</span> <span class="pre">2258.29145729,</span> <span class="pre">2259.79899497,</span> <span class="pre">2261.30653266,</span> <span class="pre">2262.81407035,</span> <span class="pre">2264.32160804,</span> <span class="pre">2265.82914573,</span> <span class="pre">2267.33668342,</span> <span class="pre">2268.84422111,</span> <span class="pre">2270.35175879,</span> <span class="pre">2271.85929648,</span> <span class="pre">2273.36683417,</span> <span class="pre">2274.87437186,</span> <span class="pre">2276.38190955,</span> <span class="pre">2277.88944724,</span> <span class="pre">2279.39698492,</span> <span class="pre">2280.90452261,</span> <span class="pre">2282.4120603,</span> <span class="pre">2283.91959799,</span> <span class="pre">2285.42713568,</span> <span class="pre">2286.93467337,</span> <span class="pre">2288.44221106,</span> <span class="pre">2289.94974874,</span> <span class="pre">2291.45728643,</span> <span class="pre">2292.96482412,</span> <span class="pre">2294.47236181,</span> <span class="pre">2295.9798995,</span> <span class="pre">2297.48743719,</span> <span class="pre">2298.99497487,</span> <span class="pre">2300.50251256,</span> <span class="pre">2302.01005025,</span> <span class="pre">2303.51758794,</span> <span class="pre">2305.02512563,</span> <span class="pre">2306.53266332,</span> <span class="pre">2308.04020101,</span> <span class="pre">2309.54773869,</span> <span class="pre">2311.05527638,</span> <span class="pre">2312.56281407,</span> <span class="pre">2314.07035176,</span> <span class="pre">2315.57788945,</span> <span class="pre">2317.08542714,</span> <span class="pre">2318.59296482,</span> <span class="pre">2320.10050251,</span> <span class="pre">2321.6080402,</span> <span class="pre">2323.11557789,</span> <span class="pre">2324.62311558,</span> <span class="pre">2326.13065327,</span> <span class="pre">2327.63819095,</span> <span class="pre">2329.14572864,</span> <span class="pre">2330.65326633,</span> <span class="pre">2332.16080402,</span> <span class="pre">2333.66834171,</span> <span class="pre">2335.1758794,</span> <span class="pre">2336.68341709,</span> <span class="pre">2338.19095477,</span> <span class="pre">2339.69849246,</span> <span class="pre">2341.20603015,</span> <span class="pre">2342.71356784,</span> <span class="pre">2344.22110553,</span> <span class="pre">2345.72864322,</span> <span class="pre">2347.2361809,</span> <span class="pre">2348.74371859,</span> <span class="pre">2350.25125628,</span> <span class="pre">2351.75879397,</span> <span class="pre">2353.26633166,</span> <span class="pre">2354.77386935,</span> <span class="pre">2356.28140704,</span> <span class="pre">2357.78894472,</span> <span class="pre">2359.29648241,</span> <span class="pre">2360.8040201,</span> <span class="pre">2362.31155779,</span> <span class="pre">2363.81909548,</span> <span class="pre">2365.32663317,</span> <span class="pre">2366.83417085,</span> <span class="pre">2368.34170854,</span> <span class="pre">2369.84924623,</span> <span class="pre">2371.35678392,</span> <span class="pre">2372.86432161,</span> <span class="pre">2374.3718593,</span> <span class="pre">2375.87939698,</span> <span class="pre">2377.38693467,</span> <span class="pre">2378.89447236,</span> <span class="pre">2380.40201005,</span> <span class="pre">2381.90954774,</span> <span class="pre">2383.41708543,</span> <span class="pre">2384.92462312,</span> <span class="pre">2386.4321608,</span> <span class="pre">2387.93969849,</span> <span class="pre">2389.44723618,</span> <span class="pre">2390.95477387,</span> <span class="pre">2392.46231156,</span> <span class="pre">2393.96984925,</span> <span class="pre">2395.47738693,</span> <span class="pre">2396.98492462,</span> <span class="pre">2398.49246231,</span> <span class="pre">2400.])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{'a':</span> <span class="pre">1.0,</span> <span class="pre">'f':</span> <span class="pre">[2200.0,</span> <span class="pre">2340.0],</span> <span class="pre">'nrand':</span> <span class="pre">0}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{'a':</span> <span class="pre">0.5,</span> <span class="pre">'f':</span> <span class="pre">[2160.0,</span> <span class="pre">2210.0],</span> <span class="pre">'nrand':</span> <span class="pre">0}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{'a':</span> <span class="pre">0.2,</span> <span class="pre">'f':</span> <span class="pre">[2250.0,</span> <span class="pre">2350.0],</span> <span class="pre">'nrand':</span> <span class="pre">0}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">42</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/reference/generate.html#genImage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.reference.generate.genImage" title="Link to this definition"></a></dt>
+<dd><p>Use the Bricks() and Stones() images in skimage.data to create a synthetic hyperspectral image. Useful
+for testing or demonstration purposes.
+:param wav: Numpy array containing wavelengths of the desired HSI image. Default is np.linspace(2100., 2400., 200).
+:param A: A dictionary containing arguments passed to randomSpectra(…) for phase A. Default is {f=[2200., 2340.], a=1.0}.
+:param B: A dictionary containing arguments passed to randomSpectra(…) for phase B. Default is {f=[2160., 2200.], a=0.5}.
+:param C: A dictionary containing arguments passed to randomSpectra(…) for phase C. Default is {f=[2250., 2350.], a=0.2}.
+:param flip: True if the order of latent variables should be reversed. Useful for generating different styles of image.
+:param seed: An integer seed for numpy.random(…). Default is 42.
+:param noise: Amount of white noise to add. Default is 0.05.
+:return: The synthetic hyperspectral image</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="BlackTelperion.reference.spectra.spectralon.html" class="btn btn-neutral float-left" title="BlackTelperion.reference.spectra.spectralon package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="BlackTelperion.utils.html" class="btn btn-neutral float-right" title="BlackTelperion.utils namespace" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

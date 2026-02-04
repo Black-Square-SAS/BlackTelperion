@@ -1,0 +1,249 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.io.libraries module &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="BlackTelperion.reference package" href="BlackTelperion.reference.html" />
+    <link rel="prev" title="BlackTelperion.io.images module" href="BlackTelperion.io.images.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="BlackTelperion.html">BlackTelperion package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.RGB"><code class="docutils literal notranslate"><span class="pre">RGB</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.VNIR"><code class="docutils literal notranslate"><span class="pre">VNIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.SWIR"><code class="docutils literal notranslate"><span class="pre">SWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.BROAD"><code class="docutils literal notranslate"><span class="pre">BROAD</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.MWIR"><code class="docutils literal notranslate"><span class="pre">MWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.LWIR"><code class="docutils literal notranslate"><span class="pre">LWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.band_select_threshold"><code class="docutils literal notranslate"><span class="pre">band_select_threshold</span></code></a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="BlackTelperion.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.analyse.html">BlackTelperion.analyse package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.html">BlackTelperion.correct package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.filter.html">BlackTelperion.filter package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="BlackTelperion.io.html">BlackTelperion.io package</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.io.html#BlackTelperion.io.save"><code class="docutils literal notranslate"><span class="pre">save()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.io.html#BlackTelperion.io.load"><code class="docutils literal notranslate"><span class="pre">load()</span></code></a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="BlackTelperion.io.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.reference.html">BlackTelperion.reference package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.utils.html">BlackTelperion.utils namespace</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="BlackTelperion.html">BlackTelperion package</a></li>
+          <li class="breadcrumb-item"><a href="BlackTelperion.io.html">BlackTelperion.io package</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.io.libraries module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/BlackTelperion.io.libraries.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-BlackTelperion.io.libraries">
+<span id="blacktelperion-io-libraries-module"></span><h1>BlackTelperion.io.libraries module<a class="headerlink" href="#module-BlackTelperion.io.libraries" title="Link to this heading"></a></h1>
+<p>Load or import spectral libraries.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.io.libraries.loadLibrarySED">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.io.libraries.</span></span><span class="sig-name descname"><span class="pre">loadLibrarySED</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/io/libraries.html#loadLibrarySED"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.io.libraries.loadLibrarySED" title="Link to this definition"></a></dt>
+<dd><p>Load a spectral library stored as a folder of .sed files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>directory</strong> – the directory containing the .sed files. Filenames will be used as sample names.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.io.libraries.loadLibraryTSG">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.io.libraries.</span></span><span class="sig-name descname"><span class="pre">loadLibraryTSG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/io/libraries.html#loadLibraryTSG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.io.libraries.loadLibraryTSG" title="Link to this definition"></a></dt>
+<dd><p>Load a spectral library of TSG (The Spectral GeologistTM, e.g. HyLogger data) stored as a folder of .csv files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>directory</strong> – the directory containing the .sed files. Filenames will be used as sample names.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.io.libraries.saveLibraryCSV">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.io.libraries.</span></span><span class="sig-name descname"><span class="pre">saveLibraryCSV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">library</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/io/libraries.html#saveLibraryCSV"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.io.libraries.saveLibraryCSV" title="Link to this definition"></a></dt>
+<dd><p>Save a spectral library to a csv file with wavelengths as columns and sample reflectance as rows</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.io.libraries.loadLibraryCSV">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.io.libraries.</span></span><span class="sig-name descname"><span class="pre">loadLibraryCSV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/io/libraries.html#loadLibraryCSV"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.io.libraries.loadLibraryCSV" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.io.libraries.loadLibraryTXT">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.io.libraries.</span></span><span class="sig-name descname"><span class="pre">loadLibraryTXT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/io/libraries.html#loadLibraryTXT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.io.libraries.loadLibraryTXT" title="Link to this definition"></a></dt>
+<dd><p>Load an ENVI text format library. This should have the following structure:</p>
+<blockquote>
+<div><p>ENVI ASCII Plot File
+Column 1: Wavelength
+Column 2: Sample1
+Column 3: Sample2
+C10 C20 C30
+C11 C21 C31
+C12 C22 C32
+… … ..</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.io.libraries.loadLibraryDIR">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.io.libraries.</span></span><span class="sig-name descname"><span class="pre">loadLibraryDIR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wav</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/io/libraries.html#loadLibraryDIR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.io.libraries.loadLibraryDIR" title="Link to this definition"></a></dt>
+<dd><p>Load a spectral library from a directory of ENVI text files, with the following structure:</p>
+<blockquote>
+<div><ul>
+<li><dl>
+<dt>path</dt><dd><blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>mineralA</dt><dd><ul>
+<li><p>spectraA.txt</p></li>
+<li><p>spectraB.txt</p></li>
+<li><p>spectraC.txt</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>mineralB</dt><dd><p>-spectraA.txt
+-spectraB.txt</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p>etc.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p>Data in this format can be downloaded using iSpec: <a class="reference external" href="https://www.samthiele.science/app/iSpec/index.html">https://www.samthiele.science/app/iSpec/index.html</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – the directory path to search for ENVI spectra.</p></li>
+<li><p><strong>wav</strong> – an array of wavelengths to resample the spectra onto. This is required as the txt files often
+have differing wavelength arrays. Data that does not overlap with wav will be set to nan. If None,
+this will be set to the wavelengths of the first encounted dataset.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a BlackLibrary spectral library instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.io.libraries.saveLibraryTXT">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.io.libraries.</span></span><span class="sig-name descname"><span class="pre">saveLibraryTXT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">library</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/io/libraries.html#saveLibraryTXT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.io.libraries.saveLibraryTXT" title="Link to this definition"></a></dt>
+<dd><p>Save this library in envii TXT format (see loadLibraryTXT).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.io.libraries.saveLibraryLIB">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.io.libraries.</span></span><span class="sig-name descname"><span class="pre">saveLibraryLIB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">library</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/io/libraries.html#saveLibraryLIB"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.io.libraries.saveLibraryLIB" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.io.libraries.loadLibraryLIB">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.io.libraries.</span></span><span class="sig-name descname"><span class="pre">loadLibraryLIB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/io/libraries.html#loadLibraryLIB"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.io.libraries.loadLibraryLIB" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="BlackTelperion.io.images.html" class="btn btn-neutral float-left" title="BlackTelperion.io.images module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="BlackTelperion.reference.html" class="btn btn-neutral float-right" title="BlackTelperion.reference package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,232 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.filter.dimension_reduction module &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="BlackTelperion.filter.sample module" href="BlackTelperion.filter.sample.html" />
+    <link rel="prev" title="BlackTelperion.filter.combine module" href="BlackTelperion.filter.combine.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="BlackTelperion.html">BlackTelperion package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.RGB"><code class="docutils literal notranslate"><span class="pre">RGB</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.VNIR"><code class="docutils literal notranslate"><span class="pre">VNIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.SWIR"><code class="docutils literal notranslate"><span class="pre">SWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.BROAD"><code class="docutils literal notranslate"><span class="pre">BROAD</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.MWIR"><code class="docutils literal notranslate"><span class="pre">MWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.LWIR"><code class="docutils literal notranslate"><span class="pre">LWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.band_select_threshold"><code class="docutils literal notranslate"><span class="pre">band_select_threshold</span></code></a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="BlackTelperion.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.analyse.html">BlackTelperion.analyse package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.html">BlackTelperion.correct package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="BlackTelperion.filter.html">BlackTelperion.filter package</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.filter.html#BlackTelperion.filter.boost_saturation"><code class="docutils literal notranslate"><span class="pre">boost_saturation()</span></code></a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="BlackTelperion.filter.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.io.html">BlackTelperion.io package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.reference.html">BlackTelperion.reference package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.utils.html">BlackTelperion.utils namespace</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="BlackTelperion.html">BlackTelperion package</a></li>
+          <li class="breadcrumb-item"><a href="BlackTelperion.filter.html">BlackTelperion.filter package</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.filter.dimension_reduction module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/BlackTelperion.filter.dimension_reduction.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-BlackTelperion.filter.dimension_reduction">
+<span id="blacktelperion-filter-dimension-reduction-module"></span><h1>BlackTelperion.filter.dimension_reduction module<a class="headerlink" href="#module-BlackTelperion.filter.dimension_reduction" title="Link to this heading"></a></h1>
+<p>PCA and MNF methods for dimensionality reduction.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.filter.dimension_reduction.PCA">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.filter.dimension_reduction.</span></span><span class="sig-name descname"><span class="pre">PCA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blackdata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/filter/dimension_reduction.html#PCA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.filter.dimension_reduction.PCA" title="Link to this definition"></a></dt>
+<dd><p>Apply a PCA dimensionality reduction to the hyperspectral dataset using singular vector decomposition (SVD).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – the dataset (BlackData object) to apply PCA to.</p></li>
+<li><p><strong>output_bands</strong> – number of bands to return (i.e. how many dimensions to retain). Default is 20.</p></li>
+<li><p><strong>bands</strong> – the spectral range to perform the PCA over. If (int,int) is passed then the values are treated as
+min/max band IDs, if (float,float) is passed then values are treated as wavelenghts (in nm). If None is
+passed (default) then the PCA is computed using all bands. Note that wavelengths can only be passed
+if image is a hyImage object.</p></li>
+<li><p><strong>step</strong> – subsample the dataset during SVD for performance reason. step = 1 will include all pixels in the calculation,
+step = n includes every nth pixel only. Default is 5 (as most images contain more than enough pixels to
+accurately estimate variance etc.).</p></li>
+<li><p><strong>mask</strong> – A mask containing pixels to ignore during the fitting of this PCA. Default is None (consider all pixels).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A tuple containing:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>bands = A BlackData instance containing the PCA components, ordered from highest to lowest variance.</p></li>
+<li><p>factors = the factors (vector) each band is multiplied with to give the corresponding PCA band.</p></li>
+<li><p>means = the means for each band that are subtracted before applying the PCA transform.</p></li>
+</ul>
+</div></blockquote>
+<p>Additional info (including loadings and the per-band means) are stored in the header file of the returned BlackData
+instance.</p>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.filter.dimension_reduction.MNF">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.filter.dimension_reduction.</span></span><span class="sig-name descname"><span class="pre">MNF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blackdata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'diff'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">denoise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/filter/dimension_reduction.html#MNF"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.filter.dimension_reduction.MNF" title="Link to this definition"></a></dt>
+<dd><p>Apply a minimum noise filter to a hyperspectral image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>blackdata</strong> – A BlackData instance containing the source dataset (e.g. image or point cloud).</p></li>
+<li><p><strong>bands</strong> – the number of bands to keep after MNF for dimensionality reduction or denoising. Default is 20.</p></li>
+<li><p><strong>band_range</strong> – the spectral range to perform the MNF over. If (int,int) is passed then the values are treated as
+min/max band IDs, if (float,float) is passed then values are treated as wavelenghts (in nm). If None is
+passed (default) then the MNF is computed using all bands. Note that wavelengths can only be passed
+if image is a hyImage object.</p></li>
+<li><p><strong>noise</strong> – The noise model to use. If None (default) then the ‘band noise’ parameter will be retrieved from the headerinfo,
+and if this does not exist then, this it is crudely estimated by comparing adjacent pixels / points.
+This estimation can be forced by setting noise to ‘diff’.</p></li>
+<li><p><strong>noise_thresh</strong> – The threshold percentile used when estimating noise with ‘diff’.</p></li>
+<li><p><strong>denoise</strong> – True if a MNF denoised image should be returned (rather than the MNF bands). Default is False.</p></li>
+<li><p><strong>mask</strong> – A boolean mask containing pixels to ignore during the fitting of this PCA. Default is None (consider all pixels).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A tuple containing:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>mnf = a BlackData instance containing the MNF bands or denoised image.</p></li>
+<li><p>factors = A 2D numpy array containing the factors applied to the input datset. Useful
+for plotting/interpreting the regions each MNF band is sensitive too.</p></li>
+<li><p>means = the means for each band that are subtracted before applying the MNF transform.</p></li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.filter.dimension_reduction.from_loadings">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.filter.dimension_reduction.</span></span><span class="sig-name descname"><span class="pre">from_loadings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/filter/dimension_reduction.html#from_loadings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.filter.dimension_reduction.from_loadings" title="Link to this definition"></a></dt>
+<dd><p>Transform a dataset using a precomputed loading vector.  This allows PCA
+transforms to be computed on one dataset and then applied to another.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – A dataset (BlackData instance or numpy array) with b bands in the last axis.</p></li>
+<li><p><strong>L</strong> – the loadings vector of shape (k,b), such that data is projected into a
+k-dimensional space.</p></li>
+<li><p><strong>m</strong> – the mean of each dimension. Default is None ( do not apply mean offset ).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a blackdata instance or numpy array containing the transformed data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="BlackTelperion.filter.combine.html" class="btn btn-neutral float-left" title="BlackTelperion.filter.combine module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="BlackTelperion.filter.sample.html" class="btn btn-neutral float-right" title="BlackTelperion.filter.sample module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
