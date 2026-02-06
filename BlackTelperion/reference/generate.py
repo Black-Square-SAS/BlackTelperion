@@ -1,6 +1,6 @@
 from gfit import mgauss
 import numpy as np
-import hylite
+import BlackTelperion
 import skimage.data as skdata
 from skimage.transform import rotate, swirl, rescale
 
