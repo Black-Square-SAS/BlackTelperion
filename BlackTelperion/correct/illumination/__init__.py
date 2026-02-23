@@ -12,10 +12,10 @@ from BlackTelperion.correct import get_hull_corrected
 import matplotlib.pyplot as plt
 import numpy as np
 
-#####################hylite
+#####################BlackTelperion
 ## Utility functions
 ######################
-from BlackTelperion.correct import panel
+from BlackTelperion.correct.panel import Panel
 
 from .occlusion import *
 from .reflection import *
