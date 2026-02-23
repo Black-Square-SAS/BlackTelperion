@@ -113,13 +113,12 @@ def _load_jp2_gdal(fpath):
     assert ds is not None, "GDAL could not open: %s" % fpath
 
     band = ds.GetRasterBand(1)
-    data = band.ReadAsArray().astype(np.float32)   # (rows, cols)
+    data = band.ReadAsArray().astype(np.int16)   # (rows, cols)
 
     # Mask no-data — Sentinel-2 uses 0 as fill value
     nodata = band.GetNoDataValue()
     if nodata is not None:
-        data[data == nodata] = np.nan
-    data[data == 0] = np.nan
+        data[data == nodata] = 0
 
     geo = {}
     gt = ds.GetGeoTransform()    # (x_origin, px_w, 0, y_origin, 0, -px_h)
@@ -251,7 +250,7 @@ def loadSentinel2(path, resolution=60):
     header = BlackHeader()
     header["file type"]         = "ENVI Standard"
     header["wavelength units"]  = "nm"
-    header["data ignore value"] = str(np.nan)
+    header["data ignore value"] = str(0)
     header.set_wavelengths(wavelengths)
     header.set_fwhm(fwhm)
     header.set_band_names(band_names)
