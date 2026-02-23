@@ -133,6 +133,9 @@ def load(path):
     Returns:
         The loaded data.
     """
+    if os.path.isdir(path):
+        from .sentinel import loadSentinel2
+        return loadSentinel2(path)
 
     assert os.path.exists( path ), "Error: file %s does not exist." % path
 
