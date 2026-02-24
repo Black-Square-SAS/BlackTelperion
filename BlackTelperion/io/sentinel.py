@@ -94,7 +94,6 @@ def _resolve_directory(path, resolution):
             return root
     return path
 
-
 def _load_jp2_gdal(fpath):
     """
     Read a single-band JP2 file with GDAL.
@@ -176,9 +175,8 @@ def loadSentinel2(path, resolution=60):
     Args:
         path (str): path to a directory containing Sentinel-2 JP2 files, or
             to the root of a .SAFE product folder.
-        resolution (int or str): target spatial resolution in metres — one of
-            ``10``, ``20``, or ``60``. Pass ``'auto'`` (default) to select the
-            finest resolution for which files are present.
+        resolution (int): target spatial resolution in metres — one of
+    ``10``, ``20``, or ``60``. Default is ``60``.
 
     Returns:
         BlackImage: stacked hyperspectral cube with wavelengths (nm), FWHM, band
@@ -203,12 +201,12 @@ def loadSentinel2(path, resolution=60):
         )
 
     assert os.path.exists(path), "Error: path does not exist — %s" % path
-    assert resolution in (10, 20, 60, "auto"), (
-        "Error: resolution must be 10, 20, 60, or 'auto', got %r." % resolution
+    assert resolution in (10, 20, 60), (
+            "Error: resolution must be 10, 20, or 60, got %r." % resolution
     )
 
     # Locate the directory containing JP2s; try finest resolution first
-    candidates = [10, 20, 60] if resolution == "auto" else [int(resolution)]
+    candidates = [int(resolution)]
     band_files = {}
     for res in candidates:
         directory = _resolve_directory(path, res)
@@ -251,6 +249,7 @@ def loadSentinel2(path, resolution=60):
     header["file type"]         = "ENVI Standard"
     header["wavelength units"]  = "nm"
     header["data ignore value"] = str(0)
+    header["reflectance scale factor"] = str(10000)
     header.set_wavelengths(wavelengths)
     header.set_fwhm(fwhm)
     header.set_band_names(band_names)
