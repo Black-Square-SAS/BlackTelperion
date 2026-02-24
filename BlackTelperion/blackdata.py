@@ -1009,17 +1009,24 @@ class BlackData(object):
         self.header['reflectance scale factor'] = sf
         self.header['BlackTelperion compression factor'] = sf # backup, as some packages (i.e. SPy) overwrite the reflectance scale factor
 
-    #TODO: Refactor this to include data ignore value and not using a default
-    def decompress(self):
+    def decompress(self, reflectance_scale_factor=None, data_ignore_value=None):
         """
         Expand data array to floats to get actual values
         """
         # no need to decompress...
         if not np.issubdtype(self.data.dtype, np.integer):
             return
+
+        metadata_sf = self.header.get("reflectance scale factor", None)
+        metadata_nan = self.header.get("data ignore value", None)
+        if (reflectance_scale_factor is None and metadata_sf is None) or( data_ignore_value is None and metadata_nan is None):
+            raise ValueError(
+                "Missing required metadata: reflectance scale factor or data ignore value not found in header, and not provided as argument")
+
         # get min/max data
-        sf = float(self.header.get("reflectance scale factor", 65535))
-        nan = float(self.header.get("data ignore value", -1))
+        sf = float(self.header.get("reflectance scale factor", reflectance_scale_factor))
+        nan = float(self.header.get("data ignore value", data_ignore_value))
+
 
         # update header accordingly (to avoid save / load issues in the future!)
         self.header["reflectance scale factor"] = 1.0
