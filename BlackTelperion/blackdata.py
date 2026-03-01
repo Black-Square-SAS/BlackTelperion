@@ -1035,12 +1035,10 @@ class BlackData(object):
         if 'BlackTelperion compression factor' in self.header:
             del self.header['BlackTelperion compression factor']
             
-        # expand data array to float32
+        # expand to float32, mask nodata, then scale — NaN / sf == NaN
         self.data = self.data.astype(np.float32)
-        self.data = (self.data / sf).astype(np.float32)
-
-        # set nans
         self.set_as_nan(nan)
+        self.data = (self.data / sf).astype(np.float32)
 
     def getQuantized(self, n=255, cmeth='KMeans', vthresh=10, smooth=5, subsample=50, mask=None, normalise=False):
         """
