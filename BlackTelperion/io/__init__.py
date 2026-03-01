@@ -6,6 +6,7 @@ while for point clouds and hyperspectral libraries a variety of different method
 from .headers import *
 from .images import *
 from .libraries import *
+from .vectors import extract_signatures_from_vector, load_vector_file
 from pathlib import Path
 
 from BlackTelperion import BlackImage, BlackLibrary, BlackData, BlackCollection
@@ -133,6 +134,9 @@ def load(path, **kwds):
     ...
     """
     if os.path.isdir(path):
+        from .enmap import is_enmap_product, loadEnMAP
+        if is_enmap_product(path):
+            return loadEnMAP(path, **kwds)
         from .sentinel import loadSentinel2
         return loadSentinel2(path, **kwds)
 
