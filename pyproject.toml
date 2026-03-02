@@ -37,6 +37,8 @@ dependencies = [
     "scikit-learn>=1.0",
     "tqdm",
     "imageio",
+    "pandas>=1.3",
+    "geopandas>=0.12",
 ]
 
 [project.optional-dependencies]

@@ -6,6 +6,7 @@ while for point clouds and hyperspectral libraries a variety of different method
 from .headers import *
 from .images import *
 from .libraries import *
+from .vectors import extract_signatures_from_vector, load_vector_file
 from pathlib import Path
 
 from BlackTelperion import BlackImage, BlackLibrary, BlackData, BlackCollection
@@ -122,17 +123,22 @@ def save(path, data, **kwds):
     os.makedirs( os.path.dirname(path), exist_ok=True)  # make output directory
     save_func( path, data )
 
-def load(path):
+def load(path, **kwds):
     """
-    A generic function for loading hyperspectral images, point clouds and libraries. The appropriate load function
-    will be chosen based on the file extension.
-
+    ...
     Args:
         path (str): the path of the file to load.
-
-    Returns:
-        The loaded data.
+        **kwds: optional keyword arguments forwarded to format-specific loaders.
+            For Sentinel-2 directories, ``resolution`` (int: 10, 20, or 60)
+            is supported.
+    ...
     """
+    if os.path.isdir(path):
+        from .enmap import is_enmap_product, loadEnMAP
+        if is_enmap_product(path):
+            return loadEnMAP(path, **kwds)
+        from .sentinel import loadSentinel2
+        return loadSentinel2(path, **kwds)
 
     assert os.path.exists( path ), "Error: file %s does not exist." % path
 
