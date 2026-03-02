@@ -920,6 +920,37 @@ class BlackImage( BlackData ):
 
         return points
 
+    def extract_signatures(self, vector_path, **kwargs):
+        """
+        Convenience method to extract spectral signatures from vector layer.
+
+        Extracts spectral signatures from hyperspectral image based on vector geometries:
+        - For polygons: Extracts all pixels beneath the polygon
+        - For points: Extracts the pixel beneath + N Moore neighbors
+
+        Args:
+            vector_path (str): Path to vector layer file (.shp, .gpkg, .geojson, etc.)
+            **kwargs: Additional arguments passed to extract_signatures_from_vector
+                - output_csv (str): Path to save CSV output
+                - neighbor_size (int): For point features, N where window is (2*N+1) x (2*N+1)
+                - aggregate (bool or str): How to aggregate pixels per feature
+                - label_field (str): Name of vector attribute containing class labels
+                - return_format (str): 'dataframe', 'blacklibrary', or 'both'
+                - progress (bool): Show progress bar
+
+        Returns:
+            DataFrame, BlackLibrary, or tuple depending on return_format
+
+        Example:
+            >>> df = image.extract_signatures('ground_truth.gpkg', neighbor_size=2)
+            >>> library = image.extract_signatures('ground_truth.gpkg', return_format='blacklibrary')
+
+        See also:
+            BlackTelperion.io.vectors.extract_signatures_from_vector for full documentation
+        """
+        from BlackTelperion.io import vectors
+        return vectors.extract_signatures_from_vector(self, vector_path, **kwargs)
+
 
 
 
