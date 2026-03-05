@@ -154,8 +154,8 @@ def _geo_to_envi_map_info(transform, projection):
 
     x_origin, px_w, _, y_origin, _, px_h = transform
     map_info = (
-        "{%s, 1, 1, %.4f, %.4f, %.4f, %.4f, %s, units=Meters}"
-        % (proj_name, x_origin, y_origin, abs(px_w), abs(px_h), epsg)
+            "%s, 1, 1, %.4f, %.4f, %.4f, %.4f, %s, units=Meters"
+            % (proj_name, x_origin, y_origin, abs(px_w), abs(px_h), epsg)
     )
     return map_info, projection
 
