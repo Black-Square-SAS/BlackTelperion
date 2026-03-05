@@ -95,67 +95,48 @@ def _resolve_directory(path, resolution):
     return path
 
 def _load_jp2_gdal(fpath):
-    """
-    Read a single-band JP2 file with GDAL.
-
-    Args:
-        fpath (str): path to the JP2 file.
-
-    Returns:
-        tuple: ``(data, geo_meta)`` where *data* is a float32 ndarray of shape
-               ``(rows, cols, 1)`` and *geo_meta* is a dict with keys
-               ``'transform'`` and ``'projection'``, or an empty dict if no
-               georeferencing is available.
-    """
     from osgeo import gdal
     ds = gdal.Open(fpath, gdal.GA_ReadOnly)
     assert ds is not None, "GDAL could not open: %s" % fpath
 
     band = ds.GetRasterBand(1)
-    data = band.ReadAsArray().astype(np.int16)   # (rows, cols)
+    data = band.ReadAsArray().astype(np.int16)  # (rows, cols)
 
-    # Mask no-data — Sentinel-2 uses 0 as fill value
     nodata = band.GetNoDataValue()
     if nodata is not None:
-        data[data == nodata] = 0
+        data[data == int(nodata)] = 0
+
+    # ← these must come BEFORE building the geo dict
+    gt   = ds.GetGeoTransform()
+    proj = ds.GetProjectionRef()
 
     geo = {}
-    gt = ds.GetGeoTransform()    # (x_origin, px_w, 0, y_origin, 0, -px_h)
-    proj = ds.GetProjectionRef()
     if gt and any(v != 0 for v in gt):
         geo = {"transform": gt, "projection": proj}
 
-    ds = None                                          # close dataset
-    return data[:, :, np.newaxis], geo                 # (rows, cols, 1)
-
+    ds = None
+    return data[:, :, np.newaxis], geo  # (rows, cols, 1)
 
 def _geo_to_envi_map_info(transform, projection):
-    """
-    Convert a GDAL GeoTransform and WKT projection to ENVI header strings.
-
-    Args:
-        transform (tuple): GDAL GeoTransform —
-            ``(x_origin, px_w, 0, y_origin, 0, -px_h)``.
-        projection (str): WKT projection string from GDAL.
-
-    Returns:
-        tuple: ``(map_info_str, crs_str)`` ready to store in a BlackHeader.
-    """
     try:
         from osgeo import osr
         srs = osr.SpatialReference()
         srs.ImportFromWkt(projection)
-        epsg = srs.GetAuthorityCode(None) or "unknown"
+        epsg      = srs.GetAuthorityCode(None) or "unknown"
         proj_name = (srs.GetAttrValue("PROJCS")
                      or srs.GetAttrValue("GEOGCS")
                      or "unknown")
     except Exception:
         epsg, proj_name = "unknown", "unknown"
 
-    x_origin, px_w, _, y_origin, _, px_h = transform
+    x_origin = transform[0]      # 499980   — top-left easting  ✓
+    px_w     = transform[1]      # 60       — positive, fine     ✓
+    y_origin = transform[3]      # 4200000  — top-left northing  ✓ (DON'T touch this)
+    px_h     = transform[5]      # -60      — KEEP NEGATIVE      ✓ (DON'T abs() this)
+
     map_info = (
-            "%s, 1, 1, %.4f, %.4f, %.4f, %.4f, %s, units=Meters"
-            % (proj_name, x_origin, y_origin, abs(px_w), abs(px_h), epsg)
+        "%s, 1, 1, %.4f, %.4f, %.4f, %.4f, %s, units=Meters"
+        % (proj_name, x_origin, y_origin, px_w, px_h, epsg)
     )
     return map_info, projection
 
@@ -240,27 +221,24 @@ def loadSentinel2(path, resolution=60):
             geo_meta = geo
         arrays.append(data)                          # (rows, cols, 1)
 
-    # Stack → (rows, cols, n_bands), then transpose to BlackTelperion convention
-    stacked = np.concatenate(arrays, axis=-1)        # (rows, cols, n_bands)
-    stacked = np.transpose(stacked, (1, 0, 2))       # → (cols, rows, n_bands)
+    # Stack → (x, y, bands) for BlackImage convention
+    stacked = np.concatenate(arrays, axis=-1)       # (rows, cols, n_bands)
+    stacked = np.transpose(stacked, (1, 0, 2))      # (cols, rows, n_bands) = (x, y, bands)
 
     # Build header
     header = BlackHeader()
-    header["file type"]         = "ENVI Standard"
-    header["wavelength units"]  = "nm"
-    header["data ignore value"] = str(0)
+    header["file type"]                = "ENVI Standard"
+    header["wavelength units"]         = "nm"
+    header["data ignore value"]        = str(0)
     header["reflectance scale factor"] = str(10000)
     header.set_wavelengths(wavelengths)
     header.set_fwhm(fwhm)
     header.set_band_names(band_names)
 
-    if geo_meta:
-        map_info, crs_str = _geo_to_envi_map_info(
-            geo_meta["transform"], geo_meta["projection"]
-        )
-        header["map info"] = map_info
-        header["coordinate system string"] = crs_str
-
     out = BlackImage(stacked, header=header)
     out.push_to_header()
+
+    if geo_meta:
+        out.affine = geo_meta["transform"]          # tuple: (499980, 60, 0, 4200000, 0, -60)
+        out.set_projection(geo_meta["projection"])  # WKT string → stored as SpatialReference
     return out
