@@ -826,7 +826,7 @@ class BlackData(object):
             assert False, "Error: Run_median does not work on %d-d data." % len(self.data.shape)
 
     #TODO: Refactor to remove chunks
-    def smooth_savgol(self, window=5, poly=2, chunk=False, **kwds):
+    def smooth_savgol(self, window=5, poly=2, chunk=False, inplace=False, **kwds):
         """
         Applies Savitzky-Golay-filter on data.
 
@@ -835,10 +835,11 @@ class BlackData(object):
             poly (int): degree of polynom, must be int.
             chunk (bool): True if the data should be split into chunks (removing e.g. nan bands) before filtering. Use with care!
                    Default is False.
+            inplace (bool): If True, smooth data in-place and return self instead of a copy. Default is False.
             **kwds: Keywords are passed to scipy.signal.savgol_filter(...).
 
         Returns:
-            A copy of the input dataset with smoothed spectra.
+            A copy of the input dataset with smoothed spectra, or self if inplace=True.
         """
 
         assert isinstance(window, int), "Error - running window size must be integer."
@@ -847,7 +848,7 @@ class BlackData(object):
         if chunk:
             C, w = self.contiguous_chunks(min_size=window)
         else:
-            C = [self.data.copy()]
+            C = [self.data] if inplace else [self.data.copy()]
             w = [self.get_wavelengths().copy()]
 
         # do smoothing
@@ -857,6 +858,10 @@ class BlackData(object):
         for X in C:
             mask = np.isfinite(X).all(axis=-1)  # remove nans
             X[mask, :] = signal.savgol_filter(X[mask, :], **kwds)
+
+        if inplace and not chunk:
+            # data was modified in-place, just update wavelengths if needed
+            return self
 
         # return copy
         out = self.copy(data=False)
@@ -1035,10 +1040,10 @@ class BlackData(object):
         if 'BlackTelperion compression factor' in self.header:
             del self.header['BlackTelperion compression factor']
             
-        # expand to float32, mask nodata, then scale — NaN / sf == NaN
+        # expand to float32, mask nodata, then scale in-place
         self.data = self.data.astype(np.float32)
         self.set_as_nan(nan)
-        self.data = (self.data / sf).astype(np.float32)
+        self.data /= np.float32(sf)
 
     def getQuantized(self, n=255, cmeth='KMeans', vthresh=10, smooth=5, subsample=50, mask=None, normalise=False):
         """
