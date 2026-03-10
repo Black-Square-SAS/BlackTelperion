@@ -8,6 +8,7 @@ import geopandas as gpd
 import pandas as pd
 from rasterio import features
 from rasterio.transform import Affine
+from shapely.geometry import box
 from typing import Union, Tuple, Optional, List
 from tqdm import tqdm
 
@@ -80,6 +81,9 @@ def extract_signatures_from_vector(
             - 'blacklibrary': Returns BlackLibrary instance
             - 'both': Returns tuple (DataFrame, BlackLibrary)
 
+    Raises:
+        ValueError: If the image has no wavelength information
+
     Example:
         >>> image = BlackTelperion.io.load('hyperspectral.hdr')
         >>> df = extract_signatures_from_vector(
@@ -90,6 +94,13 @@ def extract_signatures_from_vector(
         ...     label_field='class_name'
         ... )
     """
+    # Require wavelengths
+    if not image.has_wavelengths():
+        raise ValueError(
+            "Image has no wavelength information. "
+            "Wavelengths are required for spectral signature extraction."
+        )
+
     # Load vector file
     gdf = load_vector_file(vector_path)
 
@@ -98,8 +109,6 @@ def extract_signatures_from_vector(
 
     # Get wavelengths
     wavelengths = image.get_wavelengths()
-    if wavelengths is None:
-        wavelengths = np.arange(image.band_count())
 
     # Extract signatures
     records = []
@@ -110,10 +119,13 @@ def extract_signatures_from_vector(
         label = _get_label(feature, label_field, feature_id)
         geometry = feature.geometry
 
+        # Collect all non-geometry attributes
+        feature_attrs = feature.drop('geometry').to_dict()
+
         if geometry.geom_type in ['Polygon', 'MultiPolygon']:
-            pixels = _extract_from_polygon(image, geometry, feature_id, label)
+            pixels = _extract_from_polygon(image, geometry, feature_id, label, wavelengths, feature_attrs)
         elif geometry.geom_type in ['Point', 'MultiPoint']:
-            pixels = _extract_from_point(image, geometry, feature_id, label, neighbor_size)
+            pixels = _extract_from_point(image, geometry, feature_id, label, neighbor_size, wavelengths, feature_attrs)
         else:
             print(f"Warning: Skipping unsupported geometry type '{geometry.geom_type}' for feature {feature_id}")
             continue
@@ -217,11 +229,21 @@ def _get_label(feature, label_field: Optional[str], feature_id: int) -> str:
         return f"Feature_{feature_id}"
 
 
+def _raster_extent_box(image: BlackImage, transform: Affine):
+    """Get the raster extent as a Shapely box in world coordinates."""
+    x_min, y_max = transform * (0, 0)
+    x_max, y_min = transform * (image.xdim(), image.ydim())
+    # Handle negative pixel sizes (y often increases downward)
+    return box(min(x_min, x_max), min(y_min, y_max), max(x_min, x_max), max(y_min, y_max))
+
+
 def _extract_from_polygon(
     image: BlackImage,
     geometry,
     feature_id: int,
-    label: str
+    label: str,
+    wavelengths: np.ndarray,
+    feature_attrs: dict
 ) -> List[dict]:
     """
     Extract all pixels beneath a polygon geometry.
@@ -231,34 +253,43 @@ def _extract_from_polygon(
         geometry: Shapely Polygon or MultiPolygon
         feature_id: Numeric feature identifier
         label: Class label string
+        wavelengths: Array of wavelength values
+        feature_attrs: Dictionary of feature attributes from the vector layer
 
     Returns:
         List of dictionaries containing pixel data
     """
     records = []
 
-    # Convert affine to rasterio format
-    transform = Affine(*image.affine)
+    # Convert affine from GDAL GeoTransform to rasterio Affine
+    transform = Affine.from_gdal(*image.affine)
+
+    # Check bounding box overlap before rasterizing
+    raster_box = _raster_extent_box(image, transform)
+    if not geometry.intersects(raster_box):
+        return records
 
     # Create a mask for this polygon
     try:
-        # Rasterize the geometry
+        # Rasterize the geometry — out_shape is (height, width) = (rows, cols) = (ydim, xdim)
         geoms = [geometry.__geo_interface__]
         mask_array = features.rasterize(
             geoms,
-            out_shape=(image.xdim(), image.ydim()),
+            out_shape=(image.ydim(), image.xdim()),
             transform=transform,
             all_touched=True,
             dtype=np.uint8
         )
 
-        # Get pixel coordinates where mask is True
-        y_indices, x_indices = np.where(mask_array > 0)
+        # np.where returns (row_indices, col_indices) where row=y, col=x
+        row_indices, col_indices = np.where(mask_array > 0)
 
         # Extract spectral signatures
-        for y, x in zip(y_indices, x_indices):
-            if y < image.xdim() and x < image.ydim():  # Bounds check
-                spectrum = image.data[y, x, :]
+        for row, col in zip(row_indices, col_indices):
+            # Bounds check: col < xdim (x-axis), row < ydim (y-axis)
+            if col < image.xdim() and row < image.ydim():
+                # BlackImage data is data[x, y, band] where x=col, y=row
+                spectrum = image.data[col, row, :]
 
                 # Skip if all NaN or all zeros (data ignore)
                 if not np.all(np.isnan(spectrum)) and not np.all(spectrum == 0):
@@ -275,20 +306,22 @@ def _extract_from_polygon(
                         continue
 
                     # Convert pixel to world coordinates
-                    world_x, world_y = _pixel_to_world(x, y, transform)
+                    world_x, world_y = _pixel_to_world(col, row, transform)
 
-                    record = {
+                    record = {}
+                    record.update(feature_attrs)
+                    record.update({
                         'feature_id': feature_id,
                         'feature_name': label,
-                        'pixel_x': int(x),
-                        'pixel_y': int(y),
+                        'pixel_x': int(col),
+                        'pixel_y': int(row),
                         'world_x': world_x,
                         'world_y': world_y,
-                    }
+                    })
 
-                    # Add spectral bands
+                    # Add spectral bands with wavelength column names
                     for band_idx, value in enumerate(spectrum):
-                        record[f'band_{band_idx}'] = value
+                        record[wavelengths[band_idx]] = value
 
                     records.append(record)
 
@@ -303,7 +336,9 @@ def _extract_from_point(
     geometry,
     feature_id: int,
     label: str,
-    neighbor_size: int
+    neighbor_size: int,
+    wavelengths: np.ndarray,
+    feature_attrs: dict
 ) -> List[dict]:
     """
     Extract pixel beneath point + N Moore neighbors (creates (2N+1)x(2N+1) window).
@@ -314,20 +349,28 @@ def _extract_from_point(
         feature_id: Numeric feature identifier
         label: Class label string
         neighbor_size: N where window size is (2*N+1) x (2*N+1)
+        wavelengths: Array of wavelength values
+        feature_attrs: Dictionary of feature attributes from the vector layer
 
     Returns:
         List of dictionaries containing pixel data
     """
     records = []
 
-    transform = Affine(*image.affine)
+    # Convert affine from GDAL GeoTransform to rasterio Affine
+    transform = Affine.from_gdal(*image.affine)
 
     # Handle MultiPoint
     points = [geometry] if geometry.geom_type == 'Point' else list(geometry.geoms)
 
     for point in points:
         # Convert world coordinates to pixel coordinates
+        # px = x (column), py = y (row)
         px, py = _world_to_pixel(point.x, point.y, transform)
+
+        # Skip if center pixel is outside image bounds
+        if not (0 <= px < image.xdim() and 0 <= py < image.ydim()):
+            continue
 
         # Extract window around point
         for dy in range(-neighbor_size, neighbor_size + 1):
@@ -335,9 +378,10 @@ def _extract_from_point(
                 y = py + dy
                 x = px + dx
 
-                # Bounds check
-                if 0 <= y < image.xdim() and 0 <= x < image.ydim():
-                    spectrum = image.data[y, x, :]
+                # Bounds check: x (col) < xdim, y (row) < ydim
+                if 0 <= x < image.xdim() and 0 <= y < image.ydim():
+                    # BlackImage data is data[x, y, band] where x=col, y=row
+                    spectrum = image.data[x, y, :]
 
                     # Skip if all NaN or all zeros (data ignore)
                     if not np.all(np.isnan(spectrum)) and not np.all(spectrum == 0):
@@ -356,18 +400,20 @@ def _extract_from_point(
                         # Convert back to world coordinates
                         world_x, world_y = _pixel_to_world(x, y, transform)
 
-                        record = {
+                        record = {}
+                        record.update(feature_attrs)
+                        record.update({
                             'feature_id': feature_id,
                             'feature_name': label,
                             'pixel_x': int(x),
                             'pixel_y': int(y),
                             'world_x': world_x,
                             'world_y': world_y,
-                        }
+                        })
 
-                        # Add spectral bands
+                        # Add spectral bands with wavelength column names
                         for band_idx, value in enumerate(spectrum):
-                            record[f'band_{band_idx}'] = value
+                            record[wavelengths[band_idx]] = value
 
                         records.append(record)
 
@@ -403,8 +449,11 @@ def _aggregate_signatures(
     Returns:
         Aggregated DataFrame with one row per feature
     """
-    band_cols = [col for col in df.columns if col.startswith('band_')]
-    group_cols = ['feature_id', 'feature_name']
+    band_cols = list(wavelengths)
+    # Group by all non-band, non-coordinate columns
+    coord_cols = {'pixel_x', 'pixel_y', 'world_x', 'world_y'}
+    band_cols_set = set(band_cols)
+    group_cols = [col for col in df.columns if col not in coord_cols and col not in band_cols_set]
 
     if method == 'mean':
         agg_df = df.groupby(group_cols)[band_cols].mean().reset_index()
@@ -459,8 +508,8 @@ def _dataframe_to_blacklibrary(
     Returns:
         BlackLibrary instance
     """
-    # Get band columns
-    band_cols = [col for col in df.columns if col.startswith('band_')]
+    # Get band columns using wavelength values
+    band_cols = [col for col in df.columns if col in set(wavelengths)]
 
     # Extract spectral data
     spectra = df[band_cols].values
