@@ -49,6 +49,7 @@ def extract_signatures_from_vector(
     neighbor_size: int = 1,
     aggregate: Union[bool, str] = False,
     label_field: Optional[str] = None,
+    attribute_fields: Optional[List[str]] = None,
     return_format: str = 'dataframe',
     progress: bool = True
 ) -> Union[pd.DataFrame, BlackLibrary, Tuple[pd.DataFrame, BlackLibrary]]:
@@ -72,6 +73,8 @@ def extract_signatures_from_vector(
             - 'percentile_X': Xth percentile (e.g., 'percentile_50' for median)
         label_field (str, optional): Name of vector attribute containing class labels.
                                     If None, uses feature IDs
+        attribute_fields (list of str, optional): Vector attribute columns to include
+                                    in output. If None, all attributes are included
         return_format (str): Output format - 'dataframe', 'blacklibrary', or 'both'
         progress (bool): Show progress bar. Default is True
 
@@ -119,8 +122,10 @@ def extract_signatures_from_vector(
         label = _get_label(feature, label_field, feature_id)
         geometry = feature.geometry
 
-        # Collect all non-geometry attributes
+        # Collect non-geometry attributes, filtered if requested
         feature_attrs = feature.drop('geometry').to_dict()
+        if attribute_fields is not None:
+            feature_attrs = {k: v for k, v in feature_attrs.items() if k in attribute_fields}
 
         if geometry.geom_type in ['Polygon', 'MultiPolygon']:
             pixels = _extract_from_polygon(image, geometry, feature_id, label, wavelengths, feature_attrs)
