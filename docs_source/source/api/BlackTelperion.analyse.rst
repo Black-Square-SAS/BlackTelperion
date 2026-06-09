@@ -6,6 +6,14 @@ BlackTelperion.analyse package
    :show-inheritance:
    :undoc-members:
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   BlackTelperion.analyse.deshadow
+
 Submodules
 ----------
 

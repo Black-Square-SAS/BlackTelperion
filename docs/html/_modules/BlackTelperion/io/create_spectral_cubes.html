@@ -1,0 +1,629 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.io.create_spectral_cubes &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/BlackTelperion.html">BlackTelperion package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../io.html">BlackTelperion.io</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.io.create_spectral_cubes</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for BlackTelperion.io.create_spectral_cubes</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rasterio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rasterio.transform</span><span class="w"> </span><span class="kn">import</span> <span class="n">Affine</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">spectral.io.envi</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">envi</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+
+<span class="c1"># Setup logger</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="create_sentinel_spectral_cube">
+<a class="viewcode-back" href="../../../api/BlackTelperion.io.create_spectral_cubes.html#BlackTelperion.io.create_spectral_cubes.create_sentinel_spectral_cube">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_sentinel_spectral_cube</span><span class="p">(</span><span class="n">safe_directory</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bands_to_use</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">60</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a spectral cube from Sentinel-2 L2A imagery in ENVI format (.dat and .hdr).</span>
+
+<span class="sd">    This function processes Sentinel-2 L2A data to generate a spectral cube containing</span>
+<span class="sd">    selected reflectance bands. The function locates the appropriate bands within the</span>
+<span class="sd">    SAFE directory structure, reads them, and combines them into a single multi-band image.</span>
+<span class="sd">    The output is saved in ENVI format with a .dat data file and .hdr header file.</span>
+
+<span class="sd">    The function replaces the original nodata values (0) with NaN and converts</span>
+<span class="sd">    all data to float32 format for better processing compatibility.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    safe_directory : str</span>
+<span class="sd">        Path to the Sentinel-2 SAFE directory</span>
+<span class="sd">        (e.g., &quot;S2A_MSIL2A_20201210T185801_N0500_R113_T10TGK_20230302T053408.SAFE&quot;)</span>
+<span class="sd">        Can be a full path to the .SAFE directory or to a subdirectory within it.</span>
+
+<span class="sd">    output_dir : str, optional</span>
+<span class="sd">        Directory where output ENVI files will be saved.</span>
+<span class="sd">        If None, uses the same directory as the input SAFE file.</span>
+<span class="sd">        The directory will be created if it doesn&#39;t exist.</span>
+
+<span class="sd">    bands_to_use : list of str, optional</span>
+<span class="sd">        List of reflectance band names to include in the spectral cube (e.g., [&#39;B02&#39;, &#39;B03&#39;, &#39;B04&#39;]).</span>
+<span class="sd">        If None or empty, all available reflectance bands for the specified resolution will be used.</span>
+<span class="sd">        The order of bands in this list determines the order in the output spectral cube.</span>
+
+<span class="sd">        Available bands by resolution:</span>
+<span class="sd">        - 10m: B02, B03, B04, B08</span>
+<span class="sd">        - 20m: B01, B02, B03, B04, B05, B06, B07, B8A, B11, B12</span>
+<span class="sd">        - 60m: B01, B02, B03, B04, B05, B06, B07, B8A, B09, B11, B12</span>
+
+<span class="sd">    resolution : int, optional</span>
+<span class="sd">        Resolution in meters. Must be one of: 10, 20, or 60.</span>
+<span class="sd">        Default is 60m, which includes the most available bands.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        (spectral_cube, metadata, output_path)</span>
+<span class="sd">        - spectral_cube: numpy.ndarray</span>
+<span class="sd">            3D array with dimensions (height, width, bands)</span>
+<span class="sd">        - metadata: dict</span>
+<span class="sd">            ENVI header metadata</span>
+<span class="sd">        - output_path: str</span>
+<span class="sd">            Path to the output files (without extension)</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If bands are not available at the specified resolution or if resolution is invalid.</span>
+<span class="sd">        The error message will list which bands are available at the given resolution.</span>
+
+<span class="sd">    FileNotFoundError</span>
+<span class="sd">        If required files or directories cannot be found within the SAFE structure.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; # Create RGB cube at 60m resolution</span>
+<span class="sd">    &gt;&gt;&gt; cube, metadata, path = create_sentinel_spectral_cube(</span>
+<span class="sd">    ...     &quot;S2A_MSIL2A_20201210T185801_N0500_R113_T10TGK_20230302T053408.SAFE&quot;,</span>
+<span class="sd">    ...     bands_to_use=[&#39;B04&#39;, &#39;B03&#39;, &#39;B02&#39;],</span>
+<span class="sd">    ...     resolution=60</span>
+<span class="sd">    ... )</span>
+
+<span class="sd">    &gt;&gt;&gt; # Use all available bands at 10m resolution</span>
+<span class="sd">    &gt;&gt;&gt; cube, metadata, path = create_sentinel_spectral_cube(</span>
+<span class="sd">    ...     &quot;S2A_MSIL2A_20201210T185801_N0500_R113_T10TGK_20230302T053408.SAFE&quot;,</span>
+<span class="sd">    ...     resolution=10</span>
+<span class="sd">    ... )</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - The output file naming follows the pattern: {base_name}_spectralcube_R{resolution}m.dat</span>
+<span class="sd">      where base_name is derived from the SAFE directory name.</span>
+<span class="sd">    - The spectral cube shape is (height, width, bands) with bands in the last dimension.</span>
+<span class="sd">    - All data is converted to float32 and 0 values are replaced with NaN.</span>
+<span class="sd">    - The ENVI file is saved in BSQ (Band Sequential) format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Validate resolution</span>
+    <span class="k">if</span> <span class="n">resolution</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">60</span><span class="p">]:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid resolution: </span><span class="si">{</span><span class="n">resolution</span><span class="si">}</span><span class="s2">. Must be 10, 20, or 60.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid resolution: </span><span class="si">{</span><span class="n">resolution</span><span class="si">}</span><span class="s2">. Must be 10, 20, or 60.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Set default output directory if not provided</span>
+    <span class="k">if</span> <span class="n">output_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Use the same directory as the input SAFE file</span>
+        <span class="n">output_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">safe_directory</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No output directory specified. Using: </span><span class="si">{</span><span class="n">output_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Make sure the output directory exists</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_dir</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created output directory: </span><span class="si">{</span><span class="n">output_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to create output directory: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span>
+
+    <span class="c1"># Get the base name from the SAFE directory path</span>
+    <span class="c1"># First, check if the path itself ends with .SAFE</span>
+    <span class="k">if</span> <span class="n">safe_directory</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.SAFE&#39;</span><span class="p">):</span>
+        <span class="c1"># Extract just the filename part without the .SAFE extension</span>
+        <span class="n">base_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">safe_directory</span><span class="p">[:</span><span class="o">-</span><span class="mi">5</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># The path might be to a subdirectory within the SAFE structure</span>
+        <span class="c1"># Find the .SAFE part in the path</span>
+        <span class="n">safe_parts</span> <span class="o">=</span> <span class="n">safe_directory</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.SAFE&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">safe_parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># If .SAFE exists in the path</span>
+            <span class="c1"># Get just the filename part of the path leading up to .SAFE</span>
+            <span class="n">safe_dir_part</span> <span class="o">=</span> <span class="n">safe_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">base_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">safe_dir_part</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Fallback: just use the basename of the provided path</span>
+            <span class="n">base_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">safe_directory</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using base name: </span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s2"> for output files&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Create output filename with the specified format - note the &quot;*&quot; around &quot;spectralcube&quot;</span>
+    <span class="n">output_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s2">_spectralcube_R</span><span class="si">{</span><span class="n">resolution</span><span class="si">}</span><span class="s2">m&quot;</span>
+    <span class="n">full_output_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">output_filename</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output will be saved as: </span><span class="si">{</span><span class="n">full_output_path</span><span class="si">}</span><span class="s2">.dat and </span><span class="si">{</span><span class="n">full_output_path</span><span class="si">}</span><span class="s2">.hdr&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Creating spectral cube with reflectance bands: </span><span class="si">{</span><span class="n">bands_to_use</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="n">resolution</span><span class="si">}</span><span class="s2">m resolution&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Dictionary of available reflectance bands for each resolution</span>
+    <span class="n">available_bands</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">10</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;B02&#39;</span><span class="p">,</span> <span class="s1">&#39;B03&#39;</span><span class="p">,</span> <span class="s1">&#39;B04&#39;</span><span class="p">,</span> <span class="s1">&#39;B08&#39;</span><span class="p">],</span>
+
+        <span class="mi">20</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;B01&#39;</span><span class="p">,</span> <span class="s1">&#39;B02&#39;</span><span class="p">,</span> <span class="s1">&#39;B03&#39;</span><span class="p">,</span> <span class="s1">&#39;B04&#39;</span><span class="p">,</span> <span class="s1">&#39;B05&#39;</span><span class="p">,</span> <span class="s1">&#39;B06&#39;</span><span class="p">,</span> <span class="s1">&#39;B07&#39;</span><span class="p">,</span> <span class="s1">&#39;B8A&#39;</span><span class="p">,</span> <span class="s1">&#39;B11&#39;</span><span class="p">,</span> <span class="s1">&#39;B12&#39;</span><span class="p">],</span>
+
+        <span class="mi">60</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;B01&#39;</span><span class="p">,</span> <span class="s1">&#39;B02&#39;</span><span class="p">,</span> <span class="s1">&#39;B03&#39;</span><span class="p">,</span> <span class="s1">&#39;B04&#39;</span><span class="p">,</span> <span class="s1">&#39;B05&#39;</span><span class="p">,</span> <span class="s1">&#39;B06&#39;</span><span class="p">,</span> <span class="s1">&#39;B07&#39;</span><span class="p">,</span> <span class="s1">&#39;B8A&#39;</span><span class="p">,</span> <span class="s1">&#39;B09&#39;</span><span class="p">,</span> <span class="s1">&#39;B11&#39;</span><span class="p">,</span> <span class="s1">&#39;B12&#39;</span><span class="p">]</span>
+    <span class="p">}</span>
+
+    <span class="c1"># If bands_to_use is None or empty, use all available bands for the resolution</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">bands_to_use</span><span class="p">:</span>
+        <span class="n">bands_to_use</span> <span class="o">=</span> <span class="n">available_bands</span><span class="p">[</span><span class="n">resolution</span><span class="p">]</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No specific bands requested. Using all available bands at </span><span class="si">{</span><span class="n">resolution</span><span class="si">}</span><span class="s2">m: </span><span class="si">{</span><span class="n">bands_to_use</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check if all requested bands are available in the specified resolution</span>
+    <span class="n">invalid_bands</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">bands_to_use</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">band</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">available_bands</span><span class="p">[</span><span class="n">resolution</span><span class="p">]:</span>
+            <span class="n">invalid_bands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">band</span><span class="si">}</span><span class="s2"> (not available at </span><span class="si">{</span><span class="n">resolution</span><span class="si">}</span><span class="s2">m resolution)&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">invalid_bands</span><span class="p">:</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;The following bands are not available at </span><span class="si">{</span><span class="n">resolution</span><span class="si">}</span><span class="s2">m resolution: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">invalid_bands</span><span class="p">)</span><span class="si">}</span><span class="s2">. &quot;</span>
+        <span class="n">error_msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Available bands for </span><span class="si">{</span><span class="n">resolution</span><span class="si">}</span><span class="s2">m resolution are: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">available_bands</span><span class="p">[</span><span class="n">resolution</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">invalid_bands</span><span class="p">:</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;The following bands are not available at </span><span class="si">{</span><span class="n">resolution</span><span class="si">}</span><span class="s2">m resolution: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">invalid_bands</span><span class="p">)</span><span class="si">}</span><span class="s2">. &quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+    <span class="c1"># Find the correct image data directory</span>
+    <span class="n">granule_dir</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">safe_directory</span><span class="p">,</span> <span class="s1">&#39;GRANULE&#39;</span><span class="p">,</span> <span class="s1">&#39;L2A_*&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">granule_dir</span><span class="p">:</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not find GRANULE directory in </span><span class="si">{</span><span class="n">safe_directory</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+    <span class="c1"># Construct the path to the resolution-specific image directory</span>
+    <span class="n">img_data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">granule_dir</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;IMG_DATA&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;R</span><span class="si">{</span><span class="n">resolution</span><span class="si">}</span><span class="s1">m&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">img_data_dir</span><span class="p">):</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not find R</span><span class="si">{</span><span class="n">resolution</span><span class="si">}</span><span class="s2">m directory in </span><span class="si">{</span><span class="n">granule_dir</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">/IMG_DATA&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found image data directory: </span><span class="si">{</span><span class="n">img_data_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Dictionary to store paths for each band</span>
+    <span class="n">band_paths</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Find band files in the directory</span>
+    <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">bands_to_use</span><span class="p">:</span>
+        <span class="c1"># Search pattern for Sentinel-2 L2A band files</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">img_data_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;*_</span><span class="si">{</span><span class="n">band</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">resolution</span><span class="si">}</span><span class="s2">m.jp2&quot;</span><span class="p">)</span>
+        <span class="n">matches</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">matches</span><span class="p">:</span>
+            <span class="n">band_paths</span><span class="p">[</span><span class="n">band</span><span class="p">]</span> <span class="o">=</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="n">band</span><span class="si">}</span><span class="s2"> at: </span><span class="si">{</span><span class="n">band_paths</span><span class="p">[</span><span class="n">band</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not find band </span><span class="si">{</span><span class="n">band</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">img_data_dir</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+    <span class="c1"># Load the first band to get reference metadata</span>
+    <span class="n">reference_band</span> <span class="o">=</span> <span class="n">bands_to_use</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">band_paths</span><span class="p">[</span><span class="n">reference_band</span><span class="p">])</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+        <span class="n">reference_profile</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">reference_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="n">src</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
+
+        <span class="c1"># Extract geospatial information</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">transform</span>
+        <span class="n">crs</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">crs</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reference band </span><span class="si">{</span><span class="n">reference_band</span><span class="si">}</span><span class="s2"> shape: </span><span class="si">{</span><span class="n">reference_shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Create an empty array for our spectral cube</span>
+    <span class="n">num_bands</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bands_to_use</span><span class="p">)</span>
+    <span class="n">spectral_cube</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">reference_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">reference_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">num_bands</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+    <span class="c1"># Load each band and add to the spectral cube</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">band</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bands_to_use</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">band_paths</span><span class="p">[</span><span class="n">band</span><span class="p">])</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+            <span class="n">band_data</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+            <span class="c1"># Replace nodata (0) with NaN</span>
+            <span class="n">band_data</span><span class="p">[</span><span class="n">band_data</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+            <span class="c1"># Add to spectral cube - bands in the last dimension</span>
+            <span class="n">spectral_cube</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">band_data</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Spectral cube created with shape: </span><span class="si">{</span><span class="n">spectral_cube</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Prepare ENVI header metadata</span>
+    <span class="n">envi_metadata</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;Sentinel-2 L2A spectral cube with bands: </span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bands_to_use</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;bands&#39;</span><span class="p">:</span> <span class="n">num_bands</span><span class="p">,</span>
+        <span class="s1">&#39;lines&#39;</span><span class="p">:</span> <span class="n">reference_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="s1">&#39;samples&#39;</span><span class="p">:</span> <span class="n">reference_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="s1">&#39;interleave&#39;</span><span class="p">:</span> <span class="s1">&#39;bsq&#39;</span><span class="p">,</span>  <span class="c1"># Explicitly set BSQ interleave format</span>
+        <span class="s1">&#39;data type&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>       <span class="c1"># 4 corresponds to float32</span>
+        <span class="s1">&#39;byte order&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;band names&#39;</span><span class="p">:</span> <span class="n">bands_to_use</span><span class="p">,</span>
+        <span class="s1">&#39;coordinate system string&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">crs</span><span class="p">),</span>
+        <span class="s1">&#39;map info&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">crs</span><span class="o">.</span><span class="n">to_epsg</span><span class="p">()),</span>
+            <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span>  <span class="c1"># Pixel location (ENVI format is 1-based)</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">c</span><span class="p">),</span>  <span class="c1"># Upper left x</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">f</span><span class="p">),</span>  <span class="c1"># Upper left y</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">a</span><span class="p">),</span>  <span class="c1"># Pixel width</span>
+            <span class="nb">str</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">e</span><span class="p">)),</span>  <span class="c1"># Pixel height</span>
+            <span class="s1">&#39; &#39;</span>
+        <span class="p">],</span>
+        <span class="s1">&#39;data ignore value&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>  <span class="c1"># Set NaN as the nodata value</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Save as ENVI format</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Create full file paths with correct extensions</span>
+        <span class="n">base_output_path</span> <span class="o">=</span> <span class="n">full_output_path</span>
+        <span class="n">header_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_output_path</span><span class="si">}</span><span class="s2">.hdr&quot;</span>
+        <span class="n">dat_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_output_path</span><span class="si">}</span><span class="s2">.dat&quot;</span>
+
+        <span class="c1"># Save the spectral cube using spectral.io.envi with explicit extension</span>
+        <span class="n">envi</span><span class="o">.</span><span class="n">save_image</span><span class="p">(</span><span class="n">header_path</span><span class="p">,</span> <span class="n">spectral_cube</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">envi_metadata</span><span class="p">,</span>
+                       <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s1">&#39;.dat&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Check if the file was saved properly</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dat_path</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saved spectral cube to </span><span class="si">{</span><span class="n">dat_path</span><span class="si">}</span><span class="s2"> with header </span><span class="si">{</span><span class="n">header_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not find </span><span class="si">{</span><span class="n">dat_path</span><span class="si">}</span><span class="s2">, checking for alternate extensions...&quot;</span><span class="p">)</span>
+            <span class="c1"># Find the created data file (which might have .img extension)</span>
+            <span class="n">img_path</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">potential_extensions</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;.img&#39;</span><span class="p">,</span> <span class="s1">&#39;.IMG&#39;</span><span class="p">,</span> <span class="s1">&#39;.raw&#39;</span><span class="p">,</span> <span class="s1">&#39;.RAW&#39;</span><span class="p">,</span> <span class="s1">&#39;.bil&#39;</span><span class="p">,</span> <span class="s1">&#39;.BIL&#39;</span><span class="p">,</span> <span class="s1">&#39;.bsq&#39;</span><span class="p">,</span> <span class="s1">&#39;.BSQ&#39;</span><span class="p">,</span> <span class="s1">&#39;.bip&#39;</span><span class="p">,</span> <span class="s1">&#39;.BIP&#39;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">ext</span> <span class="ow">in</span> <span class="n">potential_extensions</span><span class="p">:</span>
+                <span class="n">temp_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_output_path</span><span class="si">}{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">temp_path</span><span class="p">):</span>
+                    <span class="n">img_path</span> <span class="o">=</span> <span class="n">temp_path</span>
+                    <span class="k">break</span>
+
+            <span class="c1"># If found, rename to .dat</span>
+            <span class="k">if</span> <span class="n">img_path</span><span class="p">:</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">img_path</span><span class="p">,</span> <span class="n">dat_path</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Renamed data file from </span><span class="si">{</span><span class="n">img_path</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">dat_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not find data file with known extensions. Please check the output directory.&quot;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to save ENVI files: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span>
+
+    <span class="k">return</span> <span class="n">spectral_cube</span><span class="p">,</span> <span class="n">envi_metadata</span><span class="p">,</span> <span class="n">full_output_path</span></div>
+
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rasterio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rasterio.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Resampling</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<div class="viewcode-block" id="create_hyspex_spectral_cube">
+<a class="viewcode-back" href="../../../api/BlackTelperion.io.create_spectral_cubes.html#BlackTelperion.io.create_spectral_cubes.create_hyspex_spectral_cube">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_hyspex_spectral_cube</span><span class="p">(</span><span class="n">hdr_path</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Processes a HySpex hyperspectral cube (.hdr and corresponding data file):</span>
+<span class="sd">    1. Reads the .hdr file and corresponding data file (.bsq, .dat, or no extension)</span>
+<span class="sd">    2. Converts all values &lt; 0 OR equal to 15000 to np.nan</span>
+<span class="sd">    3. Updates the header to set NaN as the data ignore value</span>
+<span class="sd">    4. Saves the result as .dat and .hdr files</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    hdr_path : str</span>
+<span class="sd">        Path to the .hdr file</span>
+<span class="sd">    output_dir : str</span>
+<span class="sd">        Directory to save output files</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    --------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        (spectral_cube, metadata, output_path)</span>
+<span class="sd">        - spectral_cube: numpy.ndarray</span>
+<span class="sd">            3D array with dimensions (height, width, bands)</span>
+<span class="sd">        - metadata: dict</span>
+<span class="sd">            ENVI header metadata</span>
+<span class="sd">        - output_path: str</span>
+<span class="sd">            Path to the output file (with .dat extension)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Create output directory if it doesn&#39;t exist</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Extract base name and directory</span>
+    <span class="n">base_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">hdr_path</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.hdr&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">input_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">hdr_path</span><span class="p">)</span>
+
+    <span class="c1"># Find the corresponding data file - could be .bsq, .dat, or no extension</span>
+    <span class="n">data_path</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># First try with extensions</span>
+    <span class="k">for</span> <span class="n">ext</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.bsq&#39;</span><span class="p">,</span> <span class="s1">&#39;.dat&#39;</span><span class="p">]:</span>
+        <span class="n">test_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">input_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_name</span><span class="si">}{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">test_path</span><span class="p">):</span>
+            <span class="n">data_path</span> <span class="o">=</span> <span class="n">test_path</span>
+            <span class="k">break</span>
+
+    <span class="c1"># If not found with extensions, try without extension</span>
+    <span class="k">if</span> <span class="n">data_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">test_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">input_dir</span><span class="p">,</span> <span class="n">base_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">test_path</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">test_path</span><span class="p">):</span>
+            <span class="n">data_path</span> <span class="o">=</span> <span class="n">test_path</span>
+
+    <span class="c1"># If still not found, search for files that start with the base name</span>
+    <span class="k">if</span> <span class="n">data_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">input_dir</span><span class="p">):</span>
+            <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">input_dir</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">base_name</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.hdr&#39;</span><span class="p">):</span>
+                <span class="n">data_path</span> <span class="o">=</span> <span class="n">file_path</span>
+                <span class="k">break</span>
+
+    <span class="k">if</span> <span class="n">data_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not find data file for </span><span class="si">{</span><span class="n">hdr_path</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found corresponding data file: </span><span class="si">{</span><span class="n">data_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Output paths</span>
+    <span class="n">output_dat_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s2">.dat&quot;</span><span class="p">)</span>
+    <span class="n">output_hdr_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s2">.hdr&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Read the original header file content</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">hdr_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">orig_hdr_content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="c1"># Initialize spectral_cube and metadata</span>
+    <span class="n">spectral_cube</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">envi_metadata</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Open dataset with rasterio - FIXED: use &#39;r&#39; mode instead of header path</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+            <span class="c1"># Get metadata</span>
+            <span class="n">profile</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">profile</span>
+
+            <span class="c1"># Extract metadata for return value</span>
+            <span class="n">envi_metadata</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;Processed hyperspectral cube from </span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;bands&#39;</span><span class="p">:</span> <span class="n">src</span><span class="o">.</span><span class="n">count</span><span class="p">,</span>
+                <span class="s1">&#39;lines&#39;</span><span class="p">:</span> <span class="n">src</span><span class="o">.</span><span class="n">height</span><span class="p">,</span>
+                <span class="s1">&#39;samples&#39;</span><span class="p">:</span> <span class="n">src</span><span class="o">.</span><span class="n">width</span><span class="p">,</span>
+                <span class="s1">&#39;interleave&#39;</span><span class="p">:</span> <span class="s1">&#39;bsq&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;data type&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>  <span class="c1"># float32</span>
+                <span class="s1">&#39;byte order&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s1">&#39;data ignore value&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
+            <span class="p">}</span>
+
+            <span class="c1"># Add coordinate information if available</span>
+            <span class="k">if</span> <span class="n">src</span><span class="o">.</span><span class="n">crs</span><span class="p">:</span>
+                <span class="n">envi_metadata</span><span class="p">[</span><span class="s1">&#39;coordinate system string&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">src</span><span class="o">.</span><span class="n">transform</span><span class="p">:</span>
+                <span class="n">envi_metadata</span><span class="p">[</span><span class="s1">&#39;map info&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">to_epsg</span><span class="p">())</span> <span class="k">if</span> <span class="n">src</span><span class="o">.</span><span class="n">crs</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span>  <span class="c1"># Pixel location (ENVI format is 1-based)</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">c</span><span class="p">),</span>  <span class="c1"># Upper left x</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">f</span><span class="p">),</span>  <span class="c1"># Upper left y</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">a</span><span class="p">),</span>  <span class="c1"># Pixel width</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">e</span><span class="p">)),</span>  <span class="c1"># Pixel height</span>
+                    <span class="s1">&#39; &#39;</span>
+                <span class="p">]</span>
+
+            <span class="c1"># Update profile for output</span>
+            <span class="n">profile</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="n">driver</span><span class="o">=</span><span class="s1">&#39;ENVI&#39;</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+                <span class="n">nodata</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="p">)</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing hyperspectral cube with dimensions: </span><span class="si">{</span><span class="n">src</span><span class="o">.</span><span class="n">width</span><span class="si">}</span><span class="s2">x</span><span class="si">{</span><span class="n">src</span><span class="o">.</span><span class="n">height</span><span class="si">}</span><span class="s2">x</span><span class="si">{</span><span class="n">src</span><span class="o">.</span><span class="n">count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Create 3D array for the spectral cube (height, width, bands)</span>
+            <span class="n">spectral_cube</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">src</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="n">src</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="n">src</span><span class="o">.</span><span class="n">count</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+            <span class="c1"># Create output dataset</span>
+            <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">output_dat_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">profile</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst</span><span class="p">:</span>
+                <span class="c1"># Process each band</span>
+                <span class="k">for</span> <span class="n">band_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">src</span><span class="o">.</span><span class="n">count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                    <span class="c1"># Read band data</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">band_idx</span><span class="p">)</span>
+
+                    <span class="c1"># Convert to float32</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+                    <span class="c1"># Set values &lt;= 0 OR equal to 15000 to NaN</span>
+                    <span class="n">data</span><span class="p">[(</span><span class="n">data</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">data</span> <span class="o">==</span> <span class="mi">15000</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+                    <span class="c1"># Store in spectral cube (adjust index since rasterio uses 1-based indexing)</span>
+                    <span class="n">spectral_cube</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">band_idx</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+
+                    <span class="c1"># Write to output</span>
+                    <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">band_idx</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Error processing data file: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="k">raise</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data processing complete. Now updating header file...&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check if header file exists</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_hdr_path</span><span class="p">):</span>
+        <span class="c1"># Read the current header</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_hdr_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">new_hdr_content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Header file not created by rasterio. Creating from the original header...&quot;</span><span class="p">)</span>
+        <span class="c1"># If not, copy from the original</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">hdr_path</span><span class="p">,</span> <span class="n">output_hdr_path</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_hdr_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">new_hdr_content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="c1"># Define mandatory fields</span>
+    <span class="n">mandatory_fields</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;bands&#39;</span><span class="p">,</span> <span class="s1">&#39;header offset&#39;</span><span class="p">,</span> <span class="s1">&#39;data type&#39;</span><span class="p">,</span> <span class="s1">&#39;interleave&#39;</span><span class="p">,</span> <span class="s1">&#39;byte order&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;map info&#39;</span><span class="p">,</span> <span class="s1">&#39;coordinate system string&#39;</span><span class="p">,</span> <span class="s1">&#39;pixel size&#39;</span><span class="p">,</span> <span class="s1">&#39;background&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;wavelength units&#39;</span><span class="p">,</span> <span class="s1">&#39;band names&#39;</span><span class="p">,</span> <span class="s1">&#39;wavelength&#39;</span><span class="p">,</span> <span class="s1">&#39;fwhm&#39;</span>
+    <span class="p">]</span>
+
+    <span class="c1"># Update data ignore value</span>
+    <span class="n">new_hdr_content</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span>
+        <span class="sa">r</span><span class="s1">&#39;data ignore value\s*=\s*[^\n]*&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;data ignore value = nan&#39;</span><span class="p">,</span>
+        <span class="n">new_hdr_content</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Ensure data type is 4 (float32)</span>
+    <span class="n">new_hdr_content</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span>
+        <span class="sa">r</span><span class="s1">&#39;data type\s*=\s*\d+&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;data type = 4&#39;</span><span class="p">,</span>
+        <span class="n">new_hdr_content</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Check for missing mandatory fields</span>
+    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">mandatory_fields</span><span class="p">:</span>
+        <span class="c1"># Skip data ignore value as we&#39;ve already set it</span>
+        <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="s1">&#39;data ignore value&#39;</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># Check if the field exists in the new header</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">rf</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s1">\s*=&#39;</span><span class="p">,</span> <span class="n">new_hdr_content</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">):</span>
+            <span class="c1"># If not, extract it from the original header</span>
+            <span class="n">pattern</span> <span class="o">=</span> <span class="sa">rf</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s1">\s*=\s*[^</span><span class="se">{{}}</span><span class="s1">]*(?:</span><span class="se">{{</span><span class="s1">[^</span><span class="se">{{}}</span><span class="s1">]*</span><span class="se">}}</span><span class="s1">)?&#39;</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">orig_hdr_content</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                <span class="c1"># Add the field to the new header</span>
+                <span class="n">field_content</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">new_hdr_content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">field_content</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Added missing field: </span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="c1"># Add to our metadata dictionary for the return value</span>
+                <span class="k">if</span> <span class="n">field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">envi_metadata</span><span class="p">:</span>
+                    <span class="c1"># Extract the content part after the equals sign</span>
+                    <span class="n">field_value</span> <span class="o">=</span> <span class="n">field_content</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="s1">&#39;=&#39;</span> <span class="ow">in</span> <span class="n">field_content</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+                    <span class="n">envi_metadata</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="n">field_value</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not find required field &#39;</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&#39; in original header&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Write the updated header</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_hdr_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">new_hdr_content</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Failed to write header file: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="k">raise</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing complete!&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output data file: </span><span class="si">{</span><span class="n">output_dat_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output header file: </span><span class="si">{</span><span class="n">output_hdr_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Return the spectral cube, metadata, and output path with extension</span>
+    <span class="k">return</span> <span class="n">spectral_cube</span><span class="p">,</span> <span class="n">envi_metadata</span><span class="p">,</span> <span class="n">output_dat_path</span></div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

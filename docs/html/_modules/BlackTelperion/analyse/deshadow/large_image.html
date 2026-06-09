@@ -1,0 +1,394 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.analyse.deshadow.large_image &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/BlackTelperion.html">BlackTelperion package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../analyse.html">BlackTelperion.analyse</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.analyse.deshadow.large_image</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for BlackTelperion.analyse.deshadow.large_image</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Shadow detection and removal for images too large to fit in memory.</span>
+
+<span class="sd">:func:`shadow_mask_large` and :func:`deshadow_large_image` are the streamed,</span>
+<span class="sd">file-in/file-out counterparts of</span>
+<span class="sd">:func:`~BlackTelperion.analyse.deshadow.core.shadow_mask` and</span>
+<span class="sd">:func:`~BlackTelperion.analyse.deshadow.core.deshadow_image`. The cube is read in</span>
+<span class="sd">horizontal row-strips via GDAL windows, reusing the integral / threshold /</span>
+<span class="sd">cleanup primitives from :mod:`BlackTelperion.analyse.deshadow.core` (no detection</span>
+<span class="sd">math is re-implemented here). See :mod:`BlackTelperion.analyse.deshadow` for the</span>
+<span class="sd">method.</span>
+
+<span class="sd">Because the threshold is a percentage of the *global* maximum integral, the</span>
+<span class="sd">single-band integral image is materialised in full (one float32 per pixel — many</span>
+<span class="sd">times smaller than the cube) before thresholding; the cube itself is never fully</span>
+<span class="sd">loaded.</span>
+
+<span class="sd">.. note::</span>
+<span class="sd">   GDAL ``ReadAsArray()`` is ``[band, row, col] = [band, y, x]`` while</span>
+<span class="sd">   ``BlackImage`` is ``[x, y, band]`` (``loadWithGDAL`` transposes). The 2-D</span>
+<span class="sd">   integral and mask are kept in GDAL ``[row, col] = [y, x]`` orientation</span>
+<span class="sd">   throughout; only the single-band mask, which fits in RAM, is transposed back</span>
+<span class="sd">   to build a BlackImage.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">BlackTelperion</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlackImage</span><span class="p">,</span> <span class="n">io</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">BlackTelperion.analyse.deshadow.core</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_trapezoid_weights</span><span class="p">,</span>
+    <span class="n">_integrate_strip</span><span class="p">,</span>
+    <span class="n">_apply_threshold</span><span class="p">,</span>
+    <span class="n">_remove_small_regions</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># GDAL helpers</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<span class="c1"># GDAL integer data-type constants -&gt; numpy dtypes (for the integer-source guard).</span>
+<span class="n">_GDAL_INT_TYPES</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Byte&quot;</span><span class="p">,</span> <span class="s2">&quot;Int8&quot;</span><span class="p">,</span> <span class="s2">&quot;UInt16&quot;</span><span class="p">,</span> <span class="s2">&quot;Int16&quot;</span><span class="p">,</span> <span class="s2">&quot;UInt32&quot;</span><span class="p">,</span> <span class="s2">&quot;Int32&quot;</span><span class="p">,</span>
+                   <span class="s2">&quot;UInt64&quot;</span><span class="p">,</span> <span class="s2">&quot;Int64&quot;</span><span class="p">,</span> <span class="s2">&quot;CInt16&quot;</span><span class="p">,</span> <span class="s2">&quot;CInt32&quot;</span><span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_gdal</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">osgeo.gdal</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gdal</span>
+        <span class="n">gdal</span><span class="o">.</span><span class="n">PushErrorHandler</span><span class="p">(</span><span class="s2">&quot;CPLQuietErrorHandler&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">gdal</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+            <span class="s2">&quot;GDAL (osgeo) is required for the large-image shadow functions &quot;</span>
+            <span class="s2">&quot;(BlackTelperion.analyse.deshadow.large_image).&quot;</span>
+        <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_source_wavelengths</span><span class="p">(</span><span class="n">input_path</span><span class="p">,</span> <span class="n">n_bands</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read wavelengths from the source ENVI header; fall back to band indices.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">hdr_path</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">matchHeader</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">hdr_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">loadHeader</span><span class="p">(</span><span class="n">hdr_path</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">header</span><span class="o">.</span><span class="n">has_wavelengths</span><span class="p">():</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">header</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_bands</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Pass 1 — streamed integral, threshold, cleanup</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_integral</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">strip_rows</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Stream row-strips and return the full ``[row, col]`` float32 integral.&quot;&quot;&quot;</span>
+    <span class="n">n_cols</span><span class="p">,</span> <span class="n">n_rows</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">RasterXSize</span><span class="p">,</span> <span class="n">ds</span><span class="o">.</span><span class="n">RasterYSize</span>
+    <span class="n">integrals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">r0</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_rows</span><span class="p">,</span> <span class="n">strip_rows</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">strip_rows</span><span class="p">,</span> <span class="n">n_rows</span> <span class="o">-</span> <span class="n">r0</span><span class="p">)</span>
+        <span class="n">strip</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>               <span class="c1"># (bands, n, cols)</span>
+        <span class="n">strip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">strip</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>  <span class="c1"># (n, cols, bands)</span>
+        <span class="n">integrals</span><span class="p">[</span><span class="n">r0</span><span class="p">:</span><span class="n">r0</span> <span class="o">+</span> <span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">_integrate_strip</span><span class="p">(</span><span class="n">strip</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">integrals</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_detect_2d</span><span class="p">(</span><span class="n">input_path</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">min_shadow_size</span><span class="p">,</span> <span class="n">min_gap_size</span><span class="p">,</span> <span class="n">strip_rows</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Open the source and return ``(ds, shadow)`` with ``shadow`` in ``[row, col]``.</span>
+
+<span class="sd">    The returned GDAL dataset stays open so callers can reuse it for pass 2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">threshold</span> <span class="o">&lt;</span> <span class="mf">100.0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;threshold must be in the open interval (0, 100), got </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="n">threshold</span>
+        <span class="p">)</span>
+
+    <span class="n">gdal</span> <span class="o">=</span> <span class="n">_gdal</span><span class="p">()</span>
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">input_path</span><span class="p">,</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GA_ReadOnly</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;GDAL could not open </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">input_path</span><span class="p">)</span>
+
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">_trapezoid_weights</span><span class="p">(</span><span class="n">_source_wavelengths</span><span class="p">(</span><span class="n">input_path</span><span class="p">,</span> <span class="n">ds</span><span class="o">.</span><span class="n">RasterCount</span><span class="p">))</span>
+    <span class="n">integrals</span> <span class="o">=</span> <span class="n">_build_integral</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">strip_rows</span><span class="p">)</span>
+
+    <span class="n">shadow</span> <span class="o">=</span> <span class="n">_apply_threshold</span><span class="p">(</span><span class="n">integrals</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">min_shadow_size</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">min_gap_size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">shadow</span> <span class="o">=</span> <span class="n">_remove_small_regions</span><span class="p">(</span><span class="n">shadow</span><span class="p">,</span> <span class="n">min_shadow_size</span><span class="p">,</span> <span class="n">min_gap_size</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ds</span><span class="p">,</span> <span class="n">shadow</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_out_hdr</span><span class="p">(</span><span class="n">output_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the .hdr path that saveWithGDAL / the ENVI driver wrote for output_path.&quot;&quot;&quot;</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">output_path</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">(</span><span class="n">base</span> <span class="o">+</span> <span class="s2">&quot;.hdr&quot;</span><span class="p">,</span> <span class="n">output_path</span> <span class="o">+</span> <span class="s2">&quot;.hdr&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">c</span>
+    <span class="k">return</span> <span class="n">base</span> <span class="o">+</span> <span class="s2">&quot;.hdr&quot;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_set_hdr_field</span><span class="p">(</span><span class="n">hdr_path</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set/replace a single scalar field in an ENVI .hdr text file.&quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">hdr_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">pat</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;(?im)^\s*</span><span class="si">%s</span><span class="s2">\s*=.*$&quot;</span> <span class="o">%</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+    <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> = </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">pat</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span> <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">pat</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span> <span class="k">else</span> <span class="n">text</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">line</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">hdr_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_save_mask</span><span class="p">(</span><span class="n">shadow</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="n">geotransform</span><span class="p">,</span> <span class="n">projection</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a single-band BlackImage mask (fits RAM) and save via :mod:`io`.</span>
+
+<span class="sd">    The on-disk mask is float32 with 1.0=shadow, 0.0=sunlit. Note that the default</span>
+<span class="sd">    ``io.load`` (``mask_zero=True``) maps sunlit 0.0 -&gt; NaN; use</span>
+<span class="sd">    ``loadWithGDAL(path, mask_zero=False)`` to read the raw 0/1 values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">BlackImage</span><span class="p">(</span><span class="n">shadow</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>  <span class="c1"># [x, y, 1]</span>
+    <span class="n">mask</span><span class="o">.</span><span class="n">affine</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">geotransform</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">projection</span><span class="p">:</span>
+        <span class="n">mask</span><span class="o">.</span><span class="n">set_projection</span><span class="p">(</span><span class="n">projection</span><span class="p">)</span>
+    <span class="n">mask</span><span class="o">.</span><span class="n">set_band_names</span><span class="p">([</span><span class="s2">&quot;shadow_mask&quot;</span><span class="p">])</span>
+    <span class="n">mask</span><span class="o">.</span><span class="n">push_to_header</span><span class="p">()</span>
+    <span class="n">io</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+    <span class="c1"># saveWithGDAL&#39;s GA_Update step clobbers band names in the .hdr; restore it.</span>
+    <span class="n">_set_hdr_field</span><span class="p">(</span><span class="n">_out_hdr</span><span class="p">(</span><span class="n">output_path</span><span class="p">),</span> <span class="s2">&quot;band names&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{shadow_mask}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Public API</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="shadow_mask_large">
+<a class="viewcode-back" href="../../../../api/BlackTelperion.analyse.deshadow.html#BlackTelperion.analyse.deshadow.shadow_mask_large">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">shadow_mask_large</span><span class="p">(</span><span class="n">input_path</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">30.0</span><span class="p">,</span>
+                      <span class="n">min_shadow_size</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">min_gap_size</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">strip_rows</span><span class="o">=</span><span class="mi">256</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Shadow detection for a cube too large to fit in memory (large-image variant</span>
+<span class="sd">    of :func:`~BlackTelperion.analyse.deshadow.core.shadow_mask`).</span>
+
+<span class="sd">    The cube is read in horizontal row-strips via GDAL windows; each pixel&#39;s</span>
+<span class="sd">    spectrum is integrated (trapezoid rule) and thresholded at *threshold*</span>
+<span class="sd">    percent of the global maximum integral. All-NaN (no-data) pixels are</span>
+<span class="sd">    classified as shadow.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_path (str): path to the source cube (any GDAL-readable raster).</span>
+<span class="sd">        output_path (str): path for the single-band float32 shadow mask</span>
+<span class="sd">            (1.0=shadow, 0.0=sunlit), written as ENVI BSQ with the source</span>
+<span class="sd">            projection and geotransform.</span>
+<span class="sd">        threshold (float): percentage of the maximum integral below which a</span>
+<span class="sd">            pixel is shadow. Must be in (0, 100). Default 30.</span>
+<span class="sd">        min_shadow_size (int): remove connected shadow regions smaller than this.</span>
+<span class="sd">            0 disables. Default 0.</span>
+<span class="sd">        min_gap_size (int): fill connected sunlit regions smaller than this.</span>
+<span class="sd">            0 disables. Default 0.</span>
+<span class="sd">        strip_rows (int): number of rows read per GDAL window. Default 256.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: *output_path*.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ds</span><span class="p">,</span> <span class="n">shadow</span> <span class="o">=</span> <span class="n">_detect_2d</span><span class="p">(</span><span class="n">input_path</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span>
+                            <span class="n">min_shadow_size</span><span class="p">,</span> <span class="n">min_gap_size</span><span class="p">,</span> <span class="n">strip_rows</span><span class="p">)</span>
+    <span class="n">gt</span><span class="p">,</span> <span class="n">pj</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">GetGeoTransform</span><span class="p">(),</span> <span class="n">ds</span><span class="o">.</span><span class="n">GetProjection</span><span class="p">()</span>
+    <span class="n">ds</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_save_mask</span><span class="p">(</span><span class="n">shadow</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="n">gt</span><span class="p">,</span> <span class="n">pj</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output_path</span></div>
+
+
+
+<div class="viewcode-block" id="deshadow_large_image">
+<a class="viewcode-back" href="../../../../api/BlackTelperion.analyse.deshadow.html#BlackTelperion.analyse.deshadow.deshadow_large_image">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">deshadow_large_image</span><span class="p">(</span><span class="n">input_path</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">30.0</span><span class="p">,</span>
+                         <span class="n">min_shadow_size</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">min_gap_size</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">strip_rows</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+                         <span class="n">flag</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">mask_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove shadows from a cube too large to fit in memory (large-image variant</span>
+<span class="sd">    of :func:`~BlackTelperion.analyse.deshadow.core.deshadow_image`).</span>
+
+<span class="sd">    Detects shadows (as :func:`shadow_mask_large`) then streams the cube a second</span>
+<span class="sd">    time, setting every band of each shadow pixel to *flag*, and writes a full</span>
+<span class="sd">    output cube preserving the source dtype, projection and geotransform.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_path (str): path to the source cube.</span>
+<span class="sd">        output_path (str): path for the masked output cube (ENVI BSQ).</span>
+<span class="sd">        threshold, min_shadow_size, min_gap_size, strip_rows: see</span>
+<span class="sd">            :func:`shadow_mask_large`.</span>
+<span class="sd">        flag (float): value written to shadow pixels across all bands. Default</span>
+<span class="sd">            ``np.nan`` (treated as no-data throughout BlackTelperion).</span>
+<span class="sd">        mask_path (str or None): if given, also persist the intermediate shadow</span>
+<span class="sd">            mask there (single band). Default None.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: *output_path*.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if the source cube has an integer dtype but *flag* cannot be</span>
+<span class="sd">            represented in it (e.g. ``np.nan``). No silent upcast is performed —</span>
+<span class="sd">            check whether the cube should be decompressed / converted to float</span>
+<span class="sd">            reflectance before deshadowing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">gdal</span> <span class="o">=</span> <span class="n">_gdal</span><span class="p">()</span>
+    <span class="n">ds</span><span class="p">,</span> <span class="n">shadow</span> <span class="o">=</span> <span class="n">_detect_2d</span><span class="p">(</span><span class="n">input_path</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span>
+                            <span class="n">min_shadow_size</span><span class="p">,</span> <span class="n">min_gap_size</span><span class="p">,</span> <span class="n">strip_rows</span><span class="p">)</span>
+
+    <span class="n">n_cols</span><span class="p">,</span> <span class="n">n_rows</span><span class="p">,</span> <span class="n">n_bands</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">RasterXSize</span><span class="p">,</span> <span class="n">ds</span><span class="o">.</span><span class="n">RasterYSize</span><span class="p">,</span> <span class="n">ds</span><span class="o">.</span><span class="n">RasterCount</span>
+    <span class="n">src_gdal_dtype</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">DataType</span>
+    <span class="n">type_name</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GetDataTypeName</span><span class="p">(</span><span class="n">src_gdal_dtype</span><span class="p">)</span>
+
+    <span class="c1"># Integer-source guard: never silently upcast.</span>
+    <span class="k">if</span> <span class="n">type_name</span> <span class="ow">in</span> <span class="n">_GDAL_INT_TYPES</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">flag</span><span class="p">):</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Source cube </span><span class="si">%s</span><span class="s2"> has integer dtype (</span><span class="si">%s</span><span class="s2">) but flag=</span><span class="si">%r</span><span class="s2"> cannot be stored &quot;</span>
+            <span class="s2">&quot;in it. Check whether the cube should be decompressed / converted to &quot;</span>
+            <span class="s2">&quot;float reflectance before deshadowing.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">input_path</span><span class="p">,</span> <span class="n">type_name</span><span class="p">,</span> <span class="n">flag</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="n">gt</span><span class="p">,</span> <span class="n">pj</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">GetGeoTransform</span><span class="p">(),</span> <span class="n">ds</span><span class="o">.</span><span class="n">GetProjection</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">mask_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_save_mask</span><span class="p">(</span><span class="n">shadow</span><span class="p">,</span> <span class="n">mask_path</span><span class="p">,</span> <span class="n">gt</span><span class="p">,</span> <span class="n">pj</span><span class="p">)</span>
+
+    <span class="c1"># Create the output cube once; copy geo verbatim (offsets place each strip).</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GetDriverByName</span><span class="p">(</span><span class="s2">&quot;ENVI&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span>
+        <span class="n">output_path</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">,</span> <span class="n">n_rows</span><span class="p">,</span> <span class="n">n_bands</span><span class="p">,</span> <span class="n">src_gdal_dtype</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;INTERLEAVE=BSQ&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">out</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;GDAL could not create output cube </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">output_path</span><span class="p">)</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">SetGeoTransform</span><span class="p">(</span><span class="n">gt</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pj</span><span class="p">:</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">SetProjection</span><span class="p">(</span><span class="n">pj</span><span class="p">)</span>
+
+    <span class="c1"># Pass 2 — stream strips, flag shadow pixels across all bands, write windowed.</span>
+    <span class="k">for</span> <span class="n">r0</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_rows</span><span class="p">,</span> <span class="n">strip_rows</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">strip_rows</span><span class="p">,</span> <span class="n">n_rows</span> <span class="o">-</span> <span class="n">r0</span><span class="p">)</span>
+        <span class="n">block</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>        <span class="c1"># (bands, n, cols)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">shadow</span><span class="p">[</span><span class="n">r0</span><span class="p">:</span><span class="n">r0</span> <span class="o">+</span> <span class="n">n</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span>                        <span class="c1"># (n, cols)</span>
+        <span class="n">block</span><span class="p">[:,</span> <span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">flag</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">WriteArray</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">r0</span><span class="p">)</span>                     <span class="c1"># xoff=0, yoff=r0</span>
+
+    <span class="n">out</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ds</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">_propagate_header</span><span class="p">(</span><span class="n">input_path</span><span class="p">,</span> <span class="n">output_path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output_path</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_propagate_header</span><span class="p">(</span><span class="n">input_path</span><span class="p">,</span> <span class="n">output_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Copy the source ENVI header to the output (preserving wavelengths / map</span>
+<span class="sd">    info / coordinate system), forcing BSQ interleave so :func:`io.load` round-trips.</span>
+
+<span class="sd">    The output cube keeps the source dtype, dims and geo, so the source header is</span>
+<span class="sd">    valid for it apart from the interleave field.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">src_hdr</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">matchHeader</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="n">src_hdr</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">src_hdr</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">src_hdr</span><span class="p">):</span>
+        <span class="k">return</span>
+
+    <span class="n">out_hdr</span> <span class="o">=</span> <span class="n">_out_hdr</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">src_hdr</span><span class="p">,</span> <span class="n">out_hdr</span><span class="p">)</span>          <span class="c1"># preserves wavelengths / map info / coord sys</span>
+    <span class="n">_set_hdr_field</span><span class="p">(</span><span class="n">out_hdr</span><span class="p">,</span> <span class="s2">&quot;interleave&quot;</span><span class="p">,</span> <span class="s2">&quot;bsq&quot;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

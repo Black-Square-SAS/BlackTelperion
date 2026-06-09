@@ -1,0 +1,391 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.analyse.deshadow.core &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/BlackTelperion.html">BlackTelperion package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../analyse.html">BlackTelperion.analyse</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.analyse.deshadow.core</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for BlackTelperion.analyse.deshadow.core</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">In-memory shadow detection and removal.</span>
+
+<span class="sd">:func:`shadow_mask` returns a single-band shadow mask; :func:`deshadow_image`</span>
+<span class="sd">returns the cube with shadow pixels flagged across all bands. Both hold the whole</span>
+<span class="sd">image in RAM (the integral is computed in row-strips only to bound peak memory).</span>
+<span class="sd">For cubes that do not fit in memory, use the streamed variants in</span>
+<span class="sd">:mod:`BlackTelperion.analyse.deshadow.large_image`.</span>
+
+<span class="sd">See :mod:`BlackTelperion.analyse.deshadow` for the detection method.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">ndimage</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Public API</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="shadow_mask">
+<a class="viewcode-back" href="../../../../api/BlackTelperion.analyse.deshadow.core.html#BlackTelperion.analyse.deshadow.shadow_mask">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">shadow_mask</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">30.0</span><span class="p">,</span>
+                <span class="n">min_shadow_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="n">min_gap_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="n">strip_rows</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build a binary shadow mask from a hyperspectral dataset.</span>
+
+<span class="sd">    The spectrum of each pixel is integrated using the trapezoidal rule. A</span>
+<span class="sd">    pixel is classified as shadow when its integral falls below *threshold*</span>
+<span class="sd">    percent of the maximum integral observed across the image. NaN bands within</span>
+<span class="sd">    a pixel are zeroed before integration so they contribute nothing to the</span>
+<span class="sd">    sum; pixels whose entire spectrum is NaN produce a NaN integral and are</span>
+<span class="sd">    classified as shadow.</span>
+
+<span class="sd">    To keep peak memory proportional to one strip rather than the whole image,</span>
+<span class="sd">    the integration is performed in horizontal row-strips of *strip_rows* rows.</span>
+<span class="sd">    The only full-image allocation is the float32 integral array (~4 bytes per</span>
+<span class="sd">    pixel) and the final uint8 mask (~1 byte per pixel).</span>
+
+<span class="sd">    An optional morphological clean-up step removes spatial noise:</span>
+
+<span class="sd">    - isolated shadow blobs smaller than *min_shadow_size* pixels are</span>
+<span class="sd">      reclassified as sunlit.</span>
+<span class="sd">    - isolated sunlit gaps smaller than *min_gap_size* pixels that are</span>
+<span class="sd">      enclosed by shadow are filled in as shadow.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data:</span>
+<span class="sd">            A BlackData (or BlackImage) instance whose last dimension indexes</span>
+<span class="sd">            spectral bands.</span>
+<span class="sd">        threshold (float):</span>
+<span class="sd">            Percentage of the maximum spectral integral below which a pixel is</span>
+<span class="sd">            labelled as shadow. Must be in the range (0, 100). Default is 30.</span>
+<span class="sd">        min_shadow_size (int):</span>
+<span class="sd">            Connected shadow regions with fewer pixels than this value are</span>
+<span class="sd">            removed (set to sunlit). 0 disables this step. Default is 0.</span>
+<span class="sd">        min_gap_size (int):</span>
+<span class="sd">            Connected sunlit regions enclosed by shadow with fewer pixels than</span>
+<span class="sd">            this value are filled in as shadow. 0 disables this step.</span>
+<span class="sd">            Default is 0.</span>
+<span class="sd">        strip_rows (int):</span>
+<span class="sd">            Number of rows processed at once. Reduce this value if memory is</span>
+<span class="sd">            still insufficient; increase it for faster processing when RAM</span>
+<span class="sd">            allows. Default is 256.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A new BlackData instance of the same concrete type as *data* with a</span>
+<span class="sd">        single ``float32`` band (``1.0`` = shadow, ``0.0`` = sunlit). The output</span>
+<span class="sd">        header carries the band name ``&quot;shadow_mask&quot;``.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if *threshold* is not in the range (0, 100).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">threshold</span> <span class="o">&lt;</span> <span class="mf">100.0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;threshold must be in the open interval (0, 100), got </span><span class="si">{</span><span class="n">threshold</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">wavelengths</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">()</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">_trapezoid_weights</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">)</span>
+
+    <span class="n">integrals</span> <span class="o">=</span> <span class="n">_spectral_integrals_stripped</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">strip_rows</span><span class="p">)</span>
+    <span class="n">shadow</span> <span class="o">=</span> <span class="n">_apply_threshold</span><span class="p">(</span><span class="n">integrals</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">min_shadow_size</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">min_gap_size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">shadow</span> <span class="o">=</span> <span class="n">_remove_small_regions</span><span class="p">(</span>
+            <span class="n">shadow</span><span class="p">,</span>
+            <span class="n">min_shadow_size</span><span class="o">=</span><span class="n">min_shadow_size</span><span class="p">,</span>
+            <span class="n">min_gap_size</span><span class="o">=</span><span class="n">min_gap_size</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">out</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">drop_all_bands</span><span class="p">()</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">shadow</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">set_band_names</span><span class="p">([</span><span class="s2">&quot;shadow_mask&quot;</span><span class="p">])</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">set_wavelengths</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">push_to_header</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+
+<div class="viewcode-block" id="deshadow_image">
+<a class="viewcode-back" href="../../../../api/BlackTelperion.analyse.deshadow.core.html#BlackTelperion.analyse.deshadow.deshadow_image">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">deshadow_image</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">30.0</span><span class="p">,</span>
+                   <span class="n">min_shadow_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                   <span class="n">min_gap_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                   <span class="n">strip_rows</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">,</span>
+                   <span class="n">flag</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                   <span class="n">inplace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove shadows from an in-memory image: detect them and flag every band.</span>
+
+<span class="sd">    Convenience wrapper that ties shadow detection (:func:`shadow_mask`) to the</span>
+<span class="sd">    existing :meth:`BlackImage.mask`, so callers get a corrected cube directly</span>
+<span class="sd">    rather than just a mask. Detection is unchanged — see :func:`shadow_mask` for</span>
+<span class="sd">    the method and parameters. The whole image is held in memory; for cubes</span>
+<span class="sd">    larger than RAM use</span>
+<span class="sd">    :func:`~BlackTelperion.analyse.deshadow.large_image.deshadow_large_image`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        image:</span>
+<span class="sd">            A BlackImage instance whose last dimension indexes spectral bands.</span>
+<span class="sd">        threshold (float):</span>
+<span class="sd">            Percentage of the maximum spectral integral below which a pixel is</span>
+<span class="sd">            labelled as shadow. Forwarded to :func:`shadow_mask`. Default is 30.</span>
+<span class="sd">        min_shadow_size (int):</span>
+<span class="sd">            Connected shadow regions smaller than this are removed. Forwarded to</span>
+<span class="sd">            :func:`shadow_mask`. Default is 0 (disabled).</span>
+<span class="sd">        min_gap_size (int):</span>
+<span class="sd">            Connected sunlit regions smaller than this are filled in as shadow.</span>
+<span class="sd">            Forwarded to :func:`shadow_mask`. Default is 0 (disabled).</span>
+<span class="sd">        strip_rows (int):</span>
+<span class="sd">            Number of rows integrated at once. Forwarded to :func:`shadow_mask`.</span>
+<span class="sd">            Default is 256.</span>
+<span class="sd">        flag (float):</span>
+<span class="sd">            Value written to every band of each shadow pixel. Default is</span>
+<span class="sd">            ``np.nan``, which is treated as no-data throughout BlackTelperion.</span>
+<span class="sd">        inplace (bool):</span>
+<span class="sd">            If True, modify *image* in place. Otherwise operate on a copy.</span>
+<span class="sd">            Default is False.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A BlackImage with shadow pixels set to *flag* across all bands.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">shadow_mask</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">min_shadow_size</span><span class="p">,</span> <span class="n">min_gap_size</span><span class="p">,</span> <span class="n">strip_rows</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">image</span> <span class="k">if</span> <span class="n">inplace</span> <span class="k">else</span> <span class="n">image</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">mask</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="n">flag</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Private helpers (shared with the streamed large-image variants)</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_trapezoid_weights</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Precompute per-band trapezoidal weights from a wavelength axis.</span>
+
+<span class="sd">    The trapezoidal rule integral(f, w) = f @ weights, where:</span>
+<span class="sd">        weights[0]    = dw[0] / 2</span>
+<span class="sd">        weights[k]    = (dw[k-1] + dw[k]) / 2   for 0 &lt; k &lt; n-1</span>
+<span class="sd">        weights[-1]   = dw[-1] / 2</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        wavelengths: 1-D array of length ``bands``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Float32 weight vector of length ``bands``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">wavelengths</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">weights</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>    <span class="o">=</span> <span class="n">dw</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="n">weights</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">dw</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">dw</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="n">weights</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>   <span class="o">=</span> <span class="n">dw</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="k">return</span> <span class="n">weights</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_integrate_strip</span><span class="p">(</span><span class="n">strip</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">weights</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Integrate one strip of rows using the precomputed trapezoidal weights.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        strip:   Float32 array of shape (rows, cols, bands) or (n_points, bands).</span>
+<span class="sd">        weights: Float32 array of length ``bands``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Float32 array of shape (rows, cols) or (n_points,).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">spatial_shape</span> <span class="o">=</span> <span class="n">strip</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">n_bands</span> <span class="o">=</span> <span class="n">strip</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">flat</span> <span class="o">=</span> <span class="n">strip</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_bands</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+    <span class="c1"># Zero NaN bands so they contribute nothing; track all-NaN pixels.</span>
+    <span class="n">all_nan</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">flat</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">safe</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">flat</span><span class="p">),</span> <span class="n">flat</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">safe</span> <span class="o">@</span> <span class="n">weights</span>
+    <span class="n">result</span><span class="p">[</span><span class="n">all_nan</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+    <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">spatial_shape</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_spectral_integrals_stripped</span><span class="p">(</span><span class="n">raw</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                  <span class="n">weights</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                  <span class="n">strip_rows</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute spectral integrals for the full image, one strip at a time.</span>
+
+<span class="sd">    Each strip is converted to float32, integrated, and discarded before the</span>
+<span class="sd">    next strip is loaded. The only full-image allocation is the output array.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        raw:        Data array of shape (x, y, bands) as stored in BlackImage,</span>
+<span class="sd">                    or (n_points, bands) for point clouds.</span>
+<span class="sd">        weights:    Float32 trapezoidal weight vector of length ``bands``.</span>
+<span class="sd">        strip_rows: Number of rows per strip.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Float32 array of shape (x, y) or (n_points,).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">raw</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_integrate_strip</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span>
+
+    <span class="n">n_rows</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">integrals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">raw</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_rows</span><span class="p">,</span> <span class="n">strip_rows</span><span class="p">):</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">start</span> <span class="o">+</span> <span class="n">strip_rows</span><span class="p">,</span> <span class="n">n_rows</span><span class="p">)</span>
+        <span class="n">integrals</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span> <span class="o">=</span> <span class="n">_integrate_strip</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">],</span> <span class="n">weights</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">integrals</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_apply_threshold</span><span class="p">(</span><span class="n">integrals</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Classify pixels as shadow or sunlit based on an integral threshold.</span>
+
+<span class="sd">    The cutoff is *threshold* percent of the maximum finite integral. Non-finite</span>
+<span class="sd">    (all-NaN / no-data) pixels are classified as shadow.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        integrals: Float array of shape (...,).</span>
+<span class="sd">        threshold: Percentage in (0, 100).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Float32 array of shape (...,) with values 1.0 (shadow) or 0.0 (sunlit).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">max_integral</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">integrals</span><span class="p">))</span>
+    <span class="n">cutoff</span> <span class="o">=</span> <span class="n">max_integral</span> <span class="o">*</span> <span class="p">(</span><span class="n">threshold</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">)</span>
+    <span class="n">shadow</span> <span class="o">=</span> <span class="p">(</span><span class="n">integrals</span> <span class="o">&lt;</span> <span class="n">cutoff</span><span class="p">)</span>          <span class="c1"># finite pixels below the cutoff</span>
+    <span class="n">shadow</span> <span class="o">|=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">integrals</span><span class="p">)</span>      <span class="c1"># NaN/inf (e.g. all-NaN nodata) -&gt; shadow</span>
+    <span class="k">return</span> <span class="n">shadow</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_remove_small_regions</span><span class="p">(</span><span class="n">shadow</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                           <span class="n">min_shadow_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                           <span class="n">min_gap_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Morphological clean-up of the binary shadow mask.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        shadow:          Float32 array of shape (...,) with values 0.0 or 1.0.</span>
+<span class="sd">        min_shadow_size: Shadow blobs smaller than this are set to 0.0 (sunlit).</span>
+<span class="sd">        min_gap_size:    Sunlit regions smaller than this are set to 1.0 (shadow).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Cleaned float32 array of the same shape as *shadow*.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">shadow</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">min_shadow_size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">labeled</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">label</span><span class="p">((</span><span class="n">result</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">))</span>
+        <span class="n">sizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">labeled</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+        <span class="n">sizes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">min_shadow_size</span>          <span class="c1"># never remove background label</span>
+        <span class="n">small_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">labeled</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">sizes</span> <span class="o">&lt;</span> <span class="n">min_shadow_size</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">result</span><span class="p">[</span><span class="n">small_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">if</span> <span class="n">min_gap_size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">labeled</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">label</span><span class="p">((</span><span class="n">result</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">))</span>
+        <span class="n">sizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">labeled</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+        <span class="n">sizes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">min_gap_size</span>             <span class="c1"># never fill background label</span>
+        <span class="n">small_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">labeled</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">sizes</span> <span class="o">&lt;</span> <span class="n">min_gap_size</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">result</span><span class="p">[</span><span class="n">small_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BlackTelperion.io.headers module &mdash; BlackTelperion 0.1 documentation</title>
+  <title>BlackTelperion.io.sentinel module &mdash; BlackTelperion 0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
 
@@ -19,8 +19,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="BlackTelperion.io.images module" href="BlackTelperion.io.images.html" />
-    <link rel="prev" title="BlackTelperion.io.enmap module" href="BlackTelperion.io.enmap.html" /> 
+    <link rel="next" title="BlackTelperion.io.vectors module" href="BlackTelperion.io.vectors.html" />
+    <link rel="prev" title="BlackTelperion.io.libraries module" href="BlackTelperion.io.libraries.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -87,9 +87,9 @@
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="BlackTelperion.html">BlackTelperion package</a></li>
           <li class="breadcrumb-item"><a href="BlackTelperion.io.html">BlackTelperion.io package</a></li>
-      <li class="breadcrumb-item active">BlackTelperion.io.headers module</li>
+      <li class="breadcrumb-item active">BlackTelperion.io.sentinel module</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/api/BlackTelperion.io.headers.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/api/BlackTelperion.io.sentinel.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -97,67 +97,63 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-BlackTelperion.io.headers">
-<span id="blacktelperion-io-headers-module"></span><h1>BlackTelperion.io.headers module<a class="headerlink" href="#module-BlackTelperion.io.headers" title="Link to this heading"></a></h1>
-<p>Read ENVI header files.</p>
+  <section id="module-BlackTelperion.io.sentinel">
+<span id="blacktelperion-io-sentinel-module"></span><h1>BlackTelperion.io.sentinel module<a class="headerlink" href="#module-BlackTelperion.io.sentinel" title="Link to this heading"></a></h1>
+<p>Load Sentinel-2 multispectral data as a hyperspectral cube (BlackImage).</p>
+<p>Sentinel-2 distributes each spectral band as a separate JP2 file. This module
+stacks the available spectral bands for a given resolution into a single
+BlackImage, assigning correct central wavelengths, FWHM, band names, and
+georeferencing derived from the JP2 metadata.</p>
+<p>JP2 files are read directly via GDAL, bypassing the generic <code class="docutils literal notranslate"><span class="pre">load()</span></code>
+dispatcher (which requires a sidecar <code class="docutils literal notranslate"><span class="pre">.hdr</span></code> file and does not support
+bare <code class="docutils literal notranslate"><span class="pre">.jp2</span></code> paths).</p>
+<p>Typical usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">BlackTelperion.io.sentinel</span><span class="w"> </span><span class="kn">import</span> <span class="n">loadSentinel2</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">loadSentinel2</span><span class="p">(</span><span class="s2">&quot;/path/to/R60m/&quot;</span><span class="p">)</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">loadSentinel2</span><span class="p">(</span><span class="s2">&quot;/path/to/S2A.SAFE/&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="py function">
-<dt class="sig sig-object py" id="BlackTelperion.io.headers.makeDirs">
-<span class="sig-prename descclassname"><span class="pre">BlackTelperion.io.headers.</span></span><span class="sig-name descname"><span class="pre">makeDirs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/io/headers.html#makeDirs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.io.headers.makeDirs" title="Link to this definition"></a></dt>
-<dd><p>Checks if all the directories to the specified file exist, and if they do not, makes them.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>path</strong> – the directory or file path to check. If any directories do not exist, they will be created.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="BlackTelperion.io.headers.saveHeader">
-<span class="sig-prename descclassname"><span class="pre">BlackTelperion.io.headers.</span></span><span class="sig-name descname"><span class="pre">saveHeader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/io/headers.html#saveHeader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.io.headers.saveHeader" title="Link to this definition"></a></dt>
-<dd><p>Write to a header file.</p>
+<dt class="sig sig-object py" id="BlackTelperion.io.sentinel.loadSentinel2">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.io.sentinel.</span></span><span class="sig-name descname"><span class="pre">loadSentinel2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/io/sentinel.html#loadSentinel2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.io.sentinel.loadSentinel2" title="Link to this definition"></a></dt>
+<dd><p>Load Sentinel-2 spectral bands into a single BlackImage cube.</p>
+<p>Individual JP2 band files are discovered automatically within <em>path</em> (or
+its sub-directories when a .SAFE / GRANULE root is provided). Only spectral
+bands are loaded; auxiliary products (SCL, TCI, AOT, WVP, etc.) are
+ignored. Bands are sorted by central wavelength before stacking.</p>
+<p>JP2 files are read directly with GDAL (<code class="docutils literal notranslate"><span class="pre">osgeo.gdal</span></code>), which must be
+installed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> – the path to write to.</p></li>
-<li><p><strong>header</strong> – the BlackHeader object to write.</p></li>
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – path to a directory containing Sentinel-2 JP2 files, or
+to the root of a .SAFE product folder.</p></li>
+<li><p><strong>resolution</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – target spatial resolution in metres — one of</p></li>
 </ul>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="BlackTelperion.io.headers.loadHeader">
-<span class="sig-prename descclassname"><span class="pre">BlackTelperion.io.headers.</span></span><span class="sig-name descname"><span class="pre">loadHeader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/io/headers.html#loadHeader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.io.headers.loadHeader" title="Link to this definition"></a></dt>
-<dd><p>Load a header file.</p>
+<p><code class="docutils literal notranslate"><span class="pre">10</span></code>, <code class="docutils literal notranslate"><span class="pre">20</span></code>, or <code class="docutils literal notranslate"><span class="pre">60</span></code>. Default is <code class="docutils literal notranslate"><span class="pre">60</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>file</strong> – a file path to a .hdr file.</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>stacked hyperspectral cube with wavelengths (nm), FWHM, band
+names, and ENVI-compatible georeferencing populated in the header.</p>
 </dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="BlackTelperion.io.headers.matchHeader">
-<span class="sig-prename descclassname"><span class="pre">BlackTelperion.io.headers.</span></span><span class="sig-name descname"><span class="pre">matchHeader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/io/headers.html#matchHeader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.io.headers.matchHeader" title="Link to this definition"></a></dt>
-<dd><p>Matches image and header path.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>path</strong> – the path to an image or header file</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage" title="BlackTelperion.blackimage.BlackImage">BlackImage</a></p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><p>A tuple containing:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>header = file path to the associated .hdr or .HDR file (if found, otherwise None)</p></li>
-<li><p>image = file path to the associated image data (if found, otherwise None).</p></li>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AssertionError" title="(in Python v3.14)"><strong>AssertionError</strong></a> – if <em>path</em> does not exist, <em>resolution</em> is invalid, or
+    no spectral band files are found.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ImportError" title="(in Python v3.14)"><strong>ImportError</strong></a> – if GDAL (<code class="docutils literal notranslate"><span class="pre">osgeo</span></code>) is not installed.</p></li>
 </ul>
-</div></blockquote>
-</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
 </dd>
 </dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">img</span> <span class="o">=</span> <span class="n">loadSentinel2</span><span class="p">(</span><span class="s2">&quot;/data/S2A.SAFE/&quot;</span><span class="p">)</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">loadSentinel2</span><span class="p">(</span><span class="s2">&quot;/data/S2A.SAFE/GRANULE/.../IMG_DATA/R20m/&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
@@ -166,8 +162,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="BlackTelperion.io.enmap.html" class="btn btn-neutral float-left" title="BlackTelperion.io.enmap module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="BlackTelperion.io.images.html" class="btn btn-neutral float-right" title="BlackTelperion.io.images module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="BlackTelperion.io.libraries.html" class="btn btn-neutral float-left" title="BlackTelperion.io.libraries module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="BlackTelperion.io.vectors.html" class="btn btn-neutral float-right" title="BlackTelperion.io.vectors module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

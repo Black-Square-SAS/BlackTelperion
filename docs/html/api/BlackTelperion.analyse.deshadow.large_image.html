@@ -1,0 +1,233 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.analyse.deshadow.large_image module &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="BlackTelperion.analyse.dtree module" href="BlackTelperion.analyse.dtree.html" />
+    <link rel="prev" title="BlackTelperion.analyse.deshadow.core module" href="BlackTelperion.analyse.deshadow.core.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="BlackTelperion.html">BlackTelperion package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.RGB"><code class="docutils literal notranslate"><span class="pre">RGB</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.VNIR"><code class="docutils literal notranslate"><span class="pre">VNIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.SWIR"><code class="docutils literal notranslate"><span class="pre">SWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.BROAD"><code class="docutils literal notranslate"><span class="pre">BROAD</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.MWIR"><code class="docutils literal notranslate"><span class="pre">MWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.LWIR"><code class="docutils literal notranslate"><span class="pre">LWIR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#BlackTelperion.band_select_threshold"><code class="docutils literal notranslate"><span class="pre">band_select_threshold</span></code></a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="BlackTelperion.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="BlackTelperion.analyse.html">BlackTelperion.analyse package</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.analyse.html#BlackTelperion.analyse.saveLegend"><code class="docutils literal notranslate"><span class="pre">saveLegend()</span></code></a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="BlackTelperion.analyse.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="BlackTelperion.analyse.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.correct.html">BlackTelperion.correct package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.filter.html">BlackTelperion.filter package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.io.html">BlackTelperion.io package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.reference.html">BlackTelperion.reference package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BlackTelperion.utils.html">BlackTelperion.utils namespace</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BlackTelperion.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="BlackTelperion.html">BlackTelperion package</a></li>
+          <li class="breadcrumb-item"><a href="BlackTelperion.analyse.html">BlackTelperion.analyse package</a></li>
+          <li class="breadcrumb-item"><a href="BlackTelperion.analyse.deshadow.html">BlackTelperion.analyse.deshadow package</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.analyse.deshadow.large_image module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/BlackTelperion.analyse.deshadow.large_image.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-BlackTelperion.analyse.deshadow.large_image">
+<span id="blacktelperion-analyse-deshadow-large-image-module"></span><h1>BlackTelperion.analyse.deshadow.large_image module<a class="headerlink" href="#module-BlackTelperion.analyse.deshadow.large_image" title="Link to this heading"></a></h1>
+<p>Shadow detection and removal for images too large to fit in memory.</p>
+<p><a class="reference internal" href="#BlackTelperion.analyse.deshadow.large_image.shadow_mask_large" title="BlackTelperion.analyse.deshadow.large_image.shadow_mask_large"><code class="xref py py-func docutils literal notranslate"><span class="pre">shadow_mask_large()</span></code></a> and <a class="reference internal" href="#BlackTelperion.analyse.deshadow.large_image.deshadow_large_image" title="BlackTelperion.analyse.deshadow.large_image.deshadow_large_image"><code class="xref py py-func docutils literal notranslate"><span class="pre">deshadow_large_image()</span></code></a> are the streamed,
+file-in/file-out counterparts of
+<a class="reference internal" href="BlackTelperion.analyse.deshadow.core.html#BlackTelperion.analyse.deshadow.core.shadow_mask" title="BlackTelperion.analyse.deshadow.core.shadow_mask"><code class="xref py py-func docutils literal notranslate"><span class="pre">shadow_mask()</span></code></a> and
+<a class="reference internal" href="BlackTelperion.analyse.deshadow.core.html#BlackTelperion.analyse.deshadow.core.deshadow_image" title="BlackTelperion.analyse.deshadow.core.deshadow_image"><code class="xref py py-func docutils literal notranslate"><span class="pre">deshadow_image()</span></code></a>. The cube is read in
+horizontal row-strips via GDAL windows, reusing the integral / threshold /
+cleanup primitives from <a class="reference internal" href="BlackTelperion.analyse.deshadow.core.html#module-BlackTelperion.analyse.deshadow.core" title="BlackTelperion.analyse.deshadow.core"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BlackTelperion.analyse.deshadow.core</span></code></a> (no detection
+math is re-implemented here). See <a class="reference internal" href="BlackTelperion.analyse.deshadow.html#module-BlackTelperion.analyse.deshadow" title="BlackTelperion.analyse.deshadow"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BlackTelperion.analyse.deshadow</span></code></a> for the
+method.</p>
+<p>Because the threshold is a percentage of the <em>global</em> maximum integral, the
+single-band integral image is materialised in full (one float32 per pixel — many
+times smaller than the cube) before thresholding; the cube itself is never fully
+loaded.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>GDAL <code class="docutils literal notranslate"><span class="pre">ReadAsArray()</span></code> is <code class="docutils literal notranslate"><span class="pre">[band,</span> <span class="pre">row,</span> <span class="pre">col]</span> <span class="pre">=</span> <span class="pre">[band,</span> <span class="pre">y,</span> <span class="pre">x]</span></code> while
+<code class="docutils literal notranslate"><span class="pre">BlackImage</span></code> is <code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">band]</span></code> (<code class="docutils literal notranslate"><span class="pre">loadWithGDAL</span></code> transposes). The 2-D
+integral and mask are kept in GDAL <code class="docutils literal notranslate"><span class="pre">[row,</span> <span class="pre">col]</span> <span class="pre">=</span> <span class="pre">[y,</span> <span class="pre">x]</span></code> orientation
+throughout; only the single-band mask, which fits in RAM, is transposed back
+to build a BlackImage.</p>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.analyse.deshadow.large_image.shadow_mask_large">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.analyse.deshadow.large_image.</span></span><span class="sig-name descname"><span class="pre">shadow_mask_large</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_shadow_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_gap_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strip_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">256</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/analyse/deshadow/large_image.html#shadow_mask_large"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.analyse.deshadow.large_image.shadow_mask_large" title="Link to this definition"></a></dt>
+<dd><p>Shadow detection for a cube too large to fit in memory (large-image variant
+of <a class="reference internal" href="BlackTelperion.analyse.deshadow.core.html#BlackTelperion.analyse.deshadow.core.shadow_mask" title="BlackTelperion.analyse.deshadow.core.shadow_mask"><code class="xref py py-func docutils literal notranslate"><span class="pre">shadow_mask()</span></code></a>).</p>
+<p>The cube is read in horizontal row-strips via GDAL windows; each pixel’s
+spectrum is integrated (trapezoid rule) and thresholded at <em>threshold</em>
+percent of the global maximum integral. All-NaN (no-data) pixels are
+classified as shadow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – path to the source cube (any GDAL-readable raster).</p></li>
+<li><p><strong>output_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – path for the single-band float32 shadow mask
+(1.0=shadow, 0.0=sunlit), written as ENVI BSQ with the source
+projection and geotransform.</p></li>
+<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – percentage of the maximum integral below which a
+pixel is shadow. Must be in (0, 100). Default 30.</p></li>
+<li><p><strong>min_shadow_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – remove connected shadow regions smaller than this.
+0 disables. Default 0.</p></li>
+<li><p><strong>min_gap_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – fill connected sunlit regions smaller than this.
+0 disables. Default 0.</p></li>
+<li><p><strong>strip_rows</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – number of rows read per GDAL window. Default 256.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>output_path</em>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.analyse.deshadow.large_image.deshadow_large_image">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.analyse.deshadow.large_image.</span></span><span class="sig-name descname"><span class="pre">deshadow_large_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_shadow_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_gap_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strip_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/analyse/deshadow/large_image.html#deshadow_large_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.analyse.deshadow.large_image.deshadow_large_image" title="Link to this definition"></a></dt>
+<dd><p>Remove shadows from a cube too large to fit in memory (large-image variant
+of <a class="reference internal" href="BlackTelperion.analyse.deshadow.core.html#BlackTelperion.analyse.deshadow.core.deshadow_image" title="BlackTelperion.analyse.deshadow.core.deshadow_image"><code class="xref py py-func docutils literal notranslate"><span class="pre">deshadow_image()</span></code></a>).</p>
+<p>Detects shadows (as <a class="reference internal" href="#BlackTelperion.analyse.deshadow.large_image.shadow_mask_large" title="BlackTelperion.analyse.deshadow.large_image.shadow_mask_large"><code class="xref py py-func docutils literal notranslate"><span class="pre">shadow_mask_large()</span></code></a>) then streams the cube a second
+time, setting every band of each shadow pixel to <em>flag</em>, and writes a full
+output cube preserving the source dtype, projection and geotransform.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – path to the source cube.</p></li>
+<li><p><strong>output_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – path for the masked output cube (ENVI BSQ).</p></li>
+<li><p><strong>threshold</strong> – see
+<a class="reference internal" href="#BlackTelperion.analyse.deshadow.large_image.shadow_mask_large" title="BlackTelperion.analyse.deshadow.large_image.shadow_mask_large"><code class="xref py py-func docutils literal notranslate"><span class="pre">shadow_mask_large()</span></code></a>.</p></li>
+<li><p><strong>min_shadow_size</strong> – see
+<a class="reference internal" href="#BlackTelperion.analyse.deshadow.large_image.shadow_mask_large" title="BlackTelperion.analyse.deshadow.large_image.shadow_mask_large"><code class="xref py py-func docutils literal notranslate"><span class="pre">shadow_mask_large()</span></code></a>.</p></li>
+<li><p><strong>min_gap_size</strong> – see
+<a class="reference internal" href="#BlackTelperion.analyse.deshadow.large_image.shadow_mask_large" title="BlackTelperion.analyse.deshadow.large_image.shadow_mask_large"><code class="xref py py-func docutils literal notranslate"><span class="pre">shadow_mask_large()</span></code></a>.</p></li>
+<li><p><strong>strip_rows</strong> – see
+<a class="reference internal" href="#BlackTelperion.analyse.deshadow.large_image.shadow_mask_large" title="BlackTelperion.analyse.deshadow.large_image.shadow_mask_large"><code class="xref py py-func docutils literal notranslate"><span class="pre">shadow_mask_large()</span></code></a>.</p></li>
+<li><p><strong>flag</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – value written to shadow pixels across all bands. Default
+<code class="docutils literal notranslate"><span class="pre">np.nan</span></code> (treated as no-data throughout BlackTelperion).</p></li>
+<li><p><strong>mask_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><em>None</em>) – if given, also persist the intermediate shadow
+mask there (single band). Default None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>output_path</em>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – if the source cube has an integer dtype but <em>flag</em> cannot be
+    represented in it (e.g. <code class="docutils literal notranslate"><span class="pre">np.nan</span></code>). No silent upcast is performed —
+    check whether the cube should be decompressed / converted to float
+    reflectance before deshadowing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="BlackTelperion.analyse.deshadow.core.html" class="btn btn-neutral float-left" title="BlackTelperion.analyse.deshadow.core module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="BlackTelperion.analyse.dtree.html" class="btn btn-neutral float-right" title="BlackTelperion.analyse.dtree module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

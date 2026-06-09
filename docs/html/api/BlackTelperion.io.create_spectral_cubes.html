@@ -19,7 +19,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="BlackTelperion.io.headers module" href="BlackTelperion.io.headers.html" />
+    <link rel="next" title="BlackTelperion.io.enmap module" href="BlackTelperion.io.enmap.html" />
     <link rel="prev" title="BlackTelperion.io package" href="BlackTelperion.io.html" /> 
 </head>
 
@@ -97,8 +97,138 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="blacktelperion-io-create-spectral-cubes-module">
-<h1>BlackTelperion.io.create_spectral_cubes module<a class="headerlink" href="#blacktelperion-io-create-spectral-cubes-module" title="Link to this heading"></a></h1>
+  <section id="module-BlackTelperion.io.create_spectral_cubes">
+<span id="blacktelperion-io-create-spectral-cubes-module"></span><h1>BlackTelperion.io.create_spectral_cubes module<a class="headerlink" href="#module-BlackTelperion.io.create_spectral_cubes" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.io.create_spectral_cubes.create_sentinel_spectral_cube">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.io.create_spectral_cubes.</span></span><span class="sig-name descname"><span class="pre">create_sentinel_spectral_cube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">safe_directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bands_to_use</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/io/create_spectral_cubes.html#create_sentinel_spectral_cube"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.io.create_spectral_cubes.create_sentinel_spectral_cube" title="Link to this definition"></a></dt>
+<dd><p>Creates a spectral cube from Sentinel-2 L2A imagery in ENVI format (.dat and .hdr).</p>
+<p>This function processes Sentinel-2 L2A data to generate a spectral cube containing
+selected reflectance bands. The function locates the appropriate bands within the
+SAFE directory structure, reads them, and combines them into a single multi-band image.
+The output is saved in ENVI format with a .dat data file and .hdr header file.</p>
+<p>The function replaces the original nodata values (0) with NaN and converts
+all data to float32 format for better processing compatibility.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>safe_directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to the Sentinel-2 SAFE directory
+(e.g., “S2A_MSIL2A_20201210T185801_N0500_R113_T10TGK_20230302T053408.SAFE”)
+Can be a full path to the .SAFE directory or to a subdirectory within it.</p></li>
+<li><p><strong>output_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Directory where output ENVI files will be saved.
+If None, uses the same directory as the input SAFE file.
+The directory will be created if it doesn’t exist.</p></li>
+<li><p><strong>bands_to_use</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – <p>List of reflectance band names to include in the spectral cube (e.g., [‘B02’, ‘B03’, ‘B04’]).
+If None or empty, all available reflectance bands for the specified resolution will be used.
+The order of bands in this list determines the order in the output spectral cube.</p>
+<p>Available bands by resolution:
+- 10m: B02, B03, B04, B08
+- 20m: B01, B02, B03, B04, B05, B06, B07, B8A, B11, B12
+- 60m: B01, B02, B03, B04, B05, B06, B07, B8A, B09, B11, B12</p>
+</p></li>
+<li><p><strong>resolution</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – Resolution in meters. Must be one of: 10, 20, or 60.
+Default is 60m, which includes the most available bands.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>(spectral_cube, metadata, output_path)
+- spectral_cube: numpy.ndarray</p>
+<blockquote>
+<div><p>3D array with dimensions (height, width, bands)</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>metadata: dict</dt><dd><p>ENVI header metadata</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>output_path: str</dt><dd><p>Path to the output files (without extension)</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If bands are not available at the specified resolution or if resolution is invalid.
+    The error message will list which bands are available at the given resolution.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.14)"><strong>FileNotFoundError</strong></a> – If required files or directories cannot be found within the SAFE structure.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create RGB cube at 60m resolution</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cube</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="n">create_sentinel_spectral_cube</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s2">&quot;S2A_MSIL2A_20201210T185801_N0500_R113_T10TGK_20230302T053408.SAFE&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">bands_to_use</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;B04&#39;</span><span class="p">,</span> <span class="s1">&#39;B03&#39;</span><span class="p">,</span> <span class="s1">&#39;B02&#39;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">resolution</span><span class="o">=</span><span class="mi">60</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Use all available bands at 10m resolution</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cube</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="n">create_sentinel_spectral_cube</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s2">&quot;S2A_MSIL2A_20201210T185801_N0500_R113_T10TGK_20230302T053408.SAFE&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">resolution</span><span class="o">=</span><span class="mi">10</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The output file naming follows the pattern: {base_name}_spectralcube_R{resolution}m.dat
+where base_name is derived from the SAFE directory name.</p></li>
+<li><p>The spectral cube shape is (height, width, bands) with bands in the last dimension.</p></li>
+<li><p>All data is converted to float32 and 0 values are replaced with NaN.</p></li>
+<li><p>The ENVI file is saved in BSQ (Band Sequential) format.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BlackTelperion.io.create_spectral_cubes.create_hyspex_spectral_cube">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.io.create_spectral_cubes.</span></span><span class="sig-name descname"><span class="pre">create_hyspex_spectral_cube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdr_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/io/create_spectral_cubes.html#create_hyspex_spectral_cube"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.io.create_spectral_cubes.create_hyspex_spectral_cube" title="Link to this definition"></a></dt>
+<dd><p>Processes a HySpex hyperspectral cube (.hdr and corresponding data file):
+1. Reads the .hdr file and corresponding data file (.bsq, .dat, or no extension)
+2. Converts all values &lt; 0 OR equal to 15000 to np.nan
+3. Updates the header to set NaN as the data ignore value
+4. Saves the result as .dat and .hdr files</p>
+<section id="parameters">
+<h2>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>hdr_path<span class="classifier">str</span></dt><dd><p>Path to the .hdr file</p>
+</dd>
+<dt>output_dir<span class="classifier">str</span></dt><dd><p>Directory to save output files</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h2>Returns:<a class="headerlink" href="#returns" title="Link to this heading"></a></h2>
+<dl>
+<dt>tuple</dt><dd><p>(spectral_cube, metadata, output_path)
+- spectral_cube: numpy.ndarray</p>
+<blockquote>
+<div><p>3D array with dimensions (height, width, bands)</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>metadata: dict</dt><dd><p>ENVI header metadata</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>output_path: str</dt><dd><p>Path to the output file (with .dat extension)</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
 </section>
 
 
@@ -106,7 +236,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="BlackTelperion.io.html" class="btn btn-neutral float-left" title="BlackTelperion.io package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="BlackTelperion.io.headers.html" class="btn btn-neutral float-right" title="BlackTelperion.io.headers module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="BlackTelperion.io.enmap.html" class="btn btn-neutral float-right" title="BlackTelperion.io.enmap module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

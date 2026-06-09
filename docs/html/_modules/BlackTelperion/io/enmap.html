@@ -1,0 +1,291 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.io.enmap &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/BlackTelperion.html">BlackTelperion package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../io.html">BlackTelperion.io</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.io.enmap</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for BlackTelperion.io.enmap</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Load EnMAP hyperspectral data as a BlackImage.</span>
+
+<span class="sd">EnMAP L2A products are distributed as a directory containing a BSQ spectral</span>
+<span class="sd">image with an ENVI ``.HDR`` sidecar and a ``-METADATA.XML`` file that holds</span>
+<span class="sd">per-band wavelengths, FWHM, and quality metadata.</span>
+
+<span class="sd">The image is loaded as **raw int16** so that the existing</span>
+<span class="sd">``BlackData.decompress()`` workflow can be used to convert to float32</span>
+<span class="sd">reflectance.</span>
+
+<span class="sd">Typical usage::</span>
+
+<span class="sd">    from BlackTelperion.io.enmap import loadEnMAP</span>
+<span class="sd">    image = loadEnMAP(&quot;/path/to/ENMAP01-____L2A-.../&quot;)</span>
+<span class="sd">    image.decompress()   # → float32 reflectance with NaN nodata</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xml.etree.ElementTree</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ET</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Product detection</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="is_enmap_product">
+<a class="viewcode-back" href="../../../api/BlackTelperion.io.enmap.html#BlackTelperion.io.enmap.is_enmap_product">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_enmap_product</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return True if *path* (a directory) looks like an EnMAP product.</span>
+
+<span class="sd">    Detection is based on the presence of a ``*-SPECTRAL_IMAGE.BSQ`` file</span>
+<span class="sd">    somewhere under *path*.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;-SPECTRAL_IMAGE.BSQ&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Internal helpers</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_find_enmap_files</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Locate the BSQ, HDR and METADATA.XML inside an EnMAP product directory.</span>
+
+<span class="sd">    Handles both the outer and inner directory levels of the standard EnMAP</span>
+<span class="sd">    distribution layout.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        directory (str): path to the EnMAP product (outer or inner dir).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: ``{&#39;bsq&#39;: ..., &#39;hdr&#39;: ..., &#39;xml&#39;: ...}`` with absolute paths.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        FileNotFoundError: if required files are not found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bsq</span> <span class="o">=</span> <span class="n">hdr</span> <span class="o">=</span> <span class="n">xml</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="n">fu</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+            <span class="n">full</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">fu</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;-SPECTRAL_IMAGE.BSQ&quot;</span><span class="p">):</span>
+                <span class="n">bsq</span> <span class="o">=</span> <span class="n">full</span>
+            <span class="k">elif</span> <span class="n">fu</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;-SPECTRAL_IMAGE.HDR&quot;</span><span class="p">):</span>
+                <span class="n">hdr</span> <span class="o">=</span> <span class="n">full</span>
+            <span class="k">elif</span> <span class="n">fu</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;-METADATA.XML&quot;</span><span class="p">):</span>
+                <span class="n">xml</span> <span class="o">=</span> <span class="n">full</span>
+
+    <span class="k">if</span> <span class="n">bsq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+            <span class="s2">&quot;No *-SPECTRAL_IMAGE.BSQ found under </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">directory</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">hdr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+            <span class="s2">&quot;No *-SPECTRAL_IMAGE.HDR found under </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">directory</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;bsq&quot;</span><span class="p">:</span> <span class="n">bsq</span><span class="p">,</span> <span class="s2">&quot;hdr&quot;</span><span class="p">:</span> <span class="n">hdr</span><span class="p">,</span> <span class="s2">&quot;xml&quot;</span><span class="p">:</span> <span class="n">xml</span><span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parse_metadata_xml</span><span class="p">(</span><span class="n">xml_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract per-band wavelengths and FWHM from an EnMAP METADATA.XML.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        xml_path (str): absolute path to the XML file.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: with keys ``&#39;wavelengths&#39;`` (ndarray, nm), ``&#39;fwhm&#39;``</span>
+<span class="sd">              (ndarray, nm), and ``&#39;processing_level&#39;`` (str or None).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">xml_path</span><span class="p">)</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
+
+    <span class="n">wavelengths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">fwhm</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">band_el</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="s2">&quot;bandID&quot;</span><span class="p">):</span>
+        <span class="n">wl_el</span> <span class="o">=</span> <span class="n">band_el</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;wavelengthCenterOfBand&quot;</span><span class="p">)</span>
+        <span class="n">fw_el</span> <span class="o">=</span> <span class="n">band_el</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;FWHMOfBand&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">wl_el</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">fw_el</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">wavelengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">wl_el</span><span class="o">.</span><span class="n">text</span><span class="p">))</span>
+            <span class="n">fwhm</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">fw_el</span><span class="o">.</span><span class="n">text</span><span class="p">))</span>
+
+    <span class="n">processing_level</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">pl_el</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;.//processingLevel&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pl_el</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">processing_level</span> <span class="o">=</span> <span class="n">pl_el</span><span class="o">.</span><span class="n">text</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;wavelengths&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+        <span class="s2">&quot;fwhm&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">fwhm</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+        <span class="s2">&quot;processing_level&quot;</span><span class="p">:</span> <span class="n">processing_level</span><span class="p">,</span>
+    <span class="p">}</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Public loader</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="loadEnMAP">
+<a class="viewcode-back" href="../../../api/BlackTelperion.io.enmap.html#BlackTelperion.io.enmap.loadEnMAP">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">loadEnMAP</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load an EnMAP L2A product into a BlackImage with int16 data.</span>
+
+<span class="sd">    The returned image keeps the raw integer values.  Use</span>
+<span class="sd">    ``image.decompress()`` to apply the reflectance scale factor and mask</span>
+<span class="sd">    nodata pixels.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path (str): path to the EnMAP product directory (outer or inner).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        BlackImage: 224-band hyperspectral cube (int16) with wavelengths,</span>
+<span class="sd">        FWHM, georeferencing, and ``reflectance scale factor = 10000``</span>
+<span class="sd">        populated in the header.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        FileNotFoundError: if required product files are missing.</span>
+
+<span class="sd">    Example::</span>
+
+<span class="sd">        img = loadEnMAP(&quot;/data/ENMAP01-____L2A-DT.../&quot;)</span>
+<span class="sd">        img.decompress()          # convert to float32 reflectance</span>
+<span class="sd">        img.quick_plot(bands=(50, 30, 10))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="s2">&quot;Error: path is not a directory — </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">path</span>
+
+    <span class="n">files</span> <span class="o">=</span> <span class="n">_find_enmap_files</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="c1"># --- load the BSQ via the existing GDAL / numpy loaders ----------------</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.images</span><span class="w"> </span><span class="kn">import</span> <span class="n">loadWithGDAL</span><span class="p">,</span> <span class="n">loadWithNumpy</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">osgeo</span><span class="w"> </span><span class="kn">import</span> <span class="n">gdal</span>  <span class="c1"># noqa: F401</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">loadWithGDAL</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="s2">&quot;hdr&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">,</span> <span class="n">mask_zero</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">loadWithNumpy</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="s2">&quot;hdr&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">,</span> <span class="n">mask_zero</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># --- enrich header with XML metadata -----------------------------------</span>
+    <span class="k">if</span> <span class="n">files</span><span class="p">[</span><span class="s2">&quot;xml&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">_parse_metadata_xml</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="s2">&quot;xml&quot;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;wavelengths&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="n">img</span><span class="o">.</span><span class="n">band_count</span><span class="p">():</span>
+            <span class="n">img</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set_wavelengths</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s2">&quot;wavelengths&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;fwhm&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="n">img</span><span class="o">.</span><span class="n">band_count</span><span class="p">():</span>
+            <span class="n">img</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set_fwhm</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s2">&quot;fwhm&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Set band names</span>
+    <span class="n">band_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Band </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">band_count</span><span class="p">())]</span>
+    <span class="n">img</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">set_band_names</span><span class="p">(</span><span class="n">band_names</span><span class="p">)</span>
+
+    <span class="c1"># Ensure critical header fields for decompress()</span>
+    <span class="n">img</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;wavelength units&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;nm&quot;</span>
+    <span class="n">img</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;reflectance scale factor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10000</span>
+    <span class="n">img</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;data ignore value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">32768</span>
+
+    <span class="n">img</span><span class="o">.</span><span class="n">push_to_header</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">img</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

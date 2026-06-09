@@ -1,0 +1,666 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackTelperion.io.vectors &mdash; BlackTelperion 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            BlackTelperion
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/BlackTelperion.html">BlackTelperion package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">BlackTelperion</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../io.html">BlackTelperion.io</a></li>
+      <li class="breadcrumb-item active">BlackTelperion.io.vectors</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for BlackTelperion.io.vectors</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Read common vector layer formats and extract hyperspectral signatures beneath vector features.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rasterio</span><span class="w"> </span><span class="kn">import</span> <span class="n">features</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rasterio.transform</span><span class="w"> </span><span class="kn">import</span> <span class="n">Affine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">box</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">BlackTelperion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">BlackTelperion</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlackImage</span><span class="p">,</span> <span class="n">BlackLibrary</span>
+
+
+<div class="viewcode-block" id="load_vector_file">
+<a class="viewcode-back" href="../../../api/BlackTelperion.io.vectors.html#BlackTelperion.io.vectors.load_vector_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_vector_file</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loads a vector file into a GeoDataFrame using geopandas.</span>
+
+<span class="sd">    Supports common vector formats: .shp, .gpkg, .geojson, .kml, etc.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path (str): Path to vector file (.shp, .gpkg, .geojson, etc.)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        geopandas.GeoDataFrame: Loaded vector layer with geometries and attributes</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        FileNotFoundError: If the file doesn&#39;t exist</span>
+<span class="sd">        ValueError: If the file format is not supported</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Vector file not found: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">gdf</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to load vector file </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="extract_signatures_from_vector">
+<a class="viewcode-back" href="../../../api/BlackTelperion.io.vectors.html#BlackTelperion.io.vectors.extract_signatures_from_vector">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_signatures_from_vector</span><span class="p">(</span>
+    <span class="n">image</span><span class="p">:</span> <span class="n">BlackImage</span><span class="p">,</span>
+    <span class="n">vector_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">output_csv</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">neighbor_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">aggregate</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">label_field</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">attribute_fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">return_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;dataframe&#39;</span><span class="p">,</span>
+    <span class="n">progress</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">BlackLibrary</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">BlackLibrary</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract spectral signatures from hyperspectral image based on vector geometries.</span>
+
+<span class="sd">    - For **polygons**: Extracts all pixels beneath the polygon</span>
+<span class="sd">    - For **points**: Extracts the pixel beneath + N Moore neighbors (NxN window)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        image (BlackImage): BlackImage instance containing hyperspectral data</span>
+<span class="sd">        vector_path (str): Path to vector layer file (.shp, .gpkg, .geojson, etc.)</span>
+<span class="sd">        output_csv (str, optional): Path to save CSV output. If None, no CSV is written</span>
+<span class="sd">        neighbor_size (int): For point features, N where window is (2*N+1) x (2*N+1).</span>
+<span class="sd">                           Default=1 creates 3x3 window. N=2 creates 5x5 window, etc.</span>
+<span class="sd">        aggregate (bool or str): How to aggregate pixels per feature:</span>
+<span class="sd">            - False or &#39;all&#39;: Return all pixels individually (default)</span>
+<span class="sd">            - &#39;mean&#39;: Average spectra per feature</span>
+<span class="sd">            - &#39;median&#39;: Median spectra per feature</span>
+<span class="sd">            - &#39;std&#39;: Standard deviation per feature</span>
+<span class="sd">            - &#39;percentile_X&#39;: Xth percentile (e.g., &#39;percentile_50&#39; for median)</span>
+<span class="sd">        label_field (str, optional): Name of vector attribute containing class labels.</span>
+<span class="sd">                                    If None, uses feature IDs</span>
+<span class="sd">        attribute_fields (list of str, optional): Vector attribute columns to include</span>
+<span class="sd">                                    in output. If None, all attributes are included</span>
+<span class="sd">        return_format (str): Output format - &#39;dataframe&#39;, &#39;blacklibrary&#39;, or &#39;both&#39;</span>
+<span class="sd">        progress (bool): Show progress bar. Default is True</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame, BlackLibrary, or tuple depending on return_format:</span>
+<span class="sd">            - &#39;dataframe&#39;: Returns pandas DataFrame</span>
+<span class="sd">            - &#39;blacklibrary&#39;: Returns BlackLibrary instance</span>
+<span class="sd">            - &#39;both&#39;: Returns tuple (DataFrame, BlackLibrary)</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the image has no wavelength information</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; image = BlackTelperion.io.load(&#39;hyperspectral.hdr&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; df = extract_signatures_from_vector(</span>
+<span class="sd">        ...     image,</span>
+<span class="sd">        ...     &#39;ground_truth.gpkg&#39;,</span>
+<span class="sd">        ...     output_csv=&#39;signatures.csv&#39;,</span>
+<span class="sd">        ...     neighbor_size=2,</span>
+<span class="sd">        ...     label_field=&#39;class_name&#39;</span>
+<span class="sd">        ... )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Require wavelengths</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">image</span><span class="o">.</span><span class="n">has_wavelengths</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Image has no wavelength information. &quot;</span>
+            <span class="s2">&quot;Wavelengths are required for spectral signature extraction.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Load vector file</span>
+    <span class="n">gdf</span> <span class="o">=</span> <span class="n">load_vector_file</span><span class="p">(</span><span class="n">vector_path</span><span class="p">)</span>
+
+    <span class="c1"># Align coordinate systems</span>
+    <span class="n">gdf_aligned</span> <span class="o">=</span> <span class="n">_align_crs</span><span class="p">(</span><span class="n">gdf</span><span class="p">,</span> <span class="n">image</span><span class="p">)</span>
+
+    <span class="c1"># Get wavelengths</span>
+    <span class="n">wavelengths</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">()</span>
+
+    <span class="c1"># Extract signatures</span>
+    <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">iterator</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">gdf_aligned</span><span class="o">.</span><span class="n">iterrows</span><span class="p">(),</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">gdf_aligned</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Extracting signatures&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">progress</span> <span class="k">else</span> <span class="n">gdf_aligned</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">:</span>
+        <span class="n">feature_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">_get_label</span><span class="p">(</span><span class="n">feature</span><span class="p">,</span> <span class="n">label_field</span><span class="p">,</span> <span class="n">feature_id</span><span class="p">)</span>
+        <span class="n">geometry</span> <span class="o">=</span> <span class="n">feature</span><span class="o">.</span><span class="n">geometry</span>
+
+        <span class="c1"># Collect non-geometry attributes, filtered if requested</span>
+        <span class="n">feature_attrs</span> <span class="o">=</span> <span class="n">feature</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;geometry&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">attribute_fields</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">feature_attrs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">feature_attrs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">attribute_fields</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">geometry</span><span class="o">.</span><span class="n">geom_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Polygon&#39;</span><span class="p">,</span> <span class="s1">&#39;MultiPolygon&#39;</span><span class="p">]:</span>
+            <span class="n">pixels</span> <span class="o">=</span> <span class="n">_extract_from_polygon</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">geometry</span><span class="p">,</span> <span class="n">feature_id</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">wavelengths</span><span class="p">,</span> <span class="n">feature_attrs</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">geometry</span><span class="o">.</span><span class="n">geom_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Point&#39;</span><span class="p">,</span> <span class="s1">&#39;MultiPoint&#39;</span><span class="p">]:</span>
+            <span class="n">pixels</span> <span class="o">=</span> <span class="n">_extract_from_point</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">geometry</span><span class="p">,</span> <span class="n">feature_id</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">neighbor_size</span><span class="p">,</span> <span class="n">wavelengths</span><span class="p">,</span> <span class="n">feature_attrs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: Skipping unsupported geometry type &#39;</span><span class="si">{</span><span class="n">geometry</span><span class="o">.</span><span class="n">geom_type</span><span class="si">}</span><span class="s2">&#39; for feature </span><span class="si">{</span><span class="n">feature_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="n">records</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">pixels</span><span class="p">)</span>
+
+    <span class="c1"># Convert to DataFrame</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">records</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No pixels were extracted. Check that vector geometries overlap with image extent.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Apply aggregation if requested</span>
+    <span class="k">if</span> <span class="n">aggregate</span> <span class="ow">and</span> <span class="n">aggregate</span> <span class="o">!=</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">_aggregate_signatures</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">aggregate</span><span class="p">,</span> <span class="n">wavelengths</span><span class="p">)</span>
+
+    <span class="c1"># Save CSV if requested</span>
+    <span class="k">if</span> <span class="n">output_csv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_save_csv_with_metadata</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">output_csv</span><span class="p">,</span> <span class="n">wavelengths</span><span class="p">)</span>
+
+    <span class="c1"># Return in requested format</span>
+    <span class="k">if</span> <span class="n">return_format</span> <span class="o">==</span> <span class="s1">&#39;dataframe&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">df</span>
+    <span class="k">elif</span> <span class="n">return_format</span> <span class="o">==</span> <span class="s1">&#39;blacklibrary&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_dataframe_to_blacklibrary</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">wavelengths</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">return_format</span> <span class="o">==</span> <span class="s1">&#39;both&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">df</span><span class="p">,</span> <span class="n">_dataframe_to_blacklibrary</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">wavelengths</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid return_format: </span><span class="si">{</span><span class="n">return_format</span><span class="si">}</span><span class="s2">. Must be &#39;dataframe&#39;, &#39;blacklibrary&#39;, or &#39;both&#39;&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_align_crs</span><span class="p">(</span><span class="n">gdf</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">BlackImage</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Align vector CRS to match image CRS.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        gdf: GeoDataFrame to reproject</span>
+<span class="sd">        image: BlackImage containing target CRS</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Reprojected GeoDataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">image_crs</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">projection</span>
+
+    <span class="k">if</span> <span class="n">image_crs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: Image has no CRS defined. Assuming vector and image share the same coordinate system.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">gdf</span>
+
+    <span class="c1"># Get vector CRS</span>
+    <span class="n">vector_crs</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">crs</span>
+
+    <span class="k">if</span> <span class="n">vector_crs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: Vector layer has no CRS defined. Assuming it matches the image CRS.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">gdf</span>
+
+    <span class="c1"># Convert GDAL SpatialReference to WKT or EPSG if needed</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">image_crs</span><span class="p">,</span> <span class="s1">&#39;ExportToWkt&#39;</span><span class="p">):</span>
+        <span class="c1"># It&#39;s a GDAL SpatialReference object</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Try to get EPSG code first</span>
+            <span class="n">epsg_code</span> <span class="o">=</span> <span class="n">image_crs</span><span class="o">.</span><span class="n">GetAuthorityCode</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">epsg_code</span><span class="p">:</span>
+                <span class="n">image_crs_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;EPSG:</span><span class="si">{</span><span class="n">epsg_code</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Fall back to WKT</span>
+                <span class="n">image_crs_str</span> <span class="o">=</span> <span class="n">image_crs</span><span class="o">.</span><span class="n">ExportToWkt</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="c1"># If all else fails, use WKT</span>
+            <span class="n">image_crs_str</span> <span class="o">=</span> <span class="n">image_crs</span><span class="o">.</span><span class="n">ExportToWkt</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Assume it&#39;s already a string or compatible format</span>
+        <span class="n">image_crs_str</span> <span class="o">=</span> <span class="n">image_crs</span>
+
+    <span class="c1"># Reproject if different</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Convert to comparable formats</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">vector_crs</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">str</span><span class="p">(</span><span class="n">image_crs_str</span><span class="p">):</span>
+            <span class="n">gdf_aligned</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">image_crs_str</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">gdf_aligned</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: CRS reprojection failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">. Proceeding with original CRS.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">gdf</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_label</span><span class="p">(</span><span class="n">feature</span><span class="p">,</span> <span class="n">label_field</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">feature_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract label from feature attributes.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        feature: GeoDataFrame row</span>
+<span class="sd">        label_field: Name of attribute field containing label</span>
+<span class="sd">        feature_id: Fallback numeric ID</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Label as string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">label_field</span> <span class="ow">and</span> <span class="n">label_field</span> <span class="ow">in</span> <span class="n">feature</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="n">label_field</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Feature_</span><span class="si">{</span><span class="n">feature_id</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_raster_extent_box</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n">BlackImage</span><span class="p">,</span> <span class="n">transform</span><span class="p">:</span> <span class="n">Affine</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the raster extent as a Shapely box in world coordinates.&quot;&quot;&quot;</span>
+    <span class="n">x_min</span><span class="p">,</span> <span class="n">y_max</span> <span class="o">=</span> <span class="n">transform</span> <span class="o">*</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">x_max</span><span class="p">,</span> <span class="n">y_min</span> <span class="o">=</span> <span class="n">transform</span> <span class="o">*</span> <span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">xdim</span><span class="p">(),</span> <span class="n">image</span><span class="o">.</span><span class="n">ydim</span><span class="p">())</span>
+    <span class="c1"># Handle negative pixel sizes (y often increases downward)</span>
+    <span class="k">return</span> <span class="n">box</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_extract_from_polygon</span><span class="p">(</span>
+    <span class="n">image</span><span class="p">:</span> <span class="n">BlackImage</span><span class="p">,</span>
+    <span class="n">geometry</span><span class="p">,</span>
+    <span class="n">feature_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">wavelengths</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">feature_attrs</span><span class="p">:</span> <span class="nb">dict</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract all pixels beneath a polygon geometry.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        image: BlackImage instance</span>
+<span class="sd">        geometry: Shapely Polygon or MultiPolygon</span>
+<span class="sd">        feature_id: Numeric feature identifier</span>
+<span class="sd">        label: Class label string</span>
+<span class="sd">        wavelengths: Array of wavelength values</span>
+<span class="sd">        feature_attrs: Dictionary of feature attributes from the vector layer</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of dictionaries containing pixel data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Convert affine from GDAL GeoTransform to rasterio Affine</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">Affine</span><span class="o">.</span><span class="n">from_gdal</span><span class="p">(</span><span class="o">*</span><span class="n">image</span><span class="o">.</span><span class="n">affine</span><span class="p">)</span>
+
+    <span class="c1"># Check bounding box overlap before rasterizing</span>
+    <span class="n">raster_box</span> <span class="o">=</span> <span class="n">_raster_extent_box</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">transform</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">geometry</span><span class="o">.</span><span class="n">intersects</span><span class="p">(</span><span class="n">raster_box</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">records</span>
+
+    <span class="c1"># Create a mask for this polygon</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Rasterize the geometry — out_shape is (height, width) = (rows, cols) = (ydim, xdim)</span>
+        <span class="n">geoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">geometry</span><span class="o">.</span><span class="n">__geo_interface__</span><span class="p">]</span>
+        <span class="n">mask_array</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">rasterize</span><span class="p">(</span>
+            <span class="n">geoms</span><span class="p">,</span>
+            <span class="n">out_shape</span><span class="o">=</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">ydim</span><span class="p">(),</span> <span class="n">image</span><span class="o">.</span><span class="n">xdim</span><span class="p">()),</span>
+            <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span>
+            <span class="n">all_touched</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span>
+        <span class="p">)</span>
+
+        <span class="c1"># np.where returns (row_indices, col_indices) where row=y, col=x</span>
+        <span class="n">row_indices</span><span class="p">,</span> <span class="n">col_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask_array</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Extract spectral signatures</span>
+        <span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">row_indices</span><span class="p">,</span> <span class="n">col_indices</span><span class="p">):</span>
+            <span class="c1"># Bounds check: col &lt; xdim (x-axis), row &lt; ydim (y-axis)</span>
+            <span class="k">if</span> <span class="n">col</span> <span class="o">&lt;</span> <span class="n">image</span><span class="o">.</span><span class="n">xdim</span><span class="p">()</span> <span class="ow">and</span> <span class="n">row</span> <span class="o">&lt;</span> <span class="n">image</span><span class="o">.</span><span class="n">ydim</span><span class="p">():</span>
+                <span class="c1"># BlackImage data is data[x, y, band] where x=col, y=row</span>
+                <span class="n">spectrum</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">col</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="p">:]</span>
+
+                <span class="c1"># Skip if all NaN or all zeros (data ignore)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">spectrum</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">spectrum</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+                    <span class="c1"># Check for data ignore value in header</span>
+                    <span class="n">ignore_value</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="k">if</span> <span class="s1">&#39;data ignore value&#39;</span> <span class="ow">in</span> <span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">ignore_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;data ignore value&#39;</span><span class="p">])</span>
+                        <span class="k">except</span><span class="p">:</span>
+                            <span class="k">pass</span>
+
+                    <span class="c1"># Skip if spectrum matches ignore value</span>
+                    <span class="k">if</span> <span class="n">ignore_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">spectrum</span> <span class="o">==</span> <span class="n">ignore_value</span><span class="p">):</span>
+                        <span class="k">continue</span>
+
+                    <span class="c1"># Convert pixel to world coordinates</span>
+                    <span class="n">world_x</span><span class="p">,</span> <span class="n">world_y</span> <span class="o">=</span> <span class="n">_pixel_to_world</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">transform</span><span class="p">)</span>
+
+                    <span class="n">record</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="n">record</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">feature_attrs</span><span class="p">)</span>
+                    <span class="n">record</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                        <span class="s1">&#39;feature_id&#39;</span><span class="p">:</span> <span class="n">feature_id</span><span class="p">,</span>
+                        <span class="s1">&#39;feature_name&#39;</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span>
+                        <span class="s1">&#39;pixel_x&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">col</span><span class="p">),</span>
+                        <span class="s1">&#39;pixel_y&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">),</span>
+                        <span class="s1">&#39;world_x&#39;</span><span class="p">:</span> <span class="n">world_x</span><span class="p">,</span>
+                        <span class="s1">&#39;world_y&#39;</span><span class="p">:</span> <span class="n">world_y</span><span class="p">,</span>
+                    <span class="p">})</span>
+
+                    <span class="c1"># Add spectral bands with wavelength column names</span>
+                    <span class="k">for</span> <span class="n">band_idx</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">spectrum</span><span class="p">):</span>
+                        <span class="n">record</span><span class="p">[</span><span class="n">wavelengths</span><span class="p">[</span><span class="n">band_idx</span><span class="p">]]</span> <span class="o">=</span> <span class="n">value</span>
+
+                    <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: Failed to extract pixels for polygon </span><span class="si">{</span><span class="n">feature_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">records</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_extract_from_point</span><span class="p">(</span>
+    <span class="n">image</span><span class="p">:</span> <span class="n">BlackImage</span><span class="p">,</span>
+    <span class="n">geometry</span><span class="p">,</span>
+    <span class="n">feature_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">neighbor_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">wavelengths</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">feature_attrs</span><span class="p">:</span> <span class="nb">dict</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract pixel beneath point + N Moore neighbors (creates (2N+1)x(2N+1) window).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        image: BlackImage instance</span>
+<span class="sd">        geometry: Shapely Point or MultiPoint</span>
+<span class="sd">        feature_id: Numeric feature identifier</span>
+<span class="sd">        label: Class label string</span>
+<span class="sd">        neighbor_size: N where window size is (2*N+1) x (2*N+1)</span>
+<span class="sd">        wavelengths: Array of wavelength values</span>
+<span class="sd">        feature_attrs: Dictionary of feature attributes from the vector layer</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of dictionaries containing pixel data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Convert affine from GDAL GeoTransform to rasterio Affine</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">Affine</span><span class="o">.</span><span class="n">from_gdal</span><span class="p">(</span><span class="o">*</span><span class="n">image</span><span class="o">.</span><span class="n">affine</span><span class="p">)</span>
+
+    <span class="c1"># Handle MultiPoint</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="p">[</span><span class="n">geometry</span><span class="p">]</span> <span class="k">if</span> <span class="n">geometry</span><span class="o">.</span><span class="n">geom_type</span> <span class="o">==</span> <span class="s1">&#39;Point&#39;</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">geoms</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">points</span><span class="p">:</span>
+        <span class="c1"># Convert world coordinates to pixel coordinates</span>
+        <span class="c1"># px = x (column), py = y (row)</span>
+        <span class="n">px</span><span class="p">,</span> <span class="n">py</span> <span class="o">=</span> <span class="n">_world_to_pixel</span><span class="p">(</span><span class="n">point</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">point</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">transform</span><span class="p">)</span>
+
+        <span class="c1"># Skip if center pixel is outside image bounds</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">px</span> <span class="o">&lt;</span> <span class="n">image</span><span class="o">.</span><span class="n">xdim</span><span class="p">()</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">py</span> <span class="o">&lt;</span> <span class="n">image</span><span class="o">.</span><span class="n">ydim</span><span class="p">()):</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># Extract window around point</span>
+        <span class="k">for</span> <span class="n">dy</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">neighbor_size</span><span class="p">,</span> <span class="n">neighbor_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">dx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">neighbor_size</span><span class="p">,</span> <span class="n">neighbor_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="n">py</span> <span class="o">+</span> <span class="n">dy</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">px</span> <span class="o">+</span> <span class="n">dx</span>
+
+                <span class="c1"># Bounds check: x (col) &lt; xdim, y (row) &lt; ydim</span>
+                <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">image</span><span class="o">.</span><span class="n">xdim</span><span class="p">()</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="n">image</span><span class="o">.</span><span class="n">ydim</span><span class="p">():</span>
+                    <span class="c1"># BlackImage data is data[x, y, band] where x=col, y=row</span>
+                    <span class="n">spectrum</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="p">:]</span>
+
+                    <span class="c1"># Skip if all NaN or all zeros (data ignore)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">spectrum</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">spectrum</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+                        <span class="c1"># Check for data ignore value in header</span>
+                        <span class="n">ignore_value</span> <span class="o">=</span> <span class="kc">None</span>
+                        <span class="k">if</span> <span class="s1">&#39;data ignore value&#39;</span> <span class="ow">in</span> <span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">ignore_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;data ignore value&#39;</span><span class="p">])</span>
+                            <span class="k">except</span><span class="p">:</span>
+                                <span class="k">pass</span>
+
+                        <span class="c1"># Skip if spectrum matches ignore value</span>
+                        <span class="k">if</span> <span class="n">ignore_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">spectrum</span> <span class="o">==</span> <span class="n">ignore_value</span><span class="p">):</span>
+                            <span class="k">continue</span>
+
+                        <span class="c1"># Convert back to world coordinates</span>
+                        <span class="n">world_x</span><span class="p">,</span> <span class="n">world_y</span> <span class="o">=</span> <span class="n">_pixel_to_world</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">transform</span><span class="p">)</span>
+
+                        <span class="n">record</span> <span class="o">=</span> <span class="p">{}</span>
+                        <span class="n">record</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">feature_attrs</span><span class="p">)</span>
+                        <span class="n">record</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                            <span class="s1">&#39;feature_id&#39;</span><span class="p">:</span> <span class="n">feature_id</span><span class="p">,</span>
+                            <span class="s1">&#39;feature_name&#39;</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span>
+                            <span class="s1">&#39;pixel_x&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
+                            <span class="s1">&#39;pixel_y&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">y</span><span class="p">),</span>
+                            <span class="s1">&#39;world_x&#39;</span><span class="p">:</span> <span class="n">world_x</span><span class="p">,</span>
+                            <span class="s1">&#39;world_y&#39;</span><span class="p">:</span> <span class="n">world_y</span><span class="p">,</span>
+                        <span class="p">})</span>
+
+                        <span class="c1"># Add spectral bands with wavelength column names</span>
+                        <span class="k">for</span> <span class="n">band_idx</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">spectrum</span><span class="p">):</span>
+                            <span class="n">record</span><span class="p">[</span><span class="n">wavelengths</span><span class="p">[</span><span class="n">band_idx</span><span class="p">]]</span> <span class="o">=</span> <span class="n">value</span>
+
+                        <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">records</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_pixel_to_world</span><span class="p">(</span><span class="n">px</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">py</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">transform</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert pixel coordinates to world coordinates using affine transform.&quot;&quot;&quot;</span>
+    <span class="n">world_x</span><span class="p">,</span> <span class="n">world_y</span> <span class="o">=</span> <span class="n">transform</span> <span class="o">*</span> <span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">world_x</span><span class="p">,</span> <span class="n">world_y</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_world_to_pixel</span><span class="p">(</span><span class="n">world_x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">world_y</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">transform</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert world coordinates to pixel coordinates using inverse affine transform.&quot;&quot;&quot;</span>
+    <span class="n">inv_transform</span> <span class="o">=</span> <span class="o">~</span><span class="n">transform</span>
+    <span class="n">px</span><span class="p">,</span> <span class="n">py</span> <span class="o">=</span> <span class="n">inv_transform</span> <span class="o">*</span> <span class="p">(</span><span class="n">world_x</span><span class="p">,</span> <span class="n">world_y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">px</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">py</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_aggregate_signatures</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">wavelengths</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Aggregate spectral signatures per feature.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df: DataFrame with individual pixel signatures</span>
+<span class="sd">        method: Aggregation method (&#39;mean&#39;, &#39;median&#39;, &#39;std&#39;, &#39;percentile_X&#39;)</span>
+<span class="sd">        wavelengths: Array of wavelength values</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Aggregated DataFrame with one row per feature</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">band_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">)</span>
+    <span class="c1"># Group by all non-band, non-coordinate columns</span>
+    <span class="n">coord_cols</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;pixel_x&#39;</span><span class="p">,</span> <span class="s1">&#39;pixel_y&#39;</span><span class="p">,</span> <span class="s1">&#39;world_x&#39;</span><span class="p">,</span> <span class="s1">&#39;world_y&#39;</span><span class="p">}</span>
+    <span class="n">band_cols_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">band_cols</span><span class="p">)</span>
+    <span class="n">group_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">coord_cols</span> <span class="ow">and</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">band_cols_set</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span>
+        <span class="n">agg_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">group_cols</span><span class="p">)[</span><span class="n">band_cols</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;median&#39;</span><span class="p">:</span>
+        <span class="n">agg_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">group_cols</span><span class="p">)[</span><span class="n">band_cols</span><span class="p">]</span><span class="o">.</span><span class="n">median</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;std&#39;</span><span class="p">:</span>
+        <span class="n">agg_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">group_cols</span><span class="p">)[</span><span class="n">band_cols</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">method</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;percentile_&#39;</span><span class="p">):</span>
+        <span class="n">percentile</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">method</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">agg_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">group_cols</span><span class="p">)[</span><span class="n">band_cols</span><span class="p">]</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">percentile</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown aggregation method: </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">agg_df</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_save_csv_with_metadata</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">wavelengths</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save DataFrame to CSV with wavelength metadata in header.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df: DataFrame to save</span>
+<span class="sd">        output_path: Output CSV file path</span>
+<span class="sd">        wavelengths: Array of wavelength values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">output_path</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="c1"># Write wavelength metadata as comment</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# Wavelengths (nm): </span><span class="si">{</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="w"> </span><span class="n">wavelengths</span><span class="p">))</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# Total pixels: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Write DataFrame</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_dataframe_to_blacklibrary</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">wavelengths</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BlackLibrary</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert DataFrame of spectral signatures to BlackLibrary format.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df: DataFrame with spectral signatures</span>
+<span class="sd">        wavelengths: Array of wavelength values</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        BlackLibrary instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Get band columns using wavelength values</span>
+    <span class="n">band_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">)]</span>
+
+    <span class="c1"># Extract spectral data</span>
+    <span class="n">spectra</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">band_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="c1"># Get unique feature names</span>
+    <span class="k">if</span> <span class="s1">&#39;feature_name&#39;</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;feature_name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;Feature_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">))]</span>
+
+    <span class="c1"># Reshape for BlackLibrary: (n_features, n_samples, n_bands)</span>
+    <span class="c1"># If aggregated, each row is one spectrum</span>
+    <span class="c1"># If not aggregated, group by feature</span>
+    <span class="k">if</span> <span class="s1">&#39;feature_id&#39;</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+        <span class="c1"># Not aggregated - group by feature</span>
+        <span class="n">grouped_spectra</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+            <span class="n">feature_spectra</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;feature_name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">label</span><span class="p">][</span><span class="n">band_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">grouped_spectra</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">feature_spectra</span><span class="p">)</span>
+
+        <span class="c1"># Find max number of samples per feature</span>
+        <span class="n">max_samples</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">grouped_spectra</span><span class="p">)</span>
+
+        <span class="c1"># Pad with NaN to create regular array</span>
+        <span class="n">padded_spectra</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">feature_spectra</span> <span class="ow">in</span> <span class="n">grouped_spectra</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">feature_spectra</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">max_samples</span><span class="p">:</span>
+                <span class="n">padding</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">max_samples</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">feature_spectra</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">band_cols</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+                <span class="n">feature_spectra</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">feature_spectra</span><span class="p">,</span> <span class="n">padding</span><span class="p">])</span>
+            <span class="n">padded_spectra</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">feature_spectra</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">padded_spectra</span><span class="p">)</span>  <span class="c1"># Shape: (n_features, n_samples, n_bands)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Aggregated - one spectrum per feature</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">spectra</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>  <span class="c1"># Shape: (1, n_samples, n_bands)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;feature_name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">if</span> <span class="s1">&#39;feature_name&#39;</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">else</span> <span class="n">labels</span>
+
+    <span class="c1"># Create BlackLibrary</span>
+    <span class="n">library</span> <span class="o">=</span> <span class="n">BlackLibrary</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">wav</span><span class="o">=</span><span class="n">wavelengths</span><span class="p">,</span> <span class="n">lab</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">library</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Leidy Alfonso, Inti Ruiz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

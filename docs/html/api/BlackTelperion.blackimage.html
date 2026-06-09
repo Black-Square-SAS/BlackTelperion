@@ -508,6 +508,41 @@ binary image mask (must be boolean) and True values will be masked across all ba
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="BlackTelperion.blackimage.BlackImage.extract_signatures">
+<span class="sig-name descname"><span class="pre">extract_signatures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vector_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackimage.html#BlackImage.extract_signatures"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackimage.BlackImage.extract_signatures" title="Link to this definition"></a></dt>
+<dd><p>Convenience method to extract spectral signatures from vector layer.</p>
+<p>Extracts spectral signatures from hyperspectral image based on vector geometries:
+- For polygons: Extracts all pixels beneath the polygon
+- For points: Extracts the pixel beneath + N Moore neighbors</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vector_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to vector layer file (.shp, .gpkg, .geojson, etc.)</p></li>
+<li><p><strong>**kwargs</strong> – Additional arguments passed to extract_signatures_from_vector
+- output_csv (str): Path to save CSV output
+- neighbor_size (int): For point features, N where window is (2*N+1) x (2*N+1)
+- aggregate (bool or str): How to aggregate pixels per feature
+- label_field (str): Name of vector attribute containing class labels
+- return_format (str): ‘dataframe’, ‘blacklibrary’, or ‘both’
+- progress (bool): Show progress bar</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame, BlackLibrary, or tuple depending on return_format</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">extract_signatures</span><span class="p">(</span><span class="s1">&#39;ground_truth.gpkg&#39;</span><span class="p">,</span> <span class="n">neighbor_size</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">library</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">extract_signatures</span><span class="p">(</span><span class="s1">&#39;ground_truth.gpkg&#39;</span><span class="p">,</span> <span class="n">return_format</span><span class="o">=</span><span class="s1">&#39;blacklibrary&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>BlackTelperion.io.vectors.extract_signatures_from_vector for full documentation</p>
+</div>
+</dd></dl>
+
 </dd></dl>
 
 </section>

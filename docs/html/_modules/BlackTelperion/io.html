@@ -77,6 +77,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.headers</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.images</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.libraries</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.vectors</span><span class="w"> </span><span class="kn">import</span> <span class="n">extract_signatures_from_vector</span><span class="p">,</span> <span class="n">load_vector_file</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">BlackTelperion</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlackImage</span><span class="p">,</span> <span class="n">BlackLibrary</span><span class="p">,</span> <span class="n">BlackData</span><span class="p">,</span> <span class="n">BlackCollection</span>
@@ -198,17 +199,22 @@
 
 <div class="viewcode-block" id="load">
 <a class="viewcode-back" href="../../api/BlackTelperion.io.html#BlackTelperion.io.load">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A generic function for loading hyperspectral images, point clouds and libraries. The appropriate load function</span>
-<span class="sd">    will be chosen based on the file extension.</span>
-
+<span class="sd">    ...</span>
 <span class="sd">    Args:</span>
 <span class="sd">        path (str): the path of the file to load.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        The loaded data.</span>
+<span class="sd">        **kwds: optional keyword arguments forwarded to format-specific loaders.</span>
+<span class="sd">            For Sentinel-2 directories, ``resolution`` (int: 10, 20, or 60)</span>
+<span class="sd">            is supported.</span>
+<span class="sd">    ...</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.enmap</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_enmap_product</span><span class="p">,</span> <span class="n">loadEnMAP</span>
+        <span class="k">if</span> <span class="n">is_enmap_product</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">loadEnMAP</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.sentinel</span><span class="w"> </span><span class="kn">import</span> <span class="n">loadSentinel2</span>
+        <span class="k">return</span> <span class="n">loadSentinel2</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span> <span class="n">path</span> <span class="p">),</span> <span class="s2">&quot;Error: file </span><span class="si">%s</span><span class="s2"> does not exist.&quot;</span> <span class="o">%</span> <span class="n">path</span>
 

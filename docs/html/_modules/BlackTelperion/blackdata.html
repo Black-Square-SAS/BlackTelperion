@@ -1009,7 +1009,7 @@
     <span class="c1">#TODO: Refactor to remove chunks</span>
 <div class="viewcode-block" id="BlackData.smooth_savgol">
 <a class="viewcode-back" href="../../api/BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.smooth_savgol">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">smooth_savgol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">poly</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">chunk</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">smooth_savgol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">poly</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">chunk</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Applies Savitzky-Golay-filter on data.</span>
 
@@ -1018,10 +1018,11 @@
 <span class="sd">            poly (int): degree of polynom, must be int.</span>
 <span class="sd">            chunk (bool): True if the data should be split into chunks (removing e.g. nan bands) before filtering. Use with care!</span>
 <span class="sd">                   Default is False.</span>
+<span class="sd">            inplace (bool): If True, smooth data in-place and return self instead of a copy. Default is False.</span>
 <span class="sd">            **kwds: Keywords are passed to scipy.signal.savgol_filter(...).</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A copy of the input dataset with smoothed spectra.</span>
+<span class="sd">            A copy of the input dataset with smoothed spectra, or self if inplace=True.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="s2">&quot;Error - running window size must be integer.&quot;</span>
@@ -1030,7 +1031,7 @@
         <span class="k">if</span> <span class="n">chunk</span><span class="p">:</span>
             <span class="n">C</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contiguous_chunks</span><span class="p">(</span><span class="n">min_size</span><span class="o">=</span><span class="n">window</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">C</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()]</span>
+            <span class="n">C</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">]</span> <span class="k">if</span> <span class="n">inplace</span> <span class="k">else</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()]</span>
             <span class="n">w</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_wavelengths</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()]</span>
 
         <span class="c1"># do smoothing</span>
@@ -1040,6 +1041,10 @@
         <span class="k">for</span> <span class="n">X</span> <span class="ow">in</span> <span class="n">C</span><span class="p">:</span>
             <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># remove nans</span>
             <span class="n">X</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">savgol_filter</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="p">:],</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">inplace</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">chunk</span><span class="p">:</span>
+            <span class="c1"># data was modified in-place, just update wavelengths if needed</span>
+            <span class="k">return</span> <span class="bp">self</span>
 
         <span class="c1"># return copy</span>
         <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -1202,19 +1207,26 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;BlackTelperion compression factor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sf</span> <span class="c1"># backup, as some packages (i.e. SPy) overwrite the reflectance scale factor</span></div>
 
 
-    <span class="c1">#TODO: Refactor this to include data ignore value and not using a default</span>
 <div class="viewcode-block" id="BlackData.decompress">
 <a class="viewcode-back" href="../../api/BlackTelperion.blackdata.html#BlackTelperion.blackdata.BlackData.decompress">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">decompress</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decompress</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reflectance_scale_factor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_ignore_value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Expand data array to floats to get actual values</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># no need to decompress...</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>
             <span class="k">return</span>
+
+        <span class="n">metadata_sf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;reflectance scale factor&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">metadata_nan</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data ignore value&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">reflectance_scale_factor</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">metadata_sf</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span><span class="p">(</span> <span class="n">data_ignore_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">metadata_nan</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Missing required metadata: reflectance scale factor or data ignore value not found in header, and not provided as argument&quot;</span><span class="p">)</span>
+
         <span class="c1"># get min/max data</span>
-        <span class="n">sf</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;reflectance scale factor&quot;</span><span class="p">,</span> <span class="mi">65535</span><span class="p">))</span>
-        <span class="n">nan</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data ignore value&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">sf</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;reflectance scale factor&quot;</span><span class="p">,</span> <span class="n">reflectance_scale_factor</span><span class="p">))</span>
+        <span class="n">nan</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data ignore value&quot;</span><span class="p">,</span> <span class="n">data_ignore_value</span><span class="p">))</span>
+
 
         <span class="c1"># update header accordingly (to avoid save / load issues in the future!)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;reflectance scale factor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
@@ -1223,12 +1235,10 @@
         <span class="k">if</span> <span class="s1">&#39;BlackTelperion compression factor&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;BlackTelperion compression factor&#39;</span><span class="p">]</span>
             
-        <span class="c1"># expand data array to float32</span>
+        <span class="c1"># expand to float32, mask nodata, then scale in-place</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">/</span> <span class="n">sf</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-
-        <span class="c1"># set nans</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_as_nan</span><span class="p">(</span><span class="n">nan</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_as_nan</span><span class="p">(</span><span class="n">nan</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="n">sf</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="BlackData.getQuantized">

@@ -600,7 +600,7 @@ a change in wavelength greater than double this percentile.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.smooth_savgol">
-<span class="sig-name descname"><span class="pre">smooth_savgol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.smooth_savgol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.smooth_savgol" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">smooth_savgol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.smooth_savgol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.smooth_savgol" title="Link to this definition"></a></dt>
 <dd><p>Applies Savitzky-Golay-filter on data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -609,11 +609,12 @@ a change in wavelength greater than double this percentile.</p></li>
 <li><p><strong>poly</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – degree of polynom, must be int.</p></li>
 <li><p><strong>chunk</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – True if the data should be split into chunks (removing e.g. nan bands) before filtering. Use with care!
 Default is False.</p></li>
+<li><p><strong>inplace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If True, smooth data in-place and return self instead of a copy. Default is False.</p></li>
 <li><p><strong>**kwds</strong> – Keywords are passed to scipy.signal.savgol_filter(…).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A copy of the input dataset with smoothed spectra.</p>
+<dd class="field-even"><p>A copy of the input dataset with smoothed spectra, or self if inplace=True.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -657,7 +658,7 @@ should be plotted (Default).</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="BlackTelperion.blackdata.BlackData.decompress">
-<span class="sig-name descname"><span class="pre">decompress</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.decompress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.decompress" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">decompress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reflectance_scale_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_ignore_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/blackdata.html#BlackData.decompress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.blackdata.BlackData.decompress" title="Link to this definition"></a></dt>
 <dd><p>Expand data array to floats to get actual values</p>
 </dd></dl>
 

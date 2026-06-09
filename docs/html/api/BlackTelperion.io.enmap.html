@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BlackTelperion.io.headers module &mdash; BlackTelperion 0.1 documentation</title>
+  <title>BlackTelperion.io.enmap module &mdash; BlackTelperion 0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
 
@@ -19,8 +19,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="BlackTelperion.io.images module" href="BlackTelperion.io.images.html" />
-    <link rel="prev" title="BlackTelperion.io.enmap module" href="BlackTelperion.io.enmap.html" /> 
+    <link rel="next" title="BlackTelperion.io.headers module" href="BlackTelperion.io.headers.html" />
+    <link rel="prev" title="BlackTelperion.io.create_spectral_cubes module" href="BlackTelperion.io.create_spectral_cubes.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -87,9 +87,9 @@
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="BlackTelperion.html">BlackTelperion package</a></li>
           <li class="breadcrumb-item"><a href="BlackTelperion.io.html">BlackTelperion.io package</a></li>
-      <li class="breadcrumb-item active">BlackTelperion.io.headers module</li>
+      <li class="breadcrumb-item active">BlackTelperion.io.enmap module</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/api/BlackTelperion.io.headers.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/api/BlackTelperion.io.enmap.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -97,67 +97,58 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-BlackTelperion.io.headers">
-<span id="blacktelperion-io-headers-module"></span><h1>BlackTelperion.io.headers module<a class="headerlink" href="#module-BlackTelperion.io.headers" title="Link to this heading"></a></h1>
-<p>Read ENVI header files.</p>
+  <section id="module-BlackTelperion.io.enmap">
+<span id="blacktelperion-io-enmap-module"></span><h1>BlackTelperion.io.enmap module<a class="headerlink" href="#module-BlackTelperion.io.enmap" title="Link to this heading"></a></h1>
+<p>Load EnMAP hyperspectral data as a BlackImage.</p>
+<p>EnMAP L2A products are distributed as a directory containing a BSQ spectral
+image with an ENVI <code class="docutils literal notranslate"><span class="pre">.HDR</span></code> sidecar and a <code class="docutils literal notranslate"><span class="pre">-METADATA.XML</span></code> file that holds
+per-band wavelengths, FWHM, and quality metadata.</p>
+<p>The image is loaded as <strong>raw int16</strong> so that the existing
+<code class="docutils literal notranslate"><span class="pre">BlackData.decompress()</span></code> workflow can be used to convert to float32
+reflectance.</p>
+<p>Typical usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">BlackTelperion.io.enmap</span><span class="w"> </span><span class="kn">import</span> <span class="n">loadEnMAP</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">loadEnMAP</span><span class="p">(</span><span class="s2">&quot;/path/to/ENMAP01-____L2A-.../&quot;</span><span class="p">)</span>
+<span class="n">image</span><span class="o">.</span><span class="n">decompress</span><span class="p">()</span>   <span class="c1"># → float32 reflectance with NaN nodata</span>
+</pre></div>
+</div>
 <dl class="py function">
-<dt class="sig sig-object py" id="BlackTelperion.io.headers.makeDirs">
-<span class="sig-prename descclassname"><span class="pre">BlackTelperion.io.headers.</span></span><span class="sig-name descname"><span class="pre">makeDirs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/io/headers.html#makeDirs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.io.headers.makeDirs" title="Link to this definition"></a></dt>
-<dd><p>Checks if all the directories to the specified file exist, and if they do not, makes them.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>path</strong> – the directory or file path to check. If any directories do not exist, they will be created.</p>
-</dd>
-</dl>
+<dt class="sig sig-object py" id="BlackTelperion.io.enmap.is_enmap_product">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.io.enmap.</span></span><span class="sig-name descname"><span class="pre">is_enmap_product</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/io/enmap.html#is_enmap_product"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.io.enmap.is_enmap_product" title="Link to this definition"></a></dt>
+<dd><p>Return True if <em>path</em> (a directory) looks like an EnMAP product.</p>
+<p>Detection is based on the presence of a <code class="docutils literal notranslate"><span class="pre">*-SPECTRAL_IMAGE.BSQ</span></code> file
+somewhere under <em>path</em>.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="BlackTelperion.io.headers.saveHeader">
-<span class="sig-prename descclassname"><span class="pre">BlackTelperion.io.headers.</span></span><span class="sig-name descname"><span class="pre">saveHeader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/io/headers.html#saveHeader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.io.headers.saveHeader" title="Link to this definition"></a></dt>
-<dd><p>Write to a header file.</p>
+<dt class="sig sig-object py" id="BlackTelperion.io.enmap.loadEnMAP">
+<span class="sig-prename descclassname"><span class="pre">BlackTelperion.io.enmap.</span></span><span class="sig-name descname"><span class="pre">loadEnMAP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/io/enmap.html#loadEnMAP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.io.enmap.loadEnMAP" title="Link to this definition"></a></dt>
+<dd><p>Load an EnMAP L2A product into a BlackImage with int16 data.</p>
+<p>The returned image keeps the raw integer values.  Use
+<code class="docutils literal notranslate"><span class="pre">image.decompress()</span></code> to apply the reflectance scale factor and mask
+nodata pixels.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> – the path to write to.</p></li>
-<li><p><strong>header</strong> – the BlackHeader object to write.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="BlackTelperion.io.headers.loadHeader">
-<span class="sig-prename descclassname"><span class="pre">BlackTelperion.io.headers.</span></span><span class="sig-name descname"><span class="pre">loadHeader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/io/headers.html#loadHeader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.io.headers.loadHeader" title="Link to this definition"></a></dt>
-<dd><p>Load a header file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>file</strong> – a file path to a .hdr file.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="BlackTelperion.io.headers.matchHeader">
-<span class="sig-prename descclassname"><span class="pre">BlackTelperion.io.headers.</span></span><span class="sig-name descname"><span class="pre">matchHeader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/BlackTelperion/io/headers.html#matchHeader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BlackTelperion.io.headers.matchHeader" title="Link to this definition"></a></dt>
-<dd><p>Matches image and header path.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>path</strong> – the path to an image or header file</p>
+<dd class="field-odd"><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – path to the EnMAP product directory (outer or inner).</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><p>A tuple containing:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>header = file path to the associated .hdr or .HDR file (if found, otherwise None)</p></li>
-<li><p>image = file path to the associated image data (if found, otherwise None).</p></li>
-</ul>
-</div></blockquote>
-</p>
+<dd class="field-even"><p>224-band hyperspectral cube (int16) with wavelengths,
+FWHM, georeferencing, and <code class="docutils literal notranslate"><span class="pre">reflectance</span> <span class="pre">scale</span> <span class="pre">factor</span> <span class="pre">=</span> <span class="pre">10000</span></code>
+populated in the header.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="BlackTelperion.blackimage.html#BlackTelperion.blackimage.BlackImage" title="BlackTelperion.blackimage.BlackImage">BlackImage</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.14)"><strong>FileNotFoundError</strong></a> – if required product files are missing.</p>
 </dd>
 </dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">img</span> <span class="o">=</span> <span class="n">loadEnMAP</span><span class="p">(</span><span class="s2">&quot;/data/ENMAP01-____L2A-DT.../&quot;</span><span class="p">)</span>
+<span class="n">img</span><span class="o">.</span><span class="n">decompress</span><span class="p">()</span>          <span class="c1"># convert to float32 reflectance</span>
+<span class="n">img</span><span class="o">.</span><span class="n">quick_plot</span><span class="p">(</span><span class="n">bands</span><span class="o">=</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
@@ -166,8 +157,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="BlackTelperion.io.enmap.html" class="btn btn-neutral float-left" title="BlackTelperion.io.enmap module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="BlackTelperion.io.images.html" class="btn btn-neutral float-right" title="BlackTelperion.io.images module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="BlackTelperion.io.create_spectral_cubes.html" class="btn btn-neutral float-left" title="BlackTelperion.io.create_spectral_cubes module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="BlackTelperion.io.headers.html" class="btn btn-neutral float-right" title="BlackTelperion.io.headers module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

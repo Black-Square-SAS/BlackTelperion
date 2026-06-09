@@ -13,6 +13,9 @@ Submodules
    :maxdepth: 4
 
    BlackTelperion.io.create_spectral_cubes
+   BlackTelperion.io.enmap
    BlackTelperion.io.headers
    BlackTelperion.io.images
    BlackTelperion.io.libraries
+   BlackTelperion.io.sentinel
+   BlackTelperion.io.vectors
