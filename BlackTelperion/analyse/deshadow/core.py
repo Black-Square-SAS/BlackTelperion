@@ -1,26 +1,13 @@
 """
-Shadow detection for hyperspectral imagery via spectral integral thresholding.
+In-memory shadow detection and removal.
 
-Shadowed pixels reflect less energy across the entire spectrum, so their
-spectral integral (area under the reflectance curve) is systematically lower
-than sunlit pixels. A threshold expressed as a percentage of the maximum
-observed integral separates the two classes.
+:func:`shadow_mask` returns a single-band shadow mask; :func:`deshadow_image`
+returns the cube with shadow pixels flagged across all bands. Both hold the whole
+image in RAM (the integral is computed in row-strips only to bound peak memory).
+For cubes that do not fit in memory, use the streamed variants in
+:mod:`BlackTelperion.analyse.deshadow.large_image`.
 
-To handle large images without exhausting RAM, the integral computation is
-performed in row-strips whose size is controlled by the ``strip_rows``
-parameter. Only one strip is held in memory at a time; the integral array
-(one float32 per pixel) accumulates the results and is the only full-image
-allocation during that phase.
-
-Typical usage
--------------
-    from BlackTelperion.filter.shadows import shadow_mask
-
-    mask = shadow_mask(image, threshold=30.0, min_shadow_size=500, min_gap_size=500)
-
-The returned object is a single-band BlackData instance whose values are:
-    1.0 → shadow pixel
-    0.0 → sunlit pixel
+See :mod:`BlackTelperion.analyse.deshadow` for the detection method.
 """
 
 import numpy as np
@@ -51,10 +38,11 @@ def shadow_mask(data, threshold: float = 30.0,
     pixel) and the final uint8 mask (~1 byte per pixel).
 
     An optional morphological clean-up step removes spatial noise:
-      - isolated shadow blobs smaller than *min_shadow_size* pixels are
-        reclassified as sunlit.
-      - isolated sunlit gaps smaller than *min_gap_size* pixels that are
-        enclosed by shadow are filled in as shadow.
+
+    - isolated shadow blobs smaller than *min_shadow_size* pixels are
+      reclassified as sunlit.
+    - isolated sunlit gaps smaller than *min_gap_size* pixels that are
+      enclosed by shadow are filled in as shadow.
 
     Args:
         data:
@@ -76,12 +64,9 @@ def shadow_mask(data, threshold: float = 30.0,
             allows. Default is 256.
 
     Returns:
-        A new BlackData instance of the same concrete type as *data* containing
-        a single band with dtype ``float32``:
-            1.0 → shadow
-            0.0 → sunlit
-
-        The output header carries the band name ``"shadow_mask"``.
+        A new BlackData instance of the same concrete type as *data* with a
+        single ``float32`` band (``1.0`` = shadow, ``0.0`` = sunlit). The output
+        header carries the band name ``"shadow_mask"``.
 
     Raises:
         ValueError: if *threshold* is not in the range (0, 100).
@@ -114,8 +99,55 @@ def shadow_mask(data, threshold: float = 30.0,
     return out
 
 
+def deshadow_image(image, threshold: float = 30.0,
+                   min_shadow_size: int = 0,
+                   min_gap_size: int = 0,
+                   strip_rows: int = 256,
+                   flag: float = np.nan,
+                   inplace: bool = False):
+    """
+    Remove shadows from an in-memory image: detect them and flag every band.
+
+    Convenience wrapper that ties shadow detection (:func:`shadow_mask`) to the
+    existing :meth:`BlackImage.mask`, so callers get a corrected cube directly
+    rather than just a mask. Detection is unchanged — see :func:`shadow_mask` for
+    the method and parameters. The whole image is held in memory; for cubes
+    larger than RAM use
+    :func:`~BlackTelperion.analyse.deshadow.large_image.deshadow_large_image`.
+
+    Args:
+        image:
+            A BlackImage instance whose last dimension indexes spectral bands.
+        threshold (float):
+            Percentage of the maximum spectral integral below which a pixel is
+            labelled as shadow. Forwarded to :func:`shadow_mask`. Default is 30.
+        min_shadow_size (int):
+            Connected shadow regions smaller than this are removed. Forwarded to
+            :func:`shadow_mask`. Default is 0 (disabled).
+        min_gap_size (int):
+            Connected sunlit regions smaller than this are filled in as shadow.
+            Forwarded to :func:`shadow_mask`. Default is 0 (disabled).
+        strip_rows (int):
+            Number of rows integrated at once. Forwarded to :func:`shadow_mask`.
+            Default is 256.
+        flag (float):
+            Value written to every band of each shadow pixel. Default is
+            ``np.nan``, which is treated as no-data throughout BlackTelperion.
+        inplace (bool):
+            If True, modify *image* in place. Otherwise operate on a copy.
+            Default is False.
+
+    Returns:
+        A BlackImage with shadow pixels set to *flag* across all bands.
+    """
+    mask = shadow_mask(image, threshold, min_shadow_size, min_gap_size, strip_rows)
+    out = image if inplace else image.copy()
+    out.mask(mask.data[..., 0] > 0, flag=flag)
+    return out
+
+
 # ---------------------------------------------------------------------------
-# Private helpers
+# Private helpers (shared with the streamed large-image variants)
 # ---------------------------------------------------------------------------
 
 def _trapezoid_weights(wavelengths: np.ndarray) -> np.ndarray:
@@ -201,8 +233,8 @@ def _apply_threshold(integrals: np.ndarray, threshold: float) -> np.ndarray:
     """
     Classify pixels as shadow or sunlit based on an integral threshold.
 
-    The cutoff is *threshold* percent of the maximum finite integral. NaN
-    pixels fall below any finite cutoff and are therefore labelled as shadow.
+    The cutoff is *threshold* percent of the maximum finite integral. Non-finite
+    (all-NaN / no-data) pixels are classified as shadow.
 
     Args:
         integrals: Float array of shape (...,).
@@ -213,7 +245,9 @@ def _apply_threshold(integrals: np.ndarray, threshold: float) -> np.ndarray:
     """
     max_integral = float(np.nanmax(integrals))
     cutoff = max_integral * (threshold / 100.0)
-    return np.where(integrals < cutoff, 1.0, 0.0).astype(np.float32)
+    shadow = (integrals < cutoff)          # finite pixels below the cutoff
+    shadow |= ~np.isfinite(integrals)      # NaN/inf (e.g. all-NaN nodata) -> shadow
+    return shadow.astype(np.float32)
 
 
 def _remove_small_regions(shadow: np.ndarray,

@@ -12,6 +12,9 @@ from .mwl import *
 from .unmixing import *
 from .sam import *
 from .dtree import *
+from .deshadow import (
+    shadow_mask, deshadow_image, shadow_mask_large, deshadow_large_image,
+)
 
 import matplotlib.pyplot as plt
 
