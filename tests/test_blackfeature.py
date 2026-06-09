@@ -4,7 +4,7 @@ from BlackTelperion import BlackFeature
 from BlackTelperion.reference.features import Minerals
 import numpy as np
 
-class MyTestCase(unittest.TestCase):
+class TestBlackFeature(unittest.TestCase):
     def test_construct(self):
         assert Minerals.Mica_K is not None
         assert Minerals.Chlorite_Fe is not None

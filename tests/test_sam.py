@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 import os
 
-class MyTestCase(unittest.TestCase):
+class TestSpectralAngleMapper(unittest.TestCase):
     def test_sam(self):
         from BlackTelperion.analyse.sam import SAM, spectral_angles
 

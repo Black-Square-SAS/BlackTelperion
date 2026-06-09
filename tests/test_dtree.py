@@ -6,7 +6,7 @@ import numpy as np
 import os
 
 
-class MyTestCase(unittest.TestCase):
+class TestDecisionTree(unittest.TestCase):
     def test_dtree(self):
         from BlackTelperion.analyse.dtree import decision_tree
 

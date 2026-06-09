@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 import os
 
-class MyTestCase(unittest.TestCase):
+class TestUnmixing(unittest.TestCase):
     def test_unmixing(self):
         from BlackTelperion.analyse.unmixing import mix, unmix, endmembers
 

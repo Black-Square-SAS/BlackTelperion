@@ -4,7 +4,7 @@ from pathlib import Path
 from BlackTelperion import io
 import numpy as np
 
-class MyTestCase(unittest.TestCase):
+class TestDimensionReductionFilters(unittest.TestCase):
     def test_PCA_MNF(self):
         image = io.load(os.path.join(os.path.join(str(Path(__file__).parent.parent), "test_data"), "image.hdr"))
 

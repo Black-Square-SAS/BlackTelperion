@@ -8,7 +8,7 @@ from tempfile import mkdtemp
 import numpy as np
 
 
-class MyTestCase(unittest.TestCase):
+class TestMinimumWavelength(unittest.TestCase):
     def test_hull(self):
         from BlackTelperion.correct import get_hull_corrected
         image = io.load(os.path.join(os.path.join(str(Path(__file__).parent.parent), "test_data"),"image.hdr"))
@@ -114,7 +114,7 @@ class MyTestCase(unittest.TestCase):
             M.sortByDepth()
             self.assertGreater(np.nanmax(M[0,'depth']), 0 ) # check there are some valid features
 
-    def testIO(self):
+    def test_io(self):
         image = io.load(os.path.join(os.path.join(str(Path(__file__).parent.parent), "test_data"),"image.hdr"))
         M = minimum_wavelength(image, minw=2100., maxw=2400., sym=False, method='gauss', n=2, vb=True)
         pth = mkdtemp()

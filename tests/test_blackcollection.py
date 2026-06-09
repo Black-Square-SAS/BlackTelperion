@@ -7,7 +7,7 @@ from BlackTelperion import io
 import os
 from pathlib import Path
 
-class MyTestCase(unittest.TestCase):
+class TestBlackCollection(unittest.TestCase):
     def getTestData(self):
         image = io.load(os.path.join(os.path.join(str(Path(__file__).parent.parent), "test_data"), "image.hdr"))
         image.data[:50, :, :] = np.nan  # add some nans to make more realistic
@@ -46,7 +46,7 @@ class MyTestCase(unittest.TestCase):
 
 
 
-    def test_basic(self):
+    def test_save_and_load_attributes(self):
         from BlackTelperion import BlackCollection
         pth = mkdtemp() # create output directory
         array = np.random.rand(50)  # create some random data

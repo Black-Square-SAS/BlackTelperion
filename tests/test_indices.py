@@ -6,7 +6,7 @@ import numpy as np
 import os
 
 
-class MyTestCase(unittest.TestCase):
+class TestSpectralIndices(unittest.TestCase):
 
     def test_band_ratio(self):
         """Test the band_ratio function with various input types"""

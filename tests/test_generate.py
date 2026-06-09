@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 
-class MyTestCase(unittest.TestCase):
+class TestReferenceGeneration(unittest.TestCase):
     def test_generate(self):
         from BlackTelperion.reference import genImage, randomSpectra
         im,A = genImage()
